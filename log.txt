@@ -1,0 +1,28 @@
+[2026-06-05 14:47:37] [run_pipeline.R] - INFO: Starting full batch pipeline. 
+[2026-06-05 14:47:37] [scrap_chotot.R] - INFO: Starting Chợ Tốt API scrape. 
+[2026-06-05 14:47:37] [scrap_chotot.R] - INFO: Finished Chợ Tốt scrape with 20 records. 
+[2026-06-05 14:47:37] [scrap_carpla.R] - INFO: Starting Carpla API scrape. 
+[2026-06-05 14:47:39] [scrap_carpla.R] - INFO: Finished Carpla scrape with 15 records. 
+[2026-06-05 14:47:39] [scrap_banxehoicu.R] - INFO: Starting Bán Xe Hơi Cũ HTML scrape. 
+[2026-06-05 14:48:02] [run_pipeline.R] - INFO: Starting full batch pipeline. 
+[2026-06-05 14:48:02] [scrap_chotot.R] - INFO: Starting Chợ Tốt API scrape. 
+[2026-06-05 14:48:03] [scrap_chotot.R] - INFO: Finished Chợ Tốt scrape with 20 records. 
+[2026-06-05 14:48:03] [scrap_carpla.R] - INFO: Starting Carpla API scrape. 
+[2026-06-05 14:48:03] [scrap_carpla.R] - INFO: Finished Carpla scrape with 15 records. 
+[2026-06-05 14:48:03] [scrap_banxehoicu.R] - INFO: Starting Bán Xe Hơi Cũ HTML scrape. 
+[2026-06-05 15:01:33] [scrap_banxehoicu.R] - INFO: Finished Bán Xe Hơi Cũ scrape with 672 records. 
+[2026-06-05 15:01:33] [scrap_oto.R] - INFO: Starting Oto.com.vn HTML scrape. 
+[2026-06-05 15:15:54] [scrap_oto.R] - INFO: Finished Oto.com.vn scrape with 1110 records. 
+[2026-06-05 15:15:54] [clean_chotot.R] - INFO: Starting Chợ Tốt cleaning. 
+[2026-06-05 15:15:55] [clean_chotot.R] - INFO: Finished Chợ Tốt cleaning with 20 rows. 
+[2026-06-05 15:15:55] [clean_carpla.R] - INFO: Starting Carpla cleaning. 
+[2026-06-05 15:15:55] [clean_carpla.R] - INFO: Finished Carpla cleaning with 15 rows. 
+[2026-06-05 15:15:55] [clean_banxehoicu.R] - INFO: Starting Bán Xe Hơi Cũ cleaning. 
+[2026-06-05 15:15:56] [clean_banxehoicu.R] - INFO: Finished Bán Xe Hơi Cũ cleaning with 672 rows. 
+[2026-06-05 15:15:56] [clean_oto.R] - INFO: Starting Oto.com.vn cleaning. 
+[2026-06-05 15:15:56] [clean_oto.R] - INFO: Finished Oto.com.vn cleaning with 1110 rows. 
+[2026-06-05 15:15:56] [merge_data.R] - INFO: Starting merge of cleaned datasets. 
+[2026-06-05 15:15:57] [merge_data.R] - ERROR: Can't combine `..1$fuel_type` <character> and `..3$fuel_type` <double>. 
+[2026-06-05 15:15:57] [init_database.R] - INFO: Starting SQLite database initialization. 
+[2026-06-05 15:15:57] [init_database.R] - INFO: Initialized database with 0 records. 
+[2026-06-05 15:15:57] [init_database.R] - INFO: Full batch pipeline completed successfully. 
