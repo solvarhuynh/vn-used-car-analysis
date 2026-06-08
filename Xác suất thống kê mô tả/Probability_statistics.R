@@ -24,7 +24,7 @@ format_pct <- function(x, digits = 2) {
 
 to_bool <- function(x) {
   if (is.logical(x)) return(x)
-  tolower(as.character(x)) %in= c("true", "1", "yes")
+  tolower(as.character(x)) %in% c("true", "1", "yes")
 }
 
 save_csv <- function(df, file_name) {
