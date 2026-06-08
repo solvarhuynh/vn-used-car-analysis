@@ -3,12 +3,21 @@
 # ==========================================
 library(ggplot2)
 library(dplyr)
+library(readr)
 
 if (!dir.exists("plots")) {
   dir.create("plots")
 }
 
-data_mau <- read.csv("data/data_mau.csv") 
+danh_sach_file <- list.files(path = "D:/Trung Khang/Documents/R_programming/Project_cuoiky/web-scraping-used-cars/data", pattern = ".*_clean\\.csv$", full.names = TRUE)
+
+data_raw <- lapply(danh_sach_file, function(file) {
+  read.csv(file, stringsAsFactors = FALSE, colClasses = "character") 
+}) %>% bind_rows()
+
+# Kiểm tra xem chúng ta đã gom được sức mạnh khổng lồ cỡ nào
+cat("Đã gộp thành công", length(danh_sach_file), "file dữ liệu!\n")
+cat("Tổng số lượng xe thu thập được là:", nrow(data_raw), "chiếc.\n")
 
 normalize_price <- function(x) {
   x_num <- suppressWarnings(as.numeric(as.character(x)))
