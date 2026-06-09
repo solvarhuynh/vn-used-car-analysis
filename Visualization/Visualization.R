@@ -39,13 +39,23 @@ normalize_price <- function(x) {
   ifelse(!is.na(x_num) & x_num < 1000, x_num * 100000, x_num)
 }
 
+# Thêm hàm chuẩn hóa Hộp số (Fix lỗi tiếng Việt từ trang Bonbanh)
+normalize_transmission_vis <- function(x) {
+  x <- trimws(tolower(as.character(x)))
+  out <- rep(NA_character_, length(x))
+  out[x %in% c("manual", "mt", "số sàn")] <- "Manual"
+  out[x %in% c("automatic", "auto", "at", "số tự động")] <- "Automatic"
+  out[x %in% c("cvt")] <- "CVT"
+  out
+}
+
 data_clean <- data_raw %>%
   mutate(
     price = normalize_price(price),
     year = suppressWarnings(as.numeric(as.character(year))),
     mileage = suppressWarnings(as.numeric(gsub("[^0-9.]", "", as.character(mileage)))),
     brand = trimws(brand),
-    transmission = trimws(transmission)
+    transmission = normalize_transmission_vis(transmission) # Dùng hàm mới ở đây
   ) %>%
   filter(
     !is.na(price), price > 0,
