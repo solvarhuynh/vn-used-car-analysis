@@ -1,9 +1,7 @@
 # ============================================================
 # FILE: Probability_statistics.R
-# File này dùng để thống kê mô tả và tính xác suất
 # ============================================================
 
-# 1. ĐẶT WORKING DIRECTORY ĐỒNG BỘ VỚI FILE TIỀN XỬ LÝ
 setwd("D:/Trung Khang/Documents/R_programming/Project_cuoiky/web-scraping-used-cars/Xác suất thống kê mô tả")
 
 OUTPUT_DIR <- "output_probability_statistics"
@@ -13,7 +11,7 @@ if (!file.exists(CLEAN_FILE)) {
   stop("Không tìm thấy tệp dữ liệu sạch. Vui lòng chạy file Cleaning_Data.R trước!")
 }
 
-# 2. CÁC HÀM TIỆN ÍCH ĐỊNH DẠNG BẢNG BIỂU
+# CÁC HÀM TIỆN ÍCH ĐỊNH DẠNG BẢNG BIỂU
 format_num <- function(x, digits = 2) {
   ifelse(is.na(x), "", format(round(x, digits), big.mark = ",", scientific = FALSE, trim = TRUE))
 }
@@ -114,7 +112,7 @@ probability_table <- function(data, group_col, event_col) {
   result
 }
 
-# 3. NẠP VÀ ÉP KIỂU BIẾN SỐ SẠCH
+# NẠP VÀ ÉP KIỂU BIẾN SỐ SẠCH
 data_clean <- read.csv(CLEAN_FILE, stringsAsFactors = FALSE)
 
 numeric_cols <- c("year", "price", "price_raw", "mileage", "age")
@@ -130,7 +128,7 @@ n <- nrow(data_clean)
 price_q75 <- quantile(data_clean$price, 0.75, na.rm = TRUE)
 mileage_q75 <- quantile(data_clean$mileage, 0.75, na.rm = TRUE)
 
-# 4. TÍNH TOÁN CÁC BẢNG SỐ LIỆU HỌC THUẬT
+# ÍNH TOÁN CÁC BẢNG SỐ LIỆU HỌC THUẬT
 overview <- data.frame(
   chi_so = c("So dong da lam sach", "So hang xe", "So loai hop so", "So nguon du lieu", "Nam cu nhat", "Nam moi nhat", "Gia Q75", "Mileage Q75"),
   gia_tri = c(n, length(unique(data_clean$brand)), length(unique(data_clean$transmission)), length(unique(data_clean$source)), min(data_clean$year, na.rm = TRUE), max(data_clean$year, na.rm = TRUE), round(as.numeric(price_q75), 2), round(as.numeric(mileage_q75), 2))
@@ -177,7 +175,7 @@ bayes_auto_new <- data.frame(
 bayes_auto_new$xac_suat <- ifelse(bayes_auto_new$tong_xe_automatic == 0, NA, bayes_auto_new$so_xe_automatic_va_moi / bayes_auto_new$tong_xe_automatic)
 bayes_auto_new$xac_suat_pct <- format_pct(bayes_auto_new$xac_suat)
 
-# 5. KIỂM ĐỊNH THỐNG KÊ GIẢ THUYẾT
+# KIỂM ĐỊNH THỐNG KÊ GIẢ THUYẾT
 test_results <- data.frame(kiem_dinh = character(), thong_ke = character(), p_value = numeric(), ket_luan = character(), stringsAsFactors = FALSE)
 data_ttest <- data_clean[data_clean$transmission %in% c("Automatic", "Manual"), ]
 
@@ -199,7 +197,7 @@ if (length(unique(data_clean$price)) > 1 && length(unique(data_clean$mileage)) >
 test_results_fmt <- test_results
 test_results_fmt$p_value <- format_num(test_results_fmt$p_value, 6)
 
-# 6. HIỂN THỊ TERMINAL VÀ ĐỒNG LOẠT IN FILE CSV VÀO OUTPUT_PROBABILITY_STATISTICS
+# HIỂN THỊ TERMINAL VÀ ĐỒNG LOẠT IN FILE CSV VÀO OUTPUT_PROBABILITY_STATISTICS
 show_export(overview, "BANG 1. TONG QUAN DU LIEU", "01_tong_quan_du_lieu.csv")
 show_export(numeric_summary, "BANG 2. THONG KE MO TA TONG QUAT", "02_thong_ke_mo_ta_tong_quat.csv")
 show_export(brand_stats, "BANG 3. THONG KE GIA THEO HANG XE - TOP 30", "03_thong_ke_gia_theo_hang_xe.csv", 30)
@@ -218,7 +216,7 @@ show_export(bayes_auto_new, "BANG 15. BAYES DON GIAN", "15_bayes_p_xe_moi_khi_au
 save_csv(test_results, "16_kiem_dinh_thong_ke.csv")
 print_table(test_results_fmt, "BANG 16. KIEM DINH THONG KE")
 
-# 7. XUẤT FILE BÁO CÁO ĐỊNH DẠNG TEXT (.TXT) TỔNG HỢP
+# XUẤT FILE BÁO CÁO ĐỊNH DẠNG TEXT (.TXT) TỔNG HỢP
 report_path <- file.path(OUTPUT_DIR, "Bao_Cao_Xac_Suat_Thong_Ke.txt")
 report_lines <- capture.output({
   cat("BAO CAO XAC SUAT - THONG KE MO TA TONG HOP\n")
