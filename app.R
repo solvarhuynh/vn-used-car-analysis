@@ -21,7 +21,7 @@ REGIONS <- c(
   "Cần Thơ", "Bình Dương", "Đồng Nai"
 )
 FUELS <- c("Xăng", "Dầu", "Hybrid", "Điện")
-TRANSMISSIONS <- c("Số tự động", "Số sàn")
+TRANSMISSIONS <- c("Tự động", "Số sàn", "CVT")
 CONDITIONS <- c("Như mới", "Tốt", "Trung bình")
 ORIGINS <- c("Lắp ráp trong nước", "Nhập khẩu")
 CHART_COLORS <- c("#0f78c7", "#22b07d", "#e9a826", "#cf3f36", "#7657d6", "#45b8df")
@@ -33,9 +33,9 @@ first_existing_file <- function(paths) {
 }
 
 DATA_FILE_CANDIDATES <- c(
-  file.path("data", "data_bonbanh_clean.csv"),
+  file.path("web_scraping", "data", "master_data.csv"),
   file.path("data", "master_data.csv"),
-  "data_bonbanh_clean.csv"
+  file.path("web_scraping", "data", "clean", "data_bonbanh_clean.csv")
 )
 MODEL_FILE_CANDIDATES <- c(
   file.path("machine_learning", "output_models.RData"),
@@ -93,9 +93,10 @@ get_price_ticks <- function(max_val) {
 clean_transmission <- function(x) {
   y <- tolower(trimws(as.character(x)))
   case_when(
-    y %in% c("automatic", "auto", "at", "cvt", "số tự động", "so tu dong", "tự động", "tu dong") ~ "Số tự động",
+    y %in% c("automatic", "auto", "at", "số tự động", "so tu dong", "tự động", "tu dong") ~ "Tự động",
+    y %in% c("cvt") ~ "CVT",
     y %in% c("manual", "mt", "robot", "số sàn", "so san", "sàn", "san") ~ "Số sàn",
-    TRUE ~ "Số tự động"
+    TRUE ~ "Tự động"
   )
 }
 
@@ -138,7 +139,7 @@ if (!is.null(MODEL_FILE) && file.exists(MODEL_FILE)) {
   load(MODEL_FILE, envir = ml_artifacts)
 }
 
-prepare_bonbanh_data <- function(raw) {
+prepare_app_data <- function(raw) {
   raw %>%
     mutate(
       year = suppressWarnings(as.integer(year)),
@@ -156,7 +157,7 @@ prepare_bonbanh_data <- function(raw) {
       transmission = clean_transmission(transmission),
       fuel_type = clean_fuel(fuel_type),
       origin = clean_origin(origin),
-      is_auto = as.integer(transmission == "Số tự động"),
+      is_auto = as.integer(transmission %in% c("Tự động", "Số tự động", "CVT")),
       is_imported = as.integer(origin == "Nhập khẩu"),
       price_segment = factor(
         case_when(
@@ -198,7 +199,7 @@ if (exists("df_final", envir = ml_artifacts)) {
   if (is.null(DATA_FILE) || !file.exists(DATA_FILE)) stop("Không tìm thấy file dữ liệu sạch trong thư mục data.")
   raw_data <- read.csv(DATA_FILE, stringsAsFactors = FALSE, check.names = TRUE)
   names(raw_data)[1] <- sub("^\ufeff", "", names(raw_data)[1])
-  source_data <- prepare_bonbanh_data(raw_data)
+  source_data <- prepare_app_data(raw_data)
   APP_DATA_SOURCE_LABEL <- DATA_SOURCE_LABEL
 }
 
@@ -220,7 +221,7 @@ data_clean <- source_data %>%
     origin = clean_origin(origin),
     region = ifelse(is.na(city) | city == "", "Không rõ", trimws(as.character(city))),
     age = CURRENT_YEAR - year,
-    is_auto = as.integer(transmission == "Số tự động"),
+    is_auto = as.integer(transmission %in% c("Tự động", "Số tự động", "CVT")),
     is_imported = as.integer(origin == "Nhập khẩu"),
     price_segment = factor(price_segment, levels = c("Phổ thông", "Tầm trung", "Khá", "Cao cấp")),
     condition = case_when(
@@ -273,7 +274,7 @@ top_one <- function(df, col) {
 
 kpis <- function(df = data_clean) {
   total <- nrow(df)
-  auto <- sum(df$transmission == "Số tự động", na.rm = TRUE)
+  auto <- sum(df$transmission %in% c("Tự động", "Số tự động", "CVT"), na.rm = TRUE)
   list(
     total = total,
     medianPrice = median_safe(df$price),
@@ -331,7 +332,7 @@ estimate_price <- function(form) {
     car_age = max(0, CURRENT_YEAR - form$year),
     mileage_k = max(0, form$km / 1000),
     engine_size = form$engine_size,
-    is_auto = as.integer(form$transmission == "Số tự động"),
+    is_auto = as.integer(form$transmission %in% c("Tự động", "Số tự động", "CVT")),
     is_imported = as.integer(form$origin == "Nhập khẩu"),
     seat_count = form$seat_count
   )
@@ -349,7 +350,7 @@ estimate_price <- function(form) {
       median_safe(data_clean$price)
     }
     km_adj <- 1 - min(0.25, (form$km / 200000) * 0.25)
-    trans_adj <- if (form$transmission == "Số tự động") 1.02 else 0.97
+    trans_adj <- if (form$transmission %in% c("Tự động", "Số tự động", "CVT")) 1.02 else 0.97
     point <- base * km_adj * trans_adj
     source <- "Heuristic fallback"
   }
@@ -887,7 +888,7 @@ ui <- fluidPage(
         });
         $(window).on('hashchange', activateFromHash);
         $('.menu-trigger').on('click', function(){ $('body').toggleClass('sidebar-open'); resizePlots(); });
-        $('#refresh-demo').on('click', function(){ toast('Dữ liệu bonbanh đã sẵn sàng'); });
+        $('#refresh-demo').on('click', function(){ toast('Dữ liệu master đã sẵn sàng'); });
         $('#export-demo').on('click', function(){ toast('Mở báo cáo tổng hợp'); setTab('report','Báo cáo','Tổng hợp nhận xét tự động'); });
         $('#copy-insights').on('click', function(){
           var text = $('#insight-copy-source').text();
@@ -923,7 +924,7 @@ ui <- fluidPage(
         nav_item("compare", "So sánh xe", "scale", "Đặt 2-3 cấu hình cạnh nhau để cân nhắc"),
         nav_item("estimate", "Dự toán giá", "calculator", "Ước tính giá tham khảo cho một cấu hình xe"),
         nav_item("models", "Mô hình ML", "cog", "Hiệu năng hồi quy, cây quyết định và K-Means"),
-        nav_item("data", "Dữ liệu bonbanh", "table", "Duyệt nhanh bộ dữ liệu đã làm sạch"),
+        nav_item("data", "Dữ liệu master", "table", "Duyệt nhanh bộ dữ liệu đa nguồn đã làm sạch"),
         nav_item("report", "Báo cáo", "report", "Tổng hợp nhận xét tự động")
       )
     ),
@@ -967,7 +968,7 @@ ui <- fluidPage(
           div(
             class = "grid grid-kpi",
             kpi_card("Tổng số mẫu xe", "kpi_total", "car", "ocean", trend = "Dữ liệu đã lọc và chuẩn hóa"),
-            kpi_card("Giá trung vị", "kpi_median", "dollar", "navy", trend = "Theo dữ liệu bonbanh"),
+            kpi_card("Giá trung vị", "kpi_median", "dollar", "navy", trend = "Theo dữ liệu master"),
             kpi_card("Hãng phổ biến nhất", "kpi_top_brand", "trophy", "success", hint = "Theo số lượng tin"),
             kpi_card("Khu vực sôi động nhất", "kpi_top_region", "map", "ocean", hint = "Lượng tin nhiều nhất")
           ),
@@ -1073,7 +1074,7 @@ ui <- fluidPage(
                 filter_select("Dòng xe", "est_model", models_for_brand(DEFAULT_BRAND)),
                 filter_select("Năm sản xuất", "est_year", setNames(rev(YEARS), rev(YEARS)), DEFAULT_YEAR),
                 field("Số km đã đi", numericInput("est_km", NULL, value = 60000, min = 0, step = 1000, width = "100%")),
-                filter_select("Hộp số", "est_transmission", TRANSMISSIONS, "Số tự động"),
+                filter_select("Hộp số", "est_transmission", TRANSMISSIONS, "Tự động"),
                 filter_select("Nhiên liệu", "est_fuel", FUELS, "Xăng"),
                 field("Dung tích động cơ (L)", numericInput("est_engine", NULL, value = 2.0, min = 0.4, max = 12.7, step = 0.1, width = "100%")),
                 field("Số chỗ ngồi", numericInput("est_seats", NULL, value = 5, min = 2, max = 47, step = 1, width = "100%")),
@@ -1117,7 +1118,7 @@ ui <- fluidPage(
         tags$section(
           id = "data", class = "page",
           section_card(
-            "Bộ dữ liệu bonbanh đã làm sạch", textOutput("data_desc", inline = TRUE), "table", body_class = "flush",
+            "Bộ dữ liệu master đã làm sạch", textOutput("data_desc", inline = TRUE), "table", body_class = "flush",
             div(
               class = "data-toolbar",
               div(class = "toolbar-search", icon_svg("search"), textInput("data_query", NULL, placeholder = "Tìm hãng, dòng, phiên bản…", width = "100%")),
@@ -1132,7 +1133,7 @@ ui <- fluidPage(
           id = "report", class = "page space-y",
           div(
             class = "report-hero",
-            div(span(class = "report-badge", icon_svg("file"), "Báo cáo tự động"), h2("Tổng hợp nhận xét — dữ liệu bonbanh"), p(textOutput("report_intro", inline = TRUE))),
+            div(span(class = "report-badge", icon_svg("file"), "Báo cáo tự động"), h2("Tổng hợp nhận xét — dữ liệu master"), p(textOutput("report_intro", inline = TRUE))),
             div(class = "report-actions", tags$button(class = "btn btn-outline", type = "button", onclick = "window.print()", span(class = "btn-ico", icon_svg("download")), "Tải PDF"), download_button("download_csv", "Tải CSV"), tags$button(id = "copy-insights", class = "btn btn-primary", type = "button", span(class = "btn-ico", icon_svg("copy")), "Sao chép nhận xét"))
           ),
           div(
@@ -1207,7 +1208,7 @@ server <- function(input, output, session) {
     updateSelectInput(session, "est_model", choices = models_for_brand(DEFAULT_BRAND), selected = default_model)
     updateSelectInput(session, "est_year", selected = DEFAULT_YEAR)
     updateNumericInput(session, "est_km", value = 60000)
-    updateSelectInput(session, "est_transmission", selected = "Số tự động")
+    updateSelectInput(session, "est_transmission", selected = "Tự động")
     updateSelectInput(session, "est_fuel", selected = "Xăng")
     updateNumericInput(session, "est_engine", value = median_lookup(DEFAULT_BRAND, default_model, "engine_size", 2))
     updateNumericInput(session, "est_seats", value = median_lookup(DEFAULT_BRAND, default_model, "seat_count", 5))
@@ -1233,7 +1234,7 @@ server <- function(input, output, session) {
 
   output$hero_total <- renderText(paste0(num(base_kpis()$total), " mẫu xe"))
   output$hero_regions <- renderText(paste0(num(length(REGIONS)), " tỉnh/thành"))
-  output$overview_gauge <- renderUI(gauge_arc(base_kpis()$automaticRatio, paste0(round(base_kpis()$automaticRatio * 100), "%"), "Số tự động"))
+  output$overview_gauge <- renderUI(gauge_arc(base_kpis()$automaticRatio, paste0(round(base_kpis()$automaticRatio * 100), "%"), "Tự động/CVT"))
   output$kpi_total <- renderText(num(base_kpis()$total))
   output$kpi_median <- renderText(format_vnd(base_kpis()$medianPrice))
   output$kpi_km <- renderText(format_km(base_kpis()$meanKm))
@@ -1957,7 +1958,7 @@ server <- function(input, output, session) {
       model = model,
       year = as.integer(input$est_year %||% DEFAULT_YEAR),
       km = as.numeric(input$est_km %||% 60000),
-      transmission = input$est_transmission %||% "Số tự động",
+      transmission = input$est_transmission %||% "Tự động",
       fuel = input$est_fuel %||% "Xăng",
       engine_size = as.numeric(input$est_engine %||% median_lookup(brand, model, "engine_size", 2)),
       seat_count = as.numeric(input$est_seats %||% median_lookup(brand, model, "seat_count", 5)),
@@ -2060,7 +2061,7 @@ server <- function(input, output, session) {
   output$report_region <- renderText({ req(is_tab("report")); report_k()$topRegion })
 
   insights <- reactive(c(
-    paste0(report_k()$topBrand, " có số lượng mẫu cao nhất trong dữ liệu, phản ánh độ phổ biến nổi bật trên tập tin bonbanh đã làm sạch."),
+    paste0(report_k()$topBrand, " có số lượng mẫu cao nhất trong dữ liệu master đa nguồn đã làm sạch."),
     paste0("Mô hình hồi quy đạt R² khoảng ", artifact("reg_metrics", list(r_squared = NA))$r_squared, ", dùng các biến tuổi xe, odo, dung tích động cơ, hộp số, nguồn gốc và số chỗ."),
     "Số km đã đi là một trong các yếu tố ảnh hưởng mạnh đến giá, đặc biệt khi vượt mốc 100.000 km.",
     paste0("Phân khúc xe số tự động chiếm ", round(report_k()$automaticRatio * 100), "%, cho thấy xu hướng ưu tiên trải nghiệm lái thuận tiện."),
@@ -2088,7 +2089,7 @@ server <- function(input, output, session) {
   })
 
   output$download_csv <- downloadHandler(
-    filename = function() "hcmute-autoinsight-bonbanh.csv",
+    filename = function() "hcmute-autoinsight-master-data.csv",
     content = function(file) {
       write.csv(data_clean, file, row.names = FALSE, fileEncoding = "UTF-8")
     }

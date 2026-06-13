@@ -9,11 +9,13 @@
 library(DBI)
 library(RSQLite)
 library(cli)
+library(readr)
 
 source("web_scraping/script/utils.R")
 
 INPUT_DIR <- "web_scraping/data/init_db/"
 OUTPUT_DB <- "web_scraping/data/master_data.db"
+OUTPUT_CSV <- "web_scraping/data/master_data.csv"
 
 # SQL tạo bảng đúng theo 18-cột canonical schema (clean_rule.md)
 CREATE_TABLE_SQL <- "
@@ -55,6 +57,7 @@ if (length(db_files) == 0) {
   log_message("merge_data.R", "No individual SQLite databases found; creating empty master database.", "WARN")
   con_master <- dbConnect(SQLite(), dbname = OUTPUT_DB)
   dbExecute(con_master, CREATE_TABLE_SQL)
+  readr::write_csv(as.data.frame(matrix(ncol = length(CANONICAL_COLS), nrow = 0, dimnames = list(NULL, CANONICAL_COLS))), OUTPUT_CSV)
   dbDisconnect(con_master)
 } else {
   pb <- cli_progress_bar(
@@ -92,10 +95,13 @@ if (length(db_files) == 0) {
   }
 
   cli_progress_done(pb)
+  master_df <- dbReadTable(con_master, "car_listings")
+  master_df <- master_df[, CANONICAL_COLS]
+  readr::write_csv(master_df, OUTPUT_CSV, na = "")
   dbDisconnect(con_master)
 
   log_message("merge_data.R", sprintf(
-    "=== Merge complete. Total records in master DB: %d → %s ===",
-    total_records, OUTPUT_DB
+    "=== Merge complete. Total records in master DB: %d → %s and %s ===",
+    nrow(master_df), OUTPUT_DB, OUTPUT_CSV
   ))
 }

@@ -1,50 +1,60 @@
-setwd("d:/R program/project")
-source("d:/R program/project/web_scraping/script/utils.R")
+suppressPackageStartupMessages({
+  library(readr)
+})
 
-SCRIPT_NAME <- "run_pipeline.R"
+source("web_scraping/script/utils.R")
+
+SCRIPT_NAME <- "web_scraping/run_pipeline.R"
+RUN_SCRAPE <- identical(tolower(Sys.getenv("RUN_SCRAPE", "false")), "true")
+
+ensure_directories <- function() {
+  dirs <- c(
+    "web_scraping/data/raw",
+    "web_scraping/data/clean",
+    "web_scraping/data/init_db",
+    "web_scraping/data/quality_report"
+  )
+  invisible(lapply(dirs, dir.create, recursive = TRUE, showWarnings = FALSE))
+}
+
+run_task <- function(file, desc) {
+  if (!file.exists(file)) stop(sprintf("Missing pipeline task file: %s", file))
+  cat(sprintf("\n---> %s\n", desc))
+  log_message(SCRIPT_NAME, desc)
+  source(file, local = new.env(parent = globalenv()))
+}
 
 ensure_directories()
-log_message(SCRIPT_NAME, "Starting full batch pipeline.")
-cat("\n========================================\n")
-cat("   STARTING USED-CAR DATA PIPELINE\n")
-cat("========================================\n")
+log_message(SCRIPT_NAME, sprintf("Starting pipeline. RUN_SCRAPE=%s", RUN_SCRAPE))
+
+scrape_tasks <- list(
+  list(file = "web_scraping/script/scrap/scrap_chotot.R", desc = "Scraping raw data from Chotot"),
+  list(file = "web_scraping/script/scrap/scrap_carpla.R", desc = "Scraping raw data from Carpla"),
+  list(file = "web_scraping/script/scrap/scrap_banxehoicu.R", desc = "Scraping raw data from Banxehoicu"),
+  list(file = "web_scraping/script/scrap/scrap_bonbanh.R", desc = "Scraping raw data from BonBanh")
+)
+
+batch_tasks <- list(
+  list(file = "web_scraping/script/clean/clean_chotot.R", desc = "Cleaning Chotot data"),
+  list(file = "web_scraping/script/clean/clean_carpla.R", desc = "Cleaning Carpla data"),
+  list(file = "web_scraping/script/clean/clean_banxehoicu.R", desc = "Cleaning BanXeHoiCu data"),
+  list(file = "web_scraping/script/clean/clean_bonbanh.R", desc = "Cleaning BonBanh data"),
+  list(file = "web_scraping/script/validate_clean_data.R", desc = "Validating cleaned data"),
+  list(file = "web_scraping/script/init_database.R", desc = "Initializing per-source SQLite databases"),
+  list(file = "web_scraping/script/merge_data.R", desc = "Merging master database and CSV")
+)
 
 tryCatch({
-  # Define all pipeline tasks - Bạn hãy kiểm tra lại các đường dẫn này có đúng folder web_scraping không nhé
-  tasks <- list(
-    list(file = "d:/R program/project/web_scraping/script/scrap/scrap_chotot.R", desc = "Scraping raw data from Chotot"),
-    list(file = "d:/R program/project/web_scraping/script/scrap/scrap_carpla.R", desc = "Scraping raw data from Carpla"),
-    list(file = "d:/R program/project/web_scraping/script/scrap/scrap_banxehoicu.R", desc = "Scraping raw data from Banxehoicu")
-  )
-
-  missing_files <- vapply(tasks, function(task) !file.exists(task$file), logical(1))
-  if (any(missing_files)) {
-    stop(sprintf(
-      "Missing pipeline task file(s): %s",
-      paste(vapply(tasks[missing_files], `[[`, character(1), "file"), collapse = ", ")
-    ))
-  }
-
-  total_tasks <- length(tasks)
-
-  # Initialize overall progress bar
-  cat("\nOverall Pipeline Progress:\n")
-  pb <- txtProgressBar(min = 0, max = total_tasks, style = 3)
-
-  for (i in seq_along(tasks)) {
-    task <- tasks[[i]]
-    cat(sprintf("\n\n---> Step [%d/%d]: %s...\n", i, total_tasks, task$desc))
-    source(task$file)
-    setTxtProgressBar(pb, i)
-  }
-  close(pb)
-
-  log_message(SCRIPT_NAME, "Full batch pipeline completed successfully.")
-  cat("\n\n========================================\n")
-  cat(" PIPELINE COMPLETED SUCCESSFULLY! \n")
+  cat("\n========================================\n")
+  cat("   STARTING USED-CAR DATA PIPELINE\n")
   cat("========================================\n")
+
+  tasks <- if (RUN_SCRAPE) c(scrape_tasks, batch_tasks) else batch_tasks
+  for (task in tasks) run_task(task$file, task$desc)
+
+  log_message(SCRIPT_NAME, "Pipeline completed successfully.")
+  cat("\nPipeline completed successfully.\n")
 }, error = function(e) {
   log_message(SCRIPT_NAME, e$message, "ERROR")
-  cat(sprintf("\n\n[ERROR] Pipeline failed: %s\n", e$message))
   stop(e)
 })

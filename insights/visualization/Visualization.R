@@ -1,79 +1,59 @@
 # ==========================================
-# SETUP & WORKING DIRECTORY
+# Visualization for multi-source clean/master used-car data
 # ==========================================
-library(ggplot2)
-library(dplyr)
-library(readr)
-library(plotly)
+suppressPackageStartupMessages({
+  library(ggplot2)
+  library(dplyr)
+  library(readr)
+  library(plotly)
+})
 
-setwd("D:/Trung Khang/Documents/R_programming/Project_cuoiky/web-scraping-used-cars/Visualization")
+source("web_scraping/script/utils.R")
 
-if (!dir.exists("plots")) {
-  dir.create("plots", recursive = TRUE)
-}
+PLOT_DIR <- "insights/visualization/plots"
+MASTER_CSV <- "web_scraping/data/master_data.csv"
+CLEAN_DIR <- "web_scraping/data/clean"
+dir.create(PLOT_DIR, recursive = TRUE, showWarnings = FALSE)
 
-# ------------------------------------------
-# ĐỌC VÀ GỘP DỮ LIỆU ĐỘNG ĐA NỀN TẢNG
-# ------------------------------------------
-danh_sach_file <- list.files(
-  #Thay đổi đường dẫn nếu muốn code chạy
-  path = "D:/Trung Khang/Documents/R_programming/Project_cuoiky/web-scraping-used-cars/data", 
-  pattern = ".*_clean\\.csv$", 
-  full.names = TRUE
-)
-
-data_raw <- lapply(danh_sach_file, function(file) {
-  read.csv(file, stringsAsFactors = FALSE, colClasses = "character") 
-}) %>% bind_rows()
-
-cat("Đã gộp thành công", length(danh_sach_file), "file dữ liệu!\n")
-cat("Tổng số lượng xe thu thập được là:", nrow(data_raw), "chiếc.\n")
-
-# ------------------------------------------
-# CLEAN DỮ LIỆU
-# ------------------------------------------
-normalize_price <- function(x) {
-  x_num <- suppressWarnings(as.numeric(as.character(x)))
-  ifelse(!is.na(x_num) & x_num < 1000, x_num * 100000, x_num)
+load_visual_data <- function() {
+  if (file.exists(MASTER_CSV)) return(read_clean_csv(MASTER_CSV))
+  files <- list.files(CLEAN_DIR, pattern = "^data_.*_clean\\.csv$", full.names = TRUE)
+  if (!length(files)) stop("No master_data.csv or clean CSV files found for visualization.")
+  bind_rows(lapply(files, read_clean_csv))
 }
 
 normalize_transmission_vis <- function(x) {
-  x <- trimws(tolower(as.character(x)))
-  out <- rep(NA_character_, length(x))
-  out[x %in% c("manual", "mt", "số sàn")] <- "Manual"
-  out[x %in% c("automatic", "auto", "at", "số tự động")] <- "Automatic"
-  out[x %in% c("cvt")] <- "CVT"
-  out
+  x <- clean_transmission(x)
+  case_when(
+    x %in% c("Tự động", "Số tự động") ~ "Automatic",
+    x == "Số sàn" ~ "Manual",
+    x == "CVT" ~ "CVT",
+    TRUE ~ NA_character_
+  )
 }
 
-data_clean <- data_raw %>%
+data_clean <- load_visual_data() %>%
   mutate(
-    price = normalize_price(price),
-    year = suppressWarnings(as.numeric(as.character(year))),
-    mileage = suppressWarnings(as.numeric(gsub("[^0-9.]", "", as.character(mileage)))),
+    price = suppressWarnings(as.numeric(price)),
+    year = suppressWarnings(as.numeric(year)),
+    mileage = suppressWarnings(as.numeric(mileage)),
     brand = trimws(brand),
-    transmission = normalize_transmission_vis(transmission) 
+    fuel_type = ifelse(is.na(fuel_type) | fuel_type == "", "Không rõ", fuel_type),
+    body_type = ifelse(is.na(body_type) | body_type == "", "Không rõ", body_type),
+    city = ifelse(is.na(city) | city == "", "Không rõ", city),
+    transmission = normalize_transmission_vis(transmission)
   ) %>%
   filter(
-    !is.na(price), price > 0,
+    !is.na(price), price >= 5e7, price <= 1.5e10,
     !is.na(brand), brand != "",
     !is.na(year), year >= 1990, year <= as.numeric(format(Sys.Date(), "%Y"))
   )
 
-# ==========================================
-# VISUALIZATION
-# ==========================================
+cat("Visualization input rows:", nrow(data_clean), "\n")
 
-# ------------------------------------------
-# BIỂU ĐỒ 00: TỔNG QUAN VOLUMES & GIÁ (COMBO CHART TOP 50)
-# ------------------------------------------
 top_50_combo <- data_clean %>%
   group_by(brand) %>%
-  summarise(
-    so_luong = n(),
-    gia_trung_vi = median(price, na.rm = TRUE),
-    .groups = "drop"
-  ) %>%
+  summarise(so_luong = n(), gia_trung_vi = median(price, na.rm = TRUE), .groups = "drop") %>%
   arrange(desc(so_luong)) %>%
   head(50) %>%
   mutate(brand = factor(brand, levels = brand))
@@ -82,130 +62,86 @@ max_vol <- max(top_50_combo$so_luong, na.rm = TRUE)
 max_price <- max(top_50_combo$gia_trung_vi, na.rm = TRUE)
 coeff <- ifelse(max_vol == 0, 1, max_price / max_vol)
 
-p0 <- ggplot(data = top_50_combo, aes(x = brand)) +
-  geom_col(aes(y = so_luong), fill = "#3498db", alpha = 0.85) +
-  geom_line(aes(y = gia_trung_vi / coeff, group = 1), color = "#e74c3c", size = 1.2) +
-  geom_point(aes(y = gia_trung_vi / coeff), color = "#c0392b", size = 2) +
+p0 <- ggplot(top_50_combo, aes(x = brand)) +
+  geom_col(aes(y = so_luong), fill = "#2878b5", alpha = 0.86) +
+  geom_line(aes(y = gia_trung_vi / coeff, group = 1), color = "#c9473a", linewidth = 1.1) +
+  geom_point(aes(y = gia_trung_vi / coeff), color = "#9f2d25", size = 2) +
   scale_y_continuous(
-    name = "Số lượng xe rao bán", 
-    sec.axis = sec_axis(~ . * coeff, name = "Mức giá (VNĐ)", labels = scales::label_number())
+    name = "Số lượng xe rao bán",
+    sec.axis = sec_axis(~ . * coeff, name = "Giá trung vị (VNĐ)", labels = scales::label_number())
   ) +
-  labs(
-    title = "[TỔNG QUAN] - Top 50 hãng xe có khối lượng giao dịch lớn nhất và xu hướng giá của chúng",
-    subtitle = "Sự đối lập giữa mức độ phổ biến của hãng xe và định vị phân khúc giá trên thị trường.",
-    x = "Hãng xe"
-  ) +
+  labs(title = "[OVERVIEW] Volume và giá trung vị theo hãng", x = "Hãng xe") +
   theme_minimal() +
-  theme(
-    plot.title = element_text(face = "bold", size = 14),
-    axis.text.x = element_text(angle = 60, hjust = 1, size = 8, face = "bold"),
-    axis.title.y = element_text(color = "#2980b9", face = "bold"),
-    axis.text.y = element_text(color = "#2980b9"),
-    axis.title.y.right = element_text(color = "#c0392b", face = "bold"),
-    axis.text.y.right = element_text(color = "#c0392b"),
-    panel.grid.major.x = element_blank()
-  )
+  theme(axis.text.x = element_text(angle = 60, hjust = 1, size = 8), panel.grid.major.x = element_blank())
+ggsave(file.path(PLOT_DIR, "00_OVERVIEW_Bar-Line_top50.png"), p0, width = 15, height = 7, dpi = 300)
 
-ggsave(filename = "plots/00_OVERVIEW_Bar-Line_top50.png", plot = p0, width = 15, height = 7, dpi = 300)
-
-
-# ------------------------------------------
-# BIỂU ĐỒ 01: WHAT - GIÁ THEO HÃNG (BOXPLOT)
-# ------------------------------------------
 brand_top <- data_clean %>%
   group_by(brand) %>%
-  summarise(
-    n = n(),
-    med_price = median(price, na.rm = TRUE),
-    .groups = "drop"
-  ) %>%
+  summarise(n = n(), med_price = median(price, na.rm = TRUE), .groups = "drop") %>%
   arrange(desc(med_price)) %>%
-  mutate(
-    rank = row_number(),
-    brand_label = paste0(rank, ". ", brand),
-    brand_label = factor(brand_label, levels = rev(brand_label))
-  )
+  mutate(brand_label = factor(paste0(row_number(), ". ", brand), levels = rev(paste0(row_number(), ". ", brand))))
 
-data_plot1 <- data_clean %>%
-  inner_join(brand_top, by = "brand")
-
-plot_height <- max(10, n_distinct(brand_top$brand) * 0.18)
-
-p1 <- ggplot(data = data_plot1, aes(x = brand_label, y = price, fill = brand)) +
-  geom_boxplot(alpha = 0.7, outlier.colour = "red", outlier.shape = 1, outlier.alpha = 0.4) +
+p1 <- data_clean %>%
+  inner_join(brand_top, by = "brand") %>%
+  ggplot(aes(x = brand_label, y = price, fill = brand)) +
+  geom_boxplot(alpha = 0.72, outlier.colour = "#c9473a", outlier.shape = 1, outlier.alpha = 0.35) +
   coord_flip() +
   scale_y_log10(labels = scales::label_number()) +
-  labs(
-    title = "[WHAT] - Mức giá xe phân bổ theo các Hãng sản xuất như thế nào?",
-    subtitle = "Biểu đồ cho thấy sự chênh lệch lớn về phân khúc giá giữa các thương hiệu.",
-    x = "Hãng xe (Brand)",
-    y = "Giá bán (VNĐ)"
-  ) +
-  theme_minimal() + 
-  theme(legend.position = "none", plot.title = element_text(face = "bold", size = 14), axis.text.y = element_text(size = 8))
+  labs(title = "[WHAT] Phân bổ giá theo hãng", x = "Hãng xe", y = "Giá bán (VNĐ)") +
+  theme_minimal() +
+  theme(legend.position = "none", axis.text.y = element_text(size = 8))
+ggsave(file.path(PLOT_DIR, "01_WHAT_boxplot_gia_theo_hang.png"), p1, width = 10, height = max(10, n_distinct(brand_top$brand) * 0.18), dpi = 300)
 
-ggsave(filename = "plots/01_WHAT_boxplot_gia_theo_hang.png", plot = p1, width = 10, height = plot_height, dpi = 300)
-
-
-# ------------------------------------------
-# BIỂU ĐỒ 02: WHEN - XU HƯỚNG GIÁ THEO NĂM SẢN XUẤT (SCATTER + TRENDLINE)
-# ------------------------------------------
 year_summary <- data_clean %>%
   group_by(year) %>%
   summarise(med_price = median(price, na.rm = TRUE), .groups = "drop")
 
-p2 <- ggplot(data = data_clean, aes(x = year, y = price)) +
+p2 <- ggplot(data_clean, aes(x = year, y = price)) +
   geom_jitter(alpha = 0.18, color = "#2c3e50", width = 0.25, size = 1.1) +
-  geom_smooth(data = year_summary, aes(x = year, y = med_price), method = "loess", color = "#e74c3c", fill = "#ffbaba", alpha = 0.4, size = 1.2) +
+  geom_smooth(data = year_summary, aes(x = year, y = med_price), method = "loess", color = "#c9473a", fill = "#f0b0a9", alpha = 0.35, linewidth = 1.1) +
   scale_y_log10(labels = scales::label_number()) +
   scale_x_continuous(breaks = seq(min(data_clean$year, na.rm = TRUE), max(data_clean$year, na.rm = TRUE), by = 2)) +
-  labs(
-    title = "[WHEN] - Xu hướng biến động giá bán xe cũ qua từng năm sản xuất",
-    subtitle = "Đường xu hướng (đỏ) phản ánh góc nhìn thực tế về giá trị thị trường theo đời xe.",
-    x = "Năm sản xuất (Year)",
-    y = "Giá bán (VNĐ)"
-  ) +
-  theme_minimal() + 
-  theme(plot.title = element_text(face = "bold", size = 14), axis.text.x = element_text(angle = 45, hjust = 1))
+  labs(title = "[WHEN] Xu hướng giá theo năm sản xuất", x = "Năm sản xuất", y = "Giá bán (VNĐ)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggsave(file.path(PLOT_DIR, "02_WHEN_scatter_trend_khau_hao_nam.png"), p2, width = 10, height = 7, dpi = 300)
 
-ggsave(filename = "plots/02_WHEN_scatter_trend_khau_hao_nam.png", plot = p2, width = 10, height = 7, dpi = 300)
-
-
-# ------------------------------------------
-# BIỂU ĐỒ 03: WHY - TÁC ĐỘNG CỦA SỐ KM & HỘP SỐ (REGRESSION)
-# ------------------------------------------
 data_plot3 <- data_clean %>%
   filter(!is.na(mileage), mileage > 0, mileage < 500000, transmission %in% c("Manual", "Automatic"))
 
-p3 <- ggplot(data = data_plot3, aes(x = mileage, y = price, color = transmission)) +
+p3 <- ggplot(data_plot3, aes(x = mileage, y = price, color = transmission)) +
   geom_jitter(alpha = 0.25, size = 1.2, width = 0.2) +
-  geom_smooth(method = "lm", se = FALSE, size = 1.5) +
-  scale_color_manual(values = c("Automatic" = "#e74c3c", "Manual" = "#3498db")) +
+  geom_smooth(method = "lm", se = FALSE, linewidth = 1.25) +
+  scale_color_manual(values = c("Automatic" = "#c9473a", "Manual" = "#2878b5")) +
   scale_y_log10(labels = scales::label_number()) +
   scale_x_continuous(labels = scales::label_comma(suffix = " km")) +
-  labs(
-    title = "[WHY] - Số Km đã đi (Odo) và Loại hộp số tác động đến giá như thế nào?",
-    subtitle = "Xe số tự động (Automatic) giữ phân khúc giá cao hơn và có tốc độ mất giá khác biệt so với số sàn.",
-    x = "Số Km đã đi (Mileage)",
-    y = "Giá bán (VNĐ)",
-    color = "Loại Hộp số:"
-  ) +
+  labs(title = "[WHY] Odo và hộp số tác động đến giá", x = "Số km đã đi", y = "Giá bán (VNĐ)", color = "Hộp số") +
   theme_minimal() +
-  theme(plot.title = element_text(face = "bold", size = 14), legend.position = "bottom", legend.title = element_text(face = "bold"))
+  theme(legend.position = "bottom")
+ggsave(file.path(PLOT_DIR, "03_WHY_scatter_odo_vs_price.png"), p3, width = 10, height = 7, dpi = 300)
 
-ggsave(filename = "plots/03_WHY_scatter_odo_vs_price.png", plot = p3, width = 10, height = 7, dpi = 300)
+save_bar_plot <- function(df, col, filename, title, fill = "#2878b5", top_n = 20) {
+  p <- df %>%
+    count(.data[[col]], sort = TRUE) %>%
+    head(top_n) %>%
+    mutate(label = factor(.data[[col]], levels = rev(.data[[col]]))) %>%
+    ggplot(aes(x = label, y = n)) +
+    geom_col(fill = fill, alpha = 0.88) +
+    coord_flip() +
+    labs(title = title, x = NULL, y = "Số lượng") +
+    theme_minimal()
+  ggsave(file.path(PLOT_DIR, filename), p, width = 9, height = 6, dpi = 300)
+  p
+}
 
+p4 <- save_bar_plot(data_clean, "fuel_type", "04_DIST_fuel_type.png", "[DISTRIBUTION] Nhiên liệu", "#3b8f63", 12)
+p5 <- save_bar_plot(data_clean %>% filter(!is.na(transmission)), "transmission", "05_DIST_transmission.png", "[DISTRIBUTION] Hộp số", "#8a63a8", 8)
+p6 <- save_bar_plot(data_clean, "body_type", "06_DIST_body_type.png", "[DISTRIBUTION] Kiểu dáng", "#c48b2c", 15)
+p7 <- save_bar_plot(data_clean, "city", "07_DIST_city.png", "[DISTRIBUTION] Thành phố", "#4c7899", 20)
 
-# ------------------------------------------
-# 4. CHUYỂN ĐỔI INTERACTIVE & XUẤT FILE RDS CHO DASHBOARD
-# ------------------------------------------
-p0_interactive <- ggplotly(p0)
-p1_interactive <- ggplotly(p1)
-p2_interactive <- ggplotly(p2)
-p3_interactive <- ggplotly(p3)
+saveRDS(ggplotly(p0), file.path(PLOT_DIR, "p0_overview_interactive.rds"))
+saveRDS(ggplotly(p1), file.path(PLOT_DIR, "p1_what_interactive.rds"))
+saveRDS(ggplotly(p2), file.path(PLOT_DIR, "p2_when_interactive.rds"))
+saveRDS(ggplotly(p3), file.path(PLOT_DIR, "p3_why_interactive.rds"))
 
-# Sửa lỗi đồng bộ biến chính xác sang file RDS tương ứng
-saveRDS(p0_interactive, file = "plots/p0_overview_interactive.rds")
-saveRDS(p1_interactive, file = "plots/p1_what_interactive.rds")
-saveRDS(p2_interactive, file = "plots/p2_when_interactive.rds")
-saveRDS(p3_interactive, file = "plots/p3_why_interactive.rds")
+cat("Visualization plots saved to", PLOT_DIR, "\n")

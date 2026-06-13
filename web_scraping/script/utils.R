@@ -20,6 +20,26 @@ CANONICAL_COLS <- c(
 
 LOG_FILE <- "web_scraping/log.txt"
 
+find_project_root <- function(start = getwd()) {
+  current <- normalizePath(start, winslash = "/", mustWork = FALSE)
+  repeat {
+    if (file.exists(file.path(current, "app.R")) &&
+        dir.exists(file.path(current, "web_scraping"))) {
+      return(current)
+    }
+    parent <- dirname(current)
+    if (identical(parent, current)) break
+    current <- parent
+  }
+  normalizePath(getwd(), winslash = "/", mustWork = FALSE)
+}
+
+PROJECT_ROOT <- find_project_root()
+
+repo_path <- function(...) {
+  file.path(PROJECT_ROOT, ...)
+}
+
 # ── Logging ───────────────────────────────────────────────────────────────────
 log_message <- function(script_name, msg, level = "INFO") {
   dir.create(dirname(LOG_FILE), recursive = TRUE, showWarnings = FALSE)
@@ -330,4 +350,32 @@ safe_write_csv <- function(df, path) {
   dir.create(dirname(path), recursive = TRUE, showWarnings = FALSE)
   readr::write_csv(df, path, na = "")
   log_message("utils.R", sprintf("Written %d rows to: %s", nrow(df), path))
+}
+
+filter_clean_business_rules <- function(df, current_year = as.integer(format(Sys.Date(), "%Y"))) {
+  before <- nrow(df)
+  out <- df %>%
+    mutate(
+      year = suppressWarnings(as.integer(year)),
+      price = suppressWarnings(as.numeric(price)),
+      mileage = suppressWarnings(as.numeric(mileage)),
+      brand = normalize_na(brand),
+      model = normalize_na(model),
+      url = normalize_na(url)
+    ) %>%
+    filter(
+      !is.na(year), year >= 1990, year <= current_year,
+      !is.na(price), price >= 5e7, price <= 1.5e10,
+      !is.na(mileage), mileage >= 0, mileage <= 1e6,
+      !is.na(brand), brand != "",
+      !is.na(model), model != "",
+      !is.na(url), url != ""
+    )
+  log_message("utils.R", sprintf("Business-rule filter kept %d/%d rows.", nrow(out), before))
+  out
+}
+
+read_clean_csv <- function(path) {
+  readr::read_csv(path, col_types = cols(.default = "c"),
+                  locale = locale(encoding = "UTF-8"), show_col_types = FALSE)
 }

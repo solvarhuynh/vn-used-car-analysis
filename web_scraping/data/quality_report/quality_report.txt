@@ -1,0 +1,22 @@
+Clean Data Quality Report
+Generated at: 2026-06-13 14:17:17
+Files checked: 4
+Total clean rows: 22123
+Duplicate URLs: 0
+Outlier rows: 0
+
+      source                                              file  rows schema_ok
+1 banxehoicu web_scraping/data/clean/data_banxehoicu_clean.csv  2018      TRUE
+2    bonbanh    web_scraping/data/clean/data_bonbanh_clean.csv  4506      TRUE
+3     carpla     web_scraping/data/clean/data_carpla_clean.csv     0      TRUE
+4     chotot     web_scraping/data/clean/data_chotot_clean.csv 15599      TRUE
+  missing_cols extra_cols duplicate_url invalid_year invalid_price
+1                                     0            0             0
+2                                     0            0             0
+3                                     0            0             0
+4                                     0            0             0
+  invalid_mileage blank_identity
+1               0              0
+2               0              0
+3               0              0
+4               0              0

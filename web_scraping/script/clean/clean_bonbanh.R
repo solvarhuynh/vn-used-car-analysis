@@ -124,6 +124,7 @@ clean_bonbanh <- function() {
     filter(!is.na(brand) & brand != "") %>%
     # Chuẩn hóa tên Tp Hồ Chí Minh
     mutate(city = ifelse(str_detect(city, regex("Hồ Chí Minh|HCM", ignore_case = TRUE)), "Tp Hồ Chí Minh", city)) %>%
+    filter_clean_business_rules() %>%
     # Xóa URL trùng (giữ lại dòng đầu tiên)
     distinct(url, .keep_all = TRUE)
 

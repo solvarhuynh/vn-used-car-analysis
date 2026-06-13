@@ -133,7 +133,9 @@ clean_chotot <- function() {
   #   - clean_transmission: "Automatic"/"Manual" → "Tự động"/"Số sàn"
   #   - clean_body_type, clean_drivetrain, clean_origin
   #   - brand/model → UPPERCASE
-  df_final <- standardize_car_data(df)
+  df_final <- standardize_car_data(df) %>%
+    filter_clean_business_rules() %>%
+    distinct(url, .keep_all = TRUE)
 
   # ── BƯỚC 3: Ghi output ───────────────────────────────────────────────────────
   safe_write_csv(df_final, OUTPUT_FILE)
