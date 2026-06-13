@@ -18,26 +18,9 @@ cat("\n========================================\n")
 cat("   STARTING USED-CAR DATA PIPELINE\n")
 cat("========================================\n")
 
-<<<<<<< HEAD
-tryCatch({
-  # Define all pipeline tasks - Bạn hãy kiểm tra lại các đường dẫn này có đúng folder web_scraping không nhé
-  tasks <- list(
-    list(file = "d:/R program/project/web_scraping/script/scrap/scrap_chotot.R", desc = "Scraping raw data from Chotot"),
-    list(file = "d:/R program/project/web_scraping/script/scrap/scrap_bonbanh.R", desc = "Scraping raw data from Bonbanh"),
-    list(file = "d:/R program/project/web_scraping/script/scrap/scrap_banxehoicu.R", desc = "Scraping raw data from Banxehoicu")
-  )
-
-  missing_files <- vapply(tasks, function(task) !file.exists(task$file), logical(1))
-  if (any(missing_files)) {
-    stop(sprintf(
-      "Missing pipeline task file(s): %s",
-      paste(vapply(tasks[missing_files], `[[`, character(1), "file"), collapse = ", ")
-    ))
-=======
 source_task <- function(path, desc) {
   if (!file.exists(path)) {
     stop(sprintf("Missing pipeline task file: %s", path))
->>>>>>> 39568475d9e1e5553a5b18a1c237fdff7889af09
   }
   cat(sprintf("\n---> %s\n", desc))
   source(path, local = new.env(parent = globalenv()))
@@ -51,7 +34,6 @@ scrape_tasks <- list(
 
 core_tasks <- list(
   list(file = "web_scraping/script/clean/clean_chotot.R", desc = "Clean Chợ Tốt data"),
-  list(file = "web_scraping/script/clean/clean_carpla.R", desc = "Clean Carpla data"),
   list(file = "web_scraping/script/clean/clean_banxehoicu.R", desc = "Clean Bán Xe Hơi Cũ data"),
   list(file = "web_scraping/script/clean/clean_bonbanh.R", desc = "Clean BonBanh data"),
   list(file = "web_scraping/script/validate_clean_data.R", desc = "Validate clean data quality"),

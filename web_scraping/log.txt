@@ -7211,3 +7211,23 @@
 [2026-06-13 13:39:02] [web_scraping/script/merge_data.R] - INFO: === Merge complete. 25514 unique records -> web_scraping/data/master_data.db and web_scraping/data/master_data.csv ===
 [2026-06-13 13:39:02] [web_scraping/run_pipeline.R] - INFO: Full pipeline completed successfully.
 >>>>>>> 39568475d9e1e5553a5b18a1c237fdff7889af09
+[2026-06-13 16:29:30] [web_scraping/script/merge_data.R] - INFO: Starting merge of individual SQLite databases into master outputs.
+[2026-06-13 16:29:30] [web_scraping/script/merge_data.R] - INFO: Merged 2018/2018 records from web_scraping/data/init_db/data_banxehoicu.db
+[2026-06-13 16:29:30] [web_scraping/script/merge_data.R] - INFO: Merged 5821/5821 records from web_scraping/data/init_db/data_bonbanh.db
+[2026-06-13 16:29:30] [web_scraping/script/merge_data.R] - INFO: Merged 17675/17675 records from web_scraping/data/init_db/data_chotot.db
+[2026-06-13 16:29:30] [web_scraping/script/merge_data.R] - INFO: === Merge complete. 25514 unique records -> web_scraping/data/master_data.db and web_scraping/data/master_data.csv ===
+[2026-06-13 16:31:51] [scrap_chotot.R] - INFO: Launching headless Chrome browser
+[2026-06-13 16:31:54] [scrap_chotot.R] - INFO: Browser session ready.
+[2026-06-13 16:31:54] [scrap_chotot.R] - INFO: Checkpoint: last completed page = 930. Starting from page 931.
+[2026-06-13 16:31:54] [scrap_chotot.R] - INFO: urlnum checkpoint: last flushed URL index = 18338. STEP B will resume from #18339.
+[2026-06-13 16:31:54] [scrap_chotot.R] - INFO: === Step A+C: Collecting listing URLs ===
+[2026-06-13 16:31:54] [scrap_chotot.R] - INFO: Reached session page limit (893). Stopping URL collection.
+[2026-06-13 16:31:54] [scrap_chotot.R] - INFO: Total new listing URLs collected this session: 0
+[2026-06-13 16:31:54] [scrap_chotot.R] - INFO: Loaded 18338 total URLs from file.
+[2026-06-13 16:31:54] [scrap_chotot.R] - INFO: === Step B: Scraping detail pages ===
+[2026-06-13 16:31:54] [scrap_chotot.R] - INFO: Resuming from car #18339 (skipping first 18338 already flushed).
+[2026-06-13 16:31:54] [scrap_chotot.R] - INFO: Session scraped 0 new records. Appended directly to: web_scraping/data/raw/data_chotot_raw.csv
+[2026-06-13 16:31:54] [scrap_chotot.R] - INFO: === Scrape complete ===
+[2026-06-13 16:36:56] [web_scraping/run_pipeline.R] - INFO: Starting full pipeline. RUN_SCRAPE=FALSE
+[2026-06-13 16:36:56] [web_scraping/script/clean/clean_chotot.R] - INFO: === Bắt đầu cleaning dữ liệu Chợ Tốt ===
+[2026-06-13 16:36:56] [web_scraping/script/clean/clean_chotot.R] - INFO: Đọc được 18079 dòng từ web_scraping/data/raw/data_chotot_raw.csv
