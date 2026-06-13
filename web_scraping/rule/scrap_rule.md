@@ -35,14 +35,7 @@ This document outlines the requirements for scraping used car data from various 
 
 *   **Reasoning**: The entire vehicle listing and detailed content on Chợ Tốt are dynamically rendered using JavaScript (React/Next.js) after the browser finishes loading the initial source code. You are required to use RSelenium to initialize a headless virtual browser (such as Chrome or Firefox in the background) and instruct it to automatically scroll down the page to trigger the loading of additional listings, waiting until the user interface is fully rendered before proceeding with the HTML parsing.
 
-#### 1.2. Carpla
-*   **URL:** `https://carpla.vn/mua-xe`
-*   **Website Type:** Dynamic Website (JavaScript-rendered)
-*   **Method:** Browser Automation / Dynamic Web Scraping
-*   **Recommended R Library:** `RSelenium` or `chromote`
-*   **Reasoning:** This site loads data asynchronously via JavaScript. Fetching pure HTML will result in an empty page with no listings. You must use `RSelenium` or `chromote` to control a headless browser, wait for the UI to fully load, and then scrape the rendered HTML.
-
-#### 1.3. Bán Xe Hơi Cũ
+#### 1.2. Bán Xe Hơi Cũ
 *   **URL:** `https://banxehoicu.vn/ban-oto-cu`
 *   **Website Type:** Static Website (Traditional HTML)
 *   **Method:** HTML Parsing

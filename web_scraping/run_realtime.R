@@ -16,9 +16,8 @@ run_realtime <- function() {
     # Danh sách các script realtime cần chạy
     scripts <- c(
       "web_scraping/script/realtime/realtime_chotot.R",
-      "web_scraping/script/realtime/realtime_carpla.R",
+      "web_scraping/script/realtime/realtime_bonbanh.R",
       "web_scraping/script/realtime/realtime_banxehoicu.R",
-      "web_scraping/script/realtime/realtime_oto.R"
     )
 
     for (script in scripts) {

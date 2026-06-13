@@ -13,7 +13,7 @@ tryCatch({
   # Define all pipeline tasks - Bạn hãy kiểm tra lại các đường dẫn này có đúng folder web_scraping không nhé
   tasks <- list(
     list(file = "d:/R program/project/web_scraping/script/scrap/scrap_chotot.R", desc = "Scraping raw data from Chotot"),
-    list(file = "d:/R program/project/web_scraping/script/scrap/scrap_carpla.R", desc = "Scraping raw data from Carpla"),
+    list(file = "d:/R program/project/web_scraping/script/scrap/scrap_bonbanh.R", desc = "Scraping raw data from Bonbanh"),
     list(file = "d:/R program/project/web_scraping/script/scrap/scrap_banxehoicu.R", desc = "Scraping raw data from Banxehoicu")
   )
 
