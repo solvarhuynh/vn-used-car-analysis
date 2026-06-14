@@ -3497,6 +3497,7 @@ HYUNDAI,SANTAFE,PREMIUM HTRAC,2019,SUV,Dầu,Tự động,2.2,7,4WD,769000000,99
 HYUNDAI,SANTAFE,HTRAC,2019,SUV,Xăng,Tự động,2.4,7,4WD,758000000,21000,Trong nước,Trắng,Tp Hồ Chí Minh,2026-06-05,bonbanh.com,https://bonbanh.com/xe-hyundai-santafe-2.4l-htrac-2019-6787257
 HYUNDAI,SANTAFE,HTRAC,2019,SUV,Dầu,Tự động,2.2,7,4WD,795000000,630000,Trong nước,Trắng,Hà Nội,2026-06-05,bonbanh.com,https://bonbanh.com/xe-hyundai-santafe-2.2l-htrac-2019-6711052
 HYUNDAI,SANTAFE,HTRAC,2019,SUV,Dầu,Tự động,2.2,7,4WD,720000000,89000,Trong nước,Đen,Hà Nội,2026-06-14,bonbanh.com,https://bonbanh.com/xe-hyundai-santafe-2.2l-htrac-2019-6742621
+HYUNDAI,SANTAFE,HTRAC,2019,SUV,Dầu,Tự động,2.2,7,AWD,750000000,700000,Trong nước,Trắng,,15-06-2026,bonbanh.com,https://bonbanh.com/xe-hyundai-santafe-2.2l-htrac-2019-6849546
 HYUNDAI,SANTAFE,PREMIUM HTRAC,2020,SUV,Xăng,Tự động,2.4,7,4WD,780000000,43000,Trong nước,Trắng,Hà Nội,2026-06-05,bonbanh.com,https://bonbanh.com/xe-hyundai-santafe-premium-2.4l-htrac-2020-6834371
 HYUNDAI,SANTAFE,BẢN THƯỜNG,2020,SUV,Dầu,Tự động,2.2,7,FWD,790000000,0,Trong nước,Trắng,Tp Hồ Chí Minh,2026-06-05,bonbanh.com,https://bonbanh.com/xe-hyundai-santafe-2.2l-2020-6526578
 HYUNDAI,SANTAFE,PREMIUM HTRAC,2020,SUV,Xăng,Tự động,2.4,7,4WD,815000000,80000,Trong nước,Trắng,Hà Nội,2026-06-05,bonbanh.com,https://bonbanh.com/xe-hyundai-santafe-premium-2.4l-htrac-2020-6720228
@@ -4025,6 +4026,7 @@ KIA,MORNING,SLX,2010,Hatchback,Xăng,Tự động,1,5,FWD,150000000,15000,Nhập
 KIA,MORNING,VAN,2010,MPV,Xăng,Tự động,1,2,FWD,90000000,130000,Nhập khẩu,Trắng,Hải Phòng,2026-06-05,bonbanh.com,https://bonbanh.com/xe-kia-morning-van-1.0-at-2010-6793247
 KIA,MORNING,SX,2010,Hatchback,Xăng,Tự động,1.1,5,FWD,175000000,148000,Trong nước,Xám,Cần Thơ,2026-06-14,bonbanh.com,https://bonbanh.com/xe-kia-morning-sx-1.1-at-2010-6838530
 KIA,MORNING,BẢN THƯỜNG,2011,Hatchback,Xăng,Tự động,1,5,FWD,189000000,130000,Nhập khẩu,Bạc,Hà Nội,2026-06-05,bonbanh.com,https://bonbanh.com/xe-kia-morning-1.0-at-2011-6802012
+KIA,MORNING,,2011,Hatchback,Xăng,Tự động,1,5,FWD,160000000,130000,Nhập khẩu,Xanh,,15-06-2026,bonbanh.com,https://bonbanh.com/xe-kia-morning-1.0-at-2011-6836160
 KIA,MORNING,SPORT,2013,Hatchback,Xăng,Tự động,1,5,FWD,239000000,100000,Nhập khẩu,Đỏ,Hải Phòng,2026-06-05,bonbanh.com,https://bonbanh.com/xe-kia-morning-1.0-at-sport-2013-6661126
 KIA,MORNING,VAN,2013,MPV,Xăng,Tự động,1,2,FWD,135000000,130000,Nhập khẩu,Đen,Hà Nội,2026-06-05,bonbanh.com,https://bonbanh.com/xe-kia-morning-van-1.0-at-2013-6833251
 KIA,MORNING,VAN,2013,MPV,Xăng,Tự động,1,2,FWD,145000000,98000,Nhập khẩu,Kem,Hà Nội,2026-06-05,bonbanh.com,https://bonbanh.com/xe-kia-morning-van-1.0-at-2013-6830725
@@ -6111,9 +6113,11 @@ MITSUBISHI,XPANDER,PREMIUM,2026,SUV,Xăng,Tự động,1.5,7,FWD,558000000,,Nh�
 MITSUBISHI,XPANDER,CROSS,2026,SUV,Xăng,Tự động,1.5,7,FWD,600000000,,Nhập khẩu,Trắng,Hà Nội,2026-06-05,bonbanh.com,https://bonbanh.com/xe-mitsubishi-xpander-cross-1.5-at-2026-6655257
 MITSUBISHI,XPANDER,PREMIUM,2026,SUV,Xăng,Tự động,1.5,7,FWD,616000000,7000,Nhập khẩu,Trắng,Hà Nội,2026-06-05,bonbanh.com,https://bonbanh.com/xe-mitsubishi-xpander-premium-1.5-at-2026-6783406
 MITSUBISHI,XPANDER,PREMIUM,2026,SUV,Xăng,Tự động,1.5,7,FWD,560000000,,Nhập khẩu,Trắng,Hà Nội,2026-06-05,bonbanh.com,https://bonbanh.com/xe-mitsubishi-xpander-premium-1.5-at-2026-6756835
+MITSUBISHI,XPANDER,Premium,2026,SUV,Xăng,Tự động,1.5,7,FWD,562000000,,Nhập khẩu,Trắng,,15-06-2026,bonbanh.com,https://bonbanh.com/xe-mitsubishi-xpander-premium-1.5-at-2026-6846204
 MORGAN,PLUS,FOUR,2023,Mui trần,Xăng,Tự động,2,2,RWD,7000000000,0,Nhập khẩu,Hồng,Hà Nội,2026-06-14,bonbanh.com,https://bonbanh.com/xe-morgan-plus_four-2.0-at-2023-6678375
 NISSAN,ALMERA,EL,2022,Sedan,Xăng,Tự động,1,5,FWD,399000000,50000,Nhập khẩu,Xám,Hà Nội,2026-06-05,bonbanh.com,https://bonbanh.com/xe-nissan-almera-el-1.0-cvt-2022-6788455
 NISSAN,ALMERA,EL,2023,Sedan,Xăng,Tự động,1,5,FWD,420000000,0,Nhập khẩu,Trắng,Hải Phòng,2026-06-05,bonbanh.com,https://bonbanh.com/xe-nissan-almera-el-1.0-cvt-2023-6607191
+NISSAN,ALMERA,VL Cao cấp,2023,Sedan,Xăng,Tự động,1,5,FWD,475000000,13000,Nhập khẩu,Đen,,15-06-2026,bonbanh.com,https://bonbanh.com/xe-nissan-almera-vl-1.0-cvt-cao-cap-2023-6554751
 NISSAN,ALMERA,V,2024,Sedan,Xăng,Tự động,1,5,FWD,459000000,10000,Nhập khẩu,Trắng,,14-06-2026,bonbanh.com,https://bonbanh.com/xe-nissan-almera-v-1.0-cvt-2024-6849098
 NISSAN,JUKE,BẢN THƯỜNG,2015,SUV,Xăng,Tự động,1.6,5,FWD,460000000,57000,Nhập khẩu,Vàng,Bình Dương,2026-06-05,bonbanh.com,https://bonbanh.com/xe-nissan-juke-1.6-at-2015-6750904
 NISSAN,NAVARA,LE 4WD,2013,Bán tải,Dầu,Số sàn,2.5,5,4WD,230000000,180000,Nhập khẩu,Xám,Hà Giang,2026-06-05,bonbanh.com,https://bonbanh.com/xe-nissan-navara-le-2.5mt-4wd-2013-6744214
@@ -7385,6 +7389,7 @@ VINFAST,LUX,SA PREMIUM,2019,SUV,Xăng,Tự động,2,7,4WD,585000000,80000,Trong
 VINFAST,LUX,SA PLUS,2019,SUV,Xăng,Tự động,2,7,RWD,519000000,99000,Trong nước,Nâu,Hà Nội,2026-06-14,bonbanh.com,https://bonbanh.com/xe-vinfast-lux_sa_2.0-plus-2.0-at-2019-6811055
 VINFAST,LUX,SA Premium,2019,SUV,Xăng,Tự động,2,7,AWD,555000000,91000,Trong nước,Đỏ,,14-06-2026,bonbanh.com,https://bonbanh.com/xe-vinfast-lux_sa_2.0-premium-2.0-at-2019-6849174
 VINFAST,LUX,A Base,2019,Sedan,Xăng,Tự động,2,5,RWD,451000000,38000,Trong nước,Trắng,,14-06-2026,bonbanh.com,https://bonbanh.com/xe-vinfast-lux_a_2.0-base-2.0-at-2019-6833303
+VINFAST,LUX,SA Plus,2019,SUV,Xăng,Tự động,2,7,RWD,495000000,68000,Trong nước,Đen,,15-06-2026,bonbanh.com,https://bonbanh.com/xe-vinfast-lux_sa_2.0-plus-2.0-at-2019-6849145
 VINFAST,LUX,SA PREMIUM,2020,SUV,Xăng,Tự động,2,7,4WD,605000000,92929,Trong nước,Nâu,Hà Nội,2026-06-05,bonbanh.com,https://bonbanh.com/xe-vinfast-lux_sa_2.0-premium-2.0-at-2020-6813519
 VINFAST,LUX,A PLUS,2020,Sedan,Xăng,Tự động,2,5,RWD,479000000,0,Trong nước,Nâu,Hà Nội,2026-06-05,bonbanh.com,https://bonbanh.com/xe-vinfast-lux_a_2.0-plus-2.0-at-2020-6554156
 VINFAST,LUX,A PLUS,2020,Sedan,Xăng,Tự động,2,5,RWD,529000000,54000,Trong nước,Đen,Hà Nội,2026-06-05,bonbanh.com,https://bonbanh.com/xe-vinfast-lux_a_2.0-plus-2.0-at-2020-6824317
@@ -25509,6 +25514,7 @@ VINFAST,LIMO GREEN,,2026,SUV,Điện,Tự động,,7,,666000000,,Trong nước,,
 VINFAST,LIMO GREEN,,2026,MPV,Điện,Tự động,,7,,645000000,,Trong nước,,Tp Hồ Chí Minh,2026-06-11,xe.chotot.com,https://xe.chotot.com/mua-ban-oto-quan-binh-tan-tp-ho-chi-minh/132910317.htm
 VINFAST,LIMO GREEN,,2026,,Điện,Tự động,,7,,654000000,,Trong nước,,Tp Hồ Chí Minh,2026-06-11,xe.chotot.com,https://xe.chotot.com/mua-ban-oto-quan-binh-tan-tp-ho-chi-minh/132904897.htm
 VINFAST,LIMO GREEN,,2026,SUV,Điện,Tự động,,7,,620000000,,Trong nước,,Hà Nội,2026-05-15,xe.chotot.com,https://xe.chotot.com/mua-ban-oto-quan-dong-da-ha-noi/125958745.htm
+VINFAST,LIMO GREEN,,2026,SUV,Điện,Tự động,,7,,620000000,,Trong nước,,Hà Nội,16-05-2026,xe.chotot.com,https://xe.chotot.com/mua-ban-oto-quan-dong-da-ha-noi/125958745.htm?ad_delivery=true&event_source=ad_list
 VINFAST,LUX A2.0,Premium 2.0 AT,2019,Sedan,Xăng,Tự động,,5,,550000000,24000,Trong nước,,Tp Hồ Chí Minh,2026-06-13,xe.chotot.com,https://xe.chotot.com/mua-ban-oto-thanh-pho-thu-duc-tp-ho-chi-minh/132861688.htm
 VINFAST,LUX A2.0,Premium 2.0 AT,2019,,Xăng,Tự động,,,,550000000,24000,,,Tp Hồ Chí Minh,2026-06-13,xe.chotot.com,https://xe.chotot.com/mua-ban-oto-thanh-pho-thu-duc-tp-ho-chi-minh/132722871.htm
 VINFAST,LUX A2.0,Premium 2.0 AT,2019,Sedan,Xăng,Tự động,,,,550000000,24000,Trong nước,,Tp Hồ Chí Minh,2026-06-01,xe.chotot.com,https://xe.chotot.com/mua-ban-oto-thanh-pho-thu-duc-tp-ho-chi-minh/132658502.htm
@@ -26434,6 +26440,7 @@ VINFAST,VF6,,2026,,Điện,Tự động,,,,648000000,1700,Trong nước,,Bình D
 VINFAST,VF6,,2026,SUV,Điện,Tự động,,5,,92000000,,Trong nước,,Tp Hồ Chí Minh,2026-06-14,xe.chotot.com,https://xe.chotot.com/mua-ban-oto-quan-binh-tan-tp-ho-chi-minh/132939384.htm
 VINFAST,VF6,,2026,SUV,Điện,Tự động,,5,,623000000,,Trong nước,,Tp Hồ Chí Minh,2026-06-13,xe.chotot.com,https://xe.chotot.com/mua-ban-oto-thanh-pho-thu-duc-tp-ho-chi-minh/131656302.htm
 VINFAST,VF6,,2026,,Điện,Tự động,,5,,745000000,,Trong nước,,Cần Thơ,2026-06-12,xe.chotot.com,https://xe.chotot.com/mua-ban-oto-quan-cai-rang-can-tho/132915396.htm
+VINFAST,VF6,,2026,,Điện,Tự động,,5,,587000000,,Trong nước,,Tp Hồ Chí Minh,15-06-2026,xe.chotot.com,https://xe.chotot.com/mua-ban-oto-thanh-pho-thu-duc-tp-ho-chi-minh/132967054.htm
 VINFAST,VF7,Plus,2024,SUV,Điện,Tự động,,5,,739000000,10899,Trong nước,,Tp Hồ Chí Minh,2026-06-14,xe.chotot.com,https://xe.chotot.com/mua-ban-oto-thanh-pho-thu-duc-tp-ho-chi-minh/132852887.htm
 VINFAST,VF7,S,2024,SUV,Điện,Tự động,,5,,580000000,57000,Trong nước,,Tp Hồ Chí Minh,2026-06-14,xe.chotot.com,https://xe.chotot.com/mua-ban-oto-thanh-pho-thu-duc-tp-ho-chi-minh/132838960.htm
 VINFAST,VF7,Plus,2024,SUV,Điện,Tự động,,5,,760000000,11833,,,Tp Hồ Chí Minh,2026-05-26,xe.chotot.com,https://xe.chotot.com/mua-ban-oto-thanh-pho-thu-duc-tp-ho-chi-minh/132561526.htm

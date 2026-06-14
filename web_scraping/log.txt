@@ -7602,3 +7602,216 @@
 [2026-06-15 00:55:33] [web_scraping/script/merge_data.R] - INFO: Merged 6065/6065 records from web_scraping/data/init_db/data_bonbanh.db
 [2026-06-15 00:55:33] [web_scraping/script/merge_data.R] - INFO: Merged 18999/18999 records from web_scraping/data/init_db/data_chotot.db
 [2026-06-15 00:55:34] [web_scraping/script/merge_data.R] - INFO: === Merge complete. 27082 unique records -> web_scraping/data/master_data.db and web_scraping/data/master_data.csv ===
+[2026-06-15 00:58:25] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-15 00:58:26] [scrap_chotot.R] - INFO: Launching headless Chrome browser
+[2026-06-15 00:58:29] [scrap_chotot.R] - INFO: Browser session ready.
+[2026-06-15 00:58:29] [scrap_chotot.R] - INFO: Checkpoint: last completed page = 900. Starting from page 901.
+[2026-06-15 00:58:29] [scrap_chotot.R] - INFO: urlnum checkpoint: last flushed URL index = 19777. STEP B will resume from #19778.
+[2026-06-15 00:58:29] [scrap_chotot.R] - INFO: === Step A+C: Collecting listing URLs ===
+[2026-06-15 00:58:29] [scrap_chotot.R] - INFO: Reached session page limit (900). Stopping URL collection.
+[2026-06-15 00:58:29] [scrap_chotot.R] - INFO: Total new listing URLs collected this session: 0
+[2026-06-15 00:58:29] [scrap_chotot.R] - INFO: Loaded 19777 total URLs from file.
+[2026-06-15 00:58:29] [scrap_chotot.R] - INFO: === Step B: Scraping detail pages ===
+[2026-06-15 00:58:29] [scrap_chotot.R] - INFO: Resuming from car #19778 (skipping first 19777 already flushed).
+[2026-06-15 00:58:29] [scrap_chotot.R] - INFO: Session scraped 0 new records. Appended directly to: web_scraping/data/raw/data_chotot_raw.csv
+[2026-06-15 00:58:29] [scrap_chotot.R] - INFO: === Scrape complete ===
+[2026-06-15 00:58:29] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-15 00:58:32] [realtime_chotot.R] - INFO: Kiểm tra trang 1...
+[2026-06-15 00:58:45] [realtime_chotot.R] - INFO: Trang 1: URL cuối chưa có trong DB → lấy hết 28 URL, sang trang tiếp.
+[2026-06-15 00:58:45] [realtime_chotot.R] - INFO: Kiểm tra trang 2...
+[2026-06-15 00:58:58] [realtime_chotot.R] - INFO: Trang 2: URL cuối đã có trong DB → so ngược từng URL.
+[2026-06-15 00:58:58] [realtime_chotot.R] - INFO: Phát hiện 28 URL mới cần cào.
+[2026-06-15 00:58:58] [realtime_chotot.R] - INFO: Đã ghi 28 URL mới vào đầu file: web_scraping/data/raw/meta/urls_chotot.txt
+[2026-06-15 00:59:05] [realtime_chotot.R] - WARN: init_db INSERT lỗi (https://xe.chotot.com/mua-ban-oto-thanh-pho-thu-duc-tp-ho-chi-minh/132807807.htm): UNIQUE constraint failed: car_listings.url
+[2026-06-15 00:59:05] [realtime_chotot.R] - WARN: master INSERT lỗi (https://xe.chotot.com/mua-ban-oto-thanh-pho-thu-duc-tp-ho-chi-minh/132807807.htm): Invalid or closed connection
+[2026-06-15 00:59:13] [realtime_chotot.R] - WARN: init_db INSERT lỗi (https://xe.chotot.com/mua-ban-oto-quan-cau-giay-ha-noi/131406323.htm): UNIQUE constraint failed: car_listings.url
+[2026-06-15 00:59:13] [realtime_chotot.R] - WARN: master INSERT lỗi (https://xe.chotot.com/mua-ban-oto-quan-cau-giay-ha-noi/131406323.htm): Invalid or closed connection
+[2026-06-15 00:59:21] [realtime_chotot.R] - WARN: init_db INSERT lỗi (https://xe.chotot.com/mua-ban-oto-huyen-chau-duc-ba-ria-vung-tau/132201355.htm): UNIQUE constraint failed: car_listings.url
+[2026-06-15 00:59:21] [realtime_chotot.R] - WARN: master INSERT lỗi (https://xe.chotot.com/mua-ban-oto-huyen-chau-duc-ba-ria-vung-tau/132201355.htm): Invalid or closed connection
+[2026-06-15 00:59:29] [realtime_chotot.R] - WARN: init_db INSERT lỗi (https://xe.chotot.com/mua-ban-oto-thanh-pho-thuan-an-binh-duong/132894830.htm): UNIQUE constraint failed: car_listings.url
+[2026-06-15 00:59:29] [realtime_chotot.R] - WARN: master INSERT lỗi (https://xe.chotot.com/mua-ban-oto-thanh-pho-thuan-an-binh-duong/132894830.htm): Invalid or closed connection
+[2026-06-15 00:59:38] [realtime_chotot.R] - WARN: master INSERT lỗi (https://xe.chotot.com/mua-ban-oto-thanh-pho-thu-duc-tp-ho-chi-minh/132967054.htm): Invalid or closed connection
+[2026-06-15 00:59:46] [realtime_chotot.R] - WARN: init_db INSERT lỗi (https://xe.chotot.com/mua-ban-oto-quan-binh-tan-tp-ho-chi-minh/132502215.htm): UNIQUE constraint failed: car_listings.url
+[2026-06-15 00:59:46] [realtime_chotot.R] - WARN: master INSERT lỗi (https://xe.chotot.com/mua-ban-oto-quan-binh-tan-tp-ho-chi-minh/132502215.htm): Invalid or closed connection
+[2026-06-15 00:59:54] [realtime_chotot.R] - WARN: master INSERT lỗi (https://xe.chotot.com/mua-ban-oto-quan-dong-da-ha-noi/125958745.htm?ad_delivery=true&event_source=ad_list): Invalid or closed connection
+[2026-06-15 01:00:02] [realtime_chotot.R] - WARN: init_db INSERT lỗi (https://xe.chotot.com/mua-ban-oto-quan-binh-thanh-tp-ho-chi-minh/132796850.htm): UNIQUE constraint failed: car_listings.url
+[2026-06-15 01:00:02] [realtime_chotot.R] - WARN: master INSERT lỗi (https://xe.chotot.com/mua-ban-oto-quan-binh-thanh-tp-ho-chi-minh/132796850.htm): Invalid or closed connection
+[2026-06-15 01:00:11] [realtime_chotot.R] - WARN: init_db INSERT lỗi (https://xe.chotot.com/mua-ban-oto-quan-binh-thanh-tp-ho-chi-minh/127484974.htm): UNIQUE constraint failed: car_listings.url
+[2026-06-15 01:00:11] [realtime_chotot.R] - WARN: master INSERT lỗi (https://xe.chotot.com/mua-ban-oto-quan-binh-thanh-tp-ho-chi-minh/127484974.htm): Invalid or closed connection
+[2026-06-15 01:00:19] [realtime_chotot.R] - WARN: init_db INSERT lỗi (https://xe.chotot.com/mua-ban-oto-thanh-pho-bien-hoa-dong-nai/132803769.htm): UNIQUE constraint failed: car_listings.url
+[2026-06-15 01:00:19] [realtime_chotot.R] - WARN: master INSERT lỗi (https://xe.chotot.com/mua-ban-oto-thanh-pho-bien-hoa-dong-nai/132803769.htm): Invalid or closed connection
+[2026-06-15 01:00:29] [realtime_chotot.R] - WARN: init_db INSERT lỗi (https://xe.chotot.com/mua-ban-oto-quan-dong-da-ha-noi/124488962.htm?ad_delivery=true&event_source=ad_list): UNIQUE constraint failed: car_listings.url
+[2026-06-15 01:00:29] [realtime_chotot.R] - WARN: master INSERT lỗi (https://xe.chotot.com/mua-ban-oto-quan-dong-da-ha-noi/124488962.htm?ad_delivery=true&event_source=ad_list): Invalid or closed connection
+[2026-06-15 01:00:37] [realtime_chotot.R] - WARN: init_db INSERT lỗi (https://xe.chotot.com/mua-ban-oto-thanh-pho-song-cong-thai-nguyen/132908070.htm): UNIQUE constraint failed: car_listings.url
+[2026-06-15 01:00:37] [realtime_chotot.R] - WARN: master INSERT lỗi (https://xe.chotot.com/mua-ban-oto-thanh-pho-song-cong-thai-nguyen/132908070.htm): Invalid or closed connection
+[2026-06-15 01:00:45] [realtime_chotot.R] - WARN: init_db INSERT lỗi (https://xe.chotot.com/mua-ban-oto-quan-binh-thanh-tp-ho-chi-minh/128822552.htm): UNIQUE constraint failed: car_listings.url
+[2026-06-15 01:00:45] [realtime_chotot.R] - WARN: master INSERT lỗi (https://xe.chotot.com/mua-ban-oto-quan-binh-thanh-tp-ho-chi-minh/128822552.htm): Invalid or closed connection
+[2026-06-15 01:00:53] [realtime_chotot.R] - WARN: init_db INSERT lỗi (https://xe.chotot.com/mua-ban-oto-quan-12-tp-ho-chi-minh/132038641.htm): UNIQUE constraint failed: car_listings.url
+[2026-06-15 01:00:53] [realtime_chotot.R] - WARN: master INSERT lỗi (https://xe.chotot.com/mua-ban-oto-quan-12-tp-ho-chi-minh/132038641.htm): Invalid or closed connection
+[2026-06-15 01:00:59] [realtime_chotot.R] - WARN: init_db INSERT lỗi (https://xe.chotot.com/mua-ban-oto-thanh-pho-thu-duc-tp-ho-chi-minh/130441612.htm?ad_delivery=true&event_source=ad_list): UNIQUE constraint failed: car_listings.url
+[2026-06-15 01:00:59] [realtime_chotot.R] - WARN: master INSERT lỗi (https://xe.chotot.com/mua-ban-oto-thanh-pho-thu-duc-tp-ho-chi-minh/130441612.htm?ad_delivery=true&event_source=ad_list): Invalid or closed connection
+[2026-06-15 01:01:05] [realtime_chotot.R] - INFO: Đã đóng session.
+[2026-06-15 01:01:17] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-15 01:01:19] [realtime_chotot.R] - INFO: Kiểm tra trang 1...
+[2026-06-15 01:01:28] [realtime_chotot.R] - INFO: Đã đóng session.
+[2026-06-15 01:01:47] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-15 01:01:47] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-15 01:01:49] [realtime_chotot.R] - INFO: Kiểm tra trang 1...
+[2026-06-15 01:02:01] [realtime_chotot.R] - INFO: Trang 1: URL cuối chưa có trong DB → lấy hết 25 URL, sang trang tiếp.
+[2026-06-15 01:02:01] [realtime_chotot.R] - INFO: Kiểm tra trang 2...
+[2026-06-15 01:02:13] [realtime_chotot.R] - INFO: Trang 2: URL cuối đã có trong DB → so ngược từng URL.
+[2026-06-15 01:02:13] [realtime_chotot.R] - INFO: Phát hiện 25 URL mới cần cào.
+[2026-06-15 01:02:13] [realtime_chotot.R] - INFO: Đã ghi 25 URL mới vào đầu file: web_scraping/data/raw/meta/urls_chotot.txt
+[2026-06-15 01:02:17] [realtime_chotot.R] - WARN: init_db INSERT lỗi (https://xe.chotot.com/mua-ban-oto-thanh-pho-thuan-an-binh-duong/132931721.htm): UNIQUE constraint failed: car_listings.url
+[2026-06-15 01:02:17] [realtime_chotot.R] - WARN: master INSERT lỗi (https://xe.chotot.com/mua-ban-oto-thanh-pho-thuan-an-binh-duong/132931721.htm): UNIQUE constraint failed: car_listings.url
+[2026-06-15 01:02:24] [realtime_chotot.R] - WARN: init_db INSERT lỗi (https://xe.chotot.com/mua-ban-oto-huyen-chau-duc-ba-ria-vung-tau/132201355.htm): UNIQUE constraint failed: car_listings.url
+[2026-06-15 01:02:24] [realtime_chotot.R] - WARN: master INSERT lỗi (https://xe.chotot.com/mua-ban-oto-huyen-chau-duc-ba-ria-vung-tau/132201355.htm): UNIQUE constraint failed: car_listings.url
+[2026-06-15 01:05:50] [realtime_bonbanh.R] - INFO: === Bắt đầu realtime BonBanh ===
+[2026-06-15 01:05:50] [realtime_bonbanh.R] - INFO: Kiểm tra trang 1...
+[2026-06-15 01:05:51] [realtime_bonbanh.R] - INFO: Trang 1: URL cuối đã có trong DB → tìm được 5/20 URL mới.
+[2026-06-15 01:05:51] [realtime_bonbanh.R] - INFO: Phát hiện 5 URL mới.
+[2026-06-15 01:05:51] [realtime_bonbanh.R] - INFO: Đã ghi 5 URL mới vào đầu: web_scraping/data/raw/meta/urls_bonbanh.txt
+[2026-06-15 01:05:58] [realtime_bonbanh.R] - INFO: Đã ghi 5 dòng vào: web_scraping/data/realtime/data_bonbanh_rt.csv
+[2026-06-15 01:05:58] [realtime_bonbanh.R] - INFO: === Hoàn thành. 5 URL mới | 5 vào init_db | 5 vào master ===
+[2026-06-15 01:06:32] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-15 01:06:32] [web_scraping/run_realtime.R] - INFO: Task disabled: web_scraping/script/realtime/realtime_chotot.R — skipping.
+[2026-06-15 01:06:32] [web_scraping/run_realtime.R] - INFO: Task disabled: web_scraping/script/realtime/realtime_banxehoicu.R — skipping.
+[2026-06-15 01:06:32] [realtime_bonbanh.R] - INFO: === Bắt đầu realtime BonBanh ===
+[2026-06-15 01:06:32] [realtime_bonbanh.R] - INFO: Kiểm tra trang 1...
+[2026-06-15 01:06:32] [realtime_bonbanh.R] - INFO: Trang 1: URL cuối đã có trong DB → tìm được 0/20 URL mới.
+[2026-06-15 01:06:32] [realtime_bonbanh.R] - INFO: Phát hiện 0 URL mới.
+[2026-06-15 01:06:32] [realtime_bonbanh.R] - INFO: Không có URL mới. Kết thúc.
+[2026-06-15 01:06:32] [realtime_bonbanh.R] - INFO: === Bắt đầu realtime BonBanh ===
+[2026-06-15 01:06:32] [realtime_bonbanh.R] - INFO: Kiểm tra trang 1...
+[2026-06-15 01:06:33] [realtime_bonbanh.R] - INFO: Trang 1: URL cuối đã có trong DB → tìm được 0/20 URL mới.
+[2026-06-15 01:06:33] [realtime_bonbanh.R] - INFO: Phát hiện 0 URL mới.
+[2026-06-15 01:06:33] [realtime_bonbanh.R] - INFO: Không có URL mới. Kết thúc.
+[2026-06-15 01:06:33] [web_scraping/run_realtime.R] - INFO: Real-time update cycle completed with 0 new rows.
+[2026-06-15 01:06:33] [web_scraping/run_realtime.R] - INFO: Khong co dong moi, giu nguyen web_scraping/data/master_data.csv.
+[2026-06-15 01:07:22] [web_scraping/script/merge_data.R] - INFO: Starting merge of individual SQLite databases into master outputs.
+[2026-06-15 01:07:22] [web_scraping/script/merge_data.R] - INFO: Merged 2018/2018 records from web_scraping/data/init_db/data_banxehoicu.db
+[2026-06-15 01:07:23] [web_scraping/script/merge_data.R] - INFO: Merged 6070/6070 records from web_scraping/data/init_db/data_bonbanh.db
+[2026-06-15 01:07:23] [web_scraping/script/merge_data.R] - INFO: Merged 19001/19001 records from web_scraping/data/init_db/data_chotot.db
+[2026-06-15 01:07:23] [web_scraping/script/merge_data.R] - INFO: === Merge complete. 27089 unique records -> web_scraping/data/master_data.db and web_scraping/data/master_data.csv ===
+[2026-06-15 01:19:37] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-15 01:19:37] [realtime_chotot.R] - WARN: Session launch attempt 1 failed: Invalid path to Chrome
+[2026-06-15 01:19:40] [realtime_chotot.R] - WARN: Session launch attempt 2 failed: Invalid path to Chrome
+[2026-06-15 01:19:43] [realtime_chotot.R] - WARN: Session launch attempt 3 failed: Invalid path to Chrome
+[2026-06-15 01:23:16] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-15 01:23:16] [realtime_chotot.R] - WARN: Session launch attempt 1 failed: Invalid path to Chrome
+[2026-06-15 01:23:19] [realtime_chotot.R] - WARN: Session launch attempt 2 failed: Invalid path to Chrome
+[2026-06-15 01:23:22] [realtime_chotot.R] - WARN: Session launch attempt 3 failed: Invalid path to Chrome
+[2026-06-15 01:25:06] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-15 01:25:09] [realtime_chotot.R] - INFO: Kiểm tra trang 1...
+[2026-06-15 01:25:23] [realtime_chotot.R] - INFO: Trang 1: URL cuối đã có trong DB → so ngược từng URL.
+[2026-06-15 01:25:23] [realtime_chotot.R] - INFO: Phát hiện 0 URL mới cần cào.
+[2026-06-15 01:25:23] [realtime_chotot.R] - INFO: Không có URL mới. Kết thúc.
+[2026-06-15 01:25:23] [realtime_chotot.R] - INFO: Đã đóng session.
+[2026-06-15 01:26:07] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-15 01:26:09] [realtime_chotot.R] - INFO: Kiểm tra trang 1...
+[2026-06-15 01:26:21] [realtime_chotot.R] - INFO: Trang 1: URL cuối đã có trong DB → so ngược từng URL.
+[2026-06-15 01:26:21] [realtime_chotot.R] - INFO: Phát hiện 0 URL mới cần cào.
+[2026-06-15 01:26:21] [realtime_chotot.R] - INFO: Không có URL mới. Kết thúc.
+[2026-06-15 01:26:21] [realtime_chotot.R] - INFO: Đã đóng session.
+[2026-06-15 01:27:33] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-15 01:27:36] [realtime_chotot.R] - INFO: Kiểm tra trang 1...
+[2026-06-15 01:27:47] [realtime_chotot.R] - INFO: Trang 1: URL cuối đã có trong DB → so ngược từng URL.
+[2026-06-15 01:27:47] [realtime_chotot.R] - INFO: Phát hiện 0 URL mới cần cào.
+[2026-06-15 01:27:47] [realtime_chotot.R] - INFO: Không có URL mới. Kết thúc.
+[2026-06-15 01:27:47] [realtime_chotot.R] - INFO: Đã đóng session.
+[2026-06-15 01:29:27] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-15 01:29:27] [web_scraping/run_realtime.R] - INFO: Task disabled: web_scraping/script/realtime/realtime_chotot.R — skipping.
+[2026-06-15 01:29:27] [web_scraping/run_realtime.R] - INFO: Task disabled: web_scraping/script/realtime/realtime_banxehoicu.R — skipping.
+[2026-06-15 01:29:27] [realtime_bonbanh.R] - INFO: === Bắt đầu realtime BonBanh ===
+[2026-06-15 01:29:27] [realtime_bonbanh.R] - INFO: Kiểm tra trang 1...
+[2026-06-15 01:29:28] [realtime_bonbanh.R] - INFO: Trang 1: URL cuối đã có trong DB → tìm được 2/20 URL mới.
+[2026-06-15 01:29:28] [realtime_bonbanh.R] - INFO: Phát hiện 2 URL mới.
+[2026-06-15 01:29:28] [realtime_bonbanh.R] - INFO: Đã ghi 2 URL mới vào đầu: web_scraping/data/raw/meta/urls_bonbanh.txt
+[2026-06-15 01:29:39] [web_scraping/run_pipeline.R] - INFO: Starting full pipeline. RUN_SCRAPE=FALSE
+[2026-06-15 01:29:39] [web_scraping/script/clean/clean_chotot.R] - INFO: === Bắt đầu cleaning dữ liệu Chợ Tốt ===
+[2026-06-15 01:29:40] [web_scraping/script/clean/clean_chotot.R] - INFO: Đọc được 19447 dòng từ web_scraping/data/raw/data_chotot_raw.csv
+[2026-06-15 01:33:44] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-15 01:33:44] [web_scraping/run_realtime.R] - INFO: Task disabled: web_scraping/script/realtime/realtime_chotot.R — skipping.
+[2026-06-15 01:33:44] [web_scraping/run_realtime.R] - INFO: Task disabled: web_scraping/script/realtime/realtime_banxehoicu.R — skipping.
+[2026-06-15 01:33:44] [realtime_bonbanh.R] - INFO: === Bắt đầu realtime BonBanh ===
+[2026-06-15 01:33:44] [realtime_bonbanh.R] - INFO: Kiểm tra trang 1...
+[2026-06-15 01:33:45] [realtime_bonbanh.R] - INFO: Trang 1: URL cuối đã có trong DB → tìm được 0/20 URL mới.
+[2026-06-15 01:33:45] [realtime_bonbanh.R] - INFO: Phát hiện 0 URL mới.
+[2026-06-15 01:33:45] [realtime_bonbanh.R] - INFO: Không có URL mới. Kết thúc.
+[2026-06-15 01:33:45] [realtime_bonbanh.R] - INFO: === Bắt đầu realtime BonBanh ===
+[2026-06-15 01:33:45] [realtime_bonbanh.R] - INFO: Kiểm tra trang 1...
+[2026-06-15 01:33:45] [realtime_bonbanh.R] - INFO: Trang 1: URL cuối đã có trong DB → tìm được 0/20 URL mới.
+[2026-06-15 01:33:45] [realtime_bonbanh.R] - INFO: Phát hiện 0 URL mới.
+[2026-06-15 01:33:45] [realtime_bonbanh.R] - INFO: Không có URL mới. Kết thúc.
+[2026-06-15 01:33:45] [web_scraping/run_realtime.R] - INFO: Real-time update cycle completed with 0 new rows.
+[2026-06-15 01:33:45] [web_scraping/run_realtime.R] - INFO: Khong co dong moi, giu nguyen web_scraping/data/master_data.csv.
+[2026-06-15 01:34:11] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-15 01:34:11] [web_scraping/run_realtime.R] - INFO: Task disabled: web_scraping/script/realtime/realtime_chotot.R — skipping.
+[2026-06-15 01:34:11] [web_scraping/run_realtime.R] - INFO: Task disabled: web_scraping/script/realtime/realtime_banxehoicu.R — skipping.
+[2026-06-15 01:34:11] [realtime_bonbanh.R] - INFO: === Bắt đầu realtime BonBanh ===
+[2026-06-15 01:34:11] [realtime_bonbanh.R] - INFO: Kiểm tra trang 1...
+[2026-06-15 01:34:11] [realtime_bonbanh.R] - INFO: Trang 1: URL cuối đã có trong DB → tìm được 0/20 URL mới.
+[2026-06-15 01:34:11] [realtime_bonbanh.R] - INFO: Phát hiện 0 URL mới.
+[2026-06-15 01:34:11] [realtime_bonbanh.R] - INFO: Không có URL mới. Kết thúc.
+[2026-06-15 01:34:11] [web_scraping/run_realtime.R] - INFO: Real-time update cycle completed with 0 new rows.
+[2026-06-15 01:34:11] [web_scraping/run_realtime.R] - INFO: Khong co dong moi, giu nguyen web_scraping/data/master_data.csv.
+[2026-06-15 01:40:04] [scrap_chotot.R] - INFO: Launching headless Chrome browser
+[2026-06-15 01:40:06] [scrap_chotot.R] - INFO: Browser session ready.
+[2026-06-15 01:40:06] [scrap_chotot.R] - INFO: Checkpoint: last completed page = 900. Starting from page 901.
+[2026-06-15 01:40:06] [scrap_chotot.R] - INFO: urlnum checkpoint: last flushed URL index = 19777. STEP B will resume from #19778.
+[2026-06-15 01:40:06] [scrap_chotot.R] - INFO: === Step A+C: Collecting listing URLs ===
+[2026-06-15 01:40:06] [scrap_chotot.R] - INFO: Reached session page limit (900). Stopping URL collection.
+[2026-06-15 01:40:06] [scrap_chotot.R] - INFO: Total new listing URLs collected this session: 0
+[2026-06-15 01:40:06] [scrap_chotot.R] - INFO: Loaded 19777 total URLs from file.
+[2026-06-15 01:40:06] [scrap_chotot.R] - INFO: === Step B: Scraping detail pages ===
+[2026-06-15 01:40:06] [scrap_chotot.R] - INFO: Resuming from car #19778 (skipping first 19777 already flushed).
+[2026-06-15 01:40:06] [scrap_chotot.R] - INFO: Session scraped 0 new records. Appended directly to: web_scraping/data/raw/data_chotot_raw.csv
+[2026-06-15 01:40:06] [scrap_chotot.R] - INFO: === Scrape complete ===
+[2026-06-15 01:40:50] [web_scraping/run_pipeline.R] - INFO: Starting full pipeline. RUN_SCRAPE=FALSE
+[2026-06-15 01:40:50] [web_scraping/script/clean/clean_chotot.R] - INFO: === Bắt đầu cleaning dữ liệu Chợ Tốt ===
+[2026-06-15 01:40:50] [web_scraping/script/clean/clean_chotot.R] - INFO: Đọc được 19447 dòng từ web_scraping/data/raw/data_chotot_raw.csv
+[2026-06-15 01:41:17] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-15 01:41:17] [scrap_chotot.R] - INFO: Launching headless Chrome browser
+[2026-06-15 01:41:19] [scrap_chotot.R] - INFO: Browser session ready.
+[2026-06-15 01:41:19] [scrap_chotot.R] - INFO: Checkpoint: last completed page = 900. Starting from page 901.
+[2026-06-15 01:41:19] [scrap_chotot.R] - INFO: urlnum checkpoint: last flushed URL index = 19777. STEP B will resume from #19778.
+[2026-06-15 01:41:19] [scrap_chotot.R] - INFO: === Step A+C: Collecting listing URLs ===
+[2026-06-15 01:41:19] [scrap_chotot.R] - INFO: Reached session page limit (900). Stopping URL collection.
+[2026-06-15 01:41:19] [scrap_chotot.R] - INFO: Total new listing URLs collected this session: 0
+[2026-06-15 01:41:19] [scrap_chotot.R] - INFO: Loaded 19777 total URLs from file.
+[2026-06-15 01:41:19] [scrap_chotot.R] - INFO: === Step B: Scraping detail pages ===
+[2026-06-15 01:41:19] [scrap_chotot.R] - INFO: Resuming from car #19778 (skipping first 19777 already flushed).
+[2026-06-15 01:41:19] [scrap_chotot.R] - INFO: Session scraped 0 new records. Appended directly to: web_scraping/data/raw/data_chotot_raw.csv
+[2026-06-15 01:41:19] [scrap_chotot.R] - INFO: === Scrape complete ===
+[2026-06-15 01:41:19] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-15 01:41:21] [realtime_chotot.R] - INFO: Kiểm tra trang 1...
+[2026-06-15 01:41:33] [realtime_chotot.R] - INFO: Trang 1: URL cuối đã có trong DB → so ngược từng URL.
+[2026-06-15 01:41:33] [realtime_chotot.R] - INFO: Phát hiện 0 URL mới cần cào.
+[2026-06-15 01:41:33] [realtime_chotot.R] - INFO: Không có URL mới. Kết thúc.
+[2026-06-15 01:41:33] [realtime_chotot.R] - INFO: Đã đóng session.
+[2026-06-15 01:41:33] [scrap_chotot.R] - INFO: Task disabled: web_scraping/script/realtime/realtime_banxehoicu.R — skipping.
+[2026-06-15 01:41:33] [realtime_bonbanh.R] - INFO: === Bắt đầu realtime BonBanh ===
+[2026-06-15 01:41:33] [realtime_bonbanh.R] - INFO: Kiểm tra trang 1...
+[2026-06-15 01:41:34] [realtime_bonbanh.R] - INFO: Trang 1: URL cuối đã có trong DB → tìm được 0/20 URL mới.
+[2026-06-15 01:41:34] [realtime_bonbanh.R] - INFO: Phát hiện 0 URL mới.
+[2026-06-15 01:41:34] [realtime_bonbanh.R] - INFO: Không có URL mới. Kết thúc.
+[2026-06-15 01:41:34] [scrap_chotot.R] - INFO: Real-time update cycle completed with 0 new rows.
+[2026-06-15 01:41:34] [scrap_chotot.R] - INFO: Khong co dong moi, giu nguyen web_scraping/data/master_data.csv.
+[2026-06-15 01:41:46] [scrap_chotot.R] - INFO: Launching headless Chrome browser
+[2026-06-15 01:41:48] [scrap_chotot.R] - INFO: Browser session ready.
+[2026-06-15 01:41:48] [scrap_chotot.R] - INFO: Checkpoint: last completed page = 900. Starting from page 901.
+[2026-06-15 01:41:48] [scrap_chotot.R] - INFO: urlnum checkpoint: last flushed URL index = 19777. STEP B will resume from #19778.
+[2026-06-15 01:41:48] [scrap_chotot.R] - INFO: === Step A+C: Collecting listing URLs ===
+[2026-06-15 01:41:49] [scrap_chotot.R] - INFO: Reached session page limit (900). Stopping URL collection.
+[2026-06-15 01:41:49] [scrap_chotot.R] - INFO: Total new listing URLs collected this session: 0
+[2026-06-15 01:41:49] [scrap_chotot.R] - INFO: Loaded 19777 total URLs from file.
+[2026-06-15 01:41:49] [scrap_chotot.R] - INFO: === Step B: Scraping detail pages ===
+[2026-06-15 01:41:49] [scrap_chotot.R] - INFO: Resuming from car #19778 (skipping first 19777 already flushed).
+[2026-06-15 01:41:49] [scrap_chotot.R] - INFO: Session scraped 0 new records. Appended directly to: web_scraping/data/raw/data_chotot_raw.csv
+[2026-06-15 01:41:49] [scrap_chotot.R] - INFO: === Scrape complete ===
+[2026-06-15 01:45:36] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-15 01:45:36] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-15 01:45:38] [realtime_chotot.R] - INFO: Kiểm tra trang 1...
+[2026-06-15 01:45:55] [web_scraping/run_pipeline.R] - INFO: Starting full pipeline. RUN_SCRAPE=FALSE
+[2026-06-15 01:45:55] [web_scraping/script/clean/clean_chotot.R] - INFO: === Bắt đầu cleaning dữ liệu Chợ Tốt ===
+[2026-06-15 01:45:56] [web_scraping/script/clean/clean_chotot.R] - INFO: Đọc được 19447 dòng từ web_scraping/data/raw/data_chotot_raw.csv

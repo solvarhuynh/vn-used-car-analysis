@@ -6,12 +6,18 @@
 #   - Cào trang 1 (20 URL), so ngược từ URL cuối lên URL đầu với DB
 #   - Nếu URL cuối cùng của trang CHƯA có trong DB → cả trang chưa cào → sang trang 2
 #   - Nếu URL cuối đã có → so từng URL từ cuối lên, dừng khi gặp URL đã có
-#   - Ghi URLs mới vào urls_chotot.txt (prepend - mới nhất ở đầu file, không ghi đè)
+#   - Ghi URLs mới vào CUỐI urls_chotot.txt (append, không prepend, không ghi đè)
+#     -> bắt buộc append vì Step B của scrap_chotot.R dùng checkpoint dạng
+#        "đã xử lý N dòng đầu file" để resume; prepend sẽ làm lệch vị trí
+#        toàn bộ URL cũ và khiến chúng bị bỏ qua vĩnh viễn.
 #   - Cào chi tiết từng URL mới → data/realtime/data_chotot_rt.csv
 #   - INSERT OR IGNORE vào init_db/data_chotot.db và master_data.db
 #
 # Output: web_scraping/data/realtime/data_chotot_rt.csv
 # ==============================================================================
+# Lưu ý: việc dò đường dẫn Chrome/Edge (CHROMOTE_CHROME) đã được xử lý trong
+# scrap_chotot.R (đặt ngoài guard REALTIME_MODE) nên sẽ tự chạy khi source()
+# bên dưới, không cần lặp lại ở đây.
 
 suppressPackageStartupMessages({
   library(chromote)
@@ -78,6 +84,22 @@ url_in_db <- function(con, url) {
   nrow(res) > 0
 }
 
+# ── INSERT OR IGNORE 1 dòng (tránh lỗi UNIQUE constraint khi URL đã tồn tại) ──
+# dbWriteTable(..., append = TRUE) không hỗ trợ "OR IGNORE" nên nếu URL đã có
+# trong bảng sẽ throw lỗi UNIQUE constraint. Dùng dbExecute với câu lệnh
+# INSERT OR IGNORE thay thế. Trả về số dòng thực sự được insert (0 nếu đã tồn tại).
+insert_or_ignore <- function(con, table, df) {
+  df <- as.data.frame(df, stringsAsFactors = FALSE)  # tránh lỗi [[i,j]] với tibble
+  cols <- names(df)
+  placeholders <- paste(rep("?", length(cols)), collapse = ", ")
+  sql <- sprintf("INSERT OR IGNORE INTO %s (%s) VALUES (%s)",
+                  table, paste(sprintf('"%s"', cols), collapse = ", "), placeholders)
+  # Lấy từng cột (df[[i]]) rồi lấy phần tử đầu ([[1]]) -> an toàn cho cả
+  # tibble và data.frame, tránh lỗi "Can't use matrix-style subsetting in [["
+  params <- lapply(seq_along(cols), function(i) df[[i]][[1]])
+  DBI::dbExecute(con, sql, params = params)
+}
+
 # ── Main realtime function ────────────────────────────────────────────────────
 run_realtime_chotot <- function(con_master = NULL) {
   log_message(SCRIPT_NAME, "=== Bắt đầu realtime Chợ Tốt ===")
@@ -85,10 +107,29 @@ run_realtime_chotot <- function(con_master = NULL) {
 
   # Kết nối DB
   owns_master <- is.null(con_master)
+  master_conns_created <- list()
   if (owns_master) {
     con_master <- DBI::dbConnect(RSQLite::SQLite(), MASTER_DB)
-    on.exit(DBI::dbDisconnect(con_master), add = TRUE)
+    master_conns_created[[length(master_conns_created) + 1L]] <- con_master
   }
+  on.exit({
+    for (cc in master_conns_created) {
+      if (DBI::dbIsValid(cc)) DBI::dbDisconnect(cc)
+    }
+  }, add = TRUE)
+
+  # Tự reconnect master DB nếu connection bị đóng/invalid giữa chừng
+  # (vd: do code sourced từ scrap_chotot.R mở/đóng connection riêng làm
+  # "Invalid or closed connection" khi insert)
+  ensure_master_con <- function(con) {
+    if (is.null(con) || !DBI::dbIsValid(con)) {
+      new_con <- DBI::dbConnect(RSQLite::SQLite(), MASTER_DB)
+      master_conns_created[[length(master_conns_created) + 1L]] <<- new_con
+      return(new_con)
+    }
+    con
+  }
+
   # Init DB riêng của chotot
   if (!file.exists(INIT_DB_FILE)) {
     log_message(SCRIPT_NAME, paste("Không tìm thấy init DB:", INIT_DB_FILE), "ERROR")
@@ -144,14 +185,21 @@ run_realtime_chotot <- function(con_master = NULL) {
     return(0L)
   }
 
-  # ── BƯỚC 2: Ghi URLs mới vào urls_chotot.txt (prepend - mới ở đầu) ──────────
-  # Đảo ngược new_urls để URL mới nhất (trang 1, vị trí 1) lên đầu file
-  urls_to_write <- rev(new_urls)
+  # ── BƯỚC 2: Ghi URLs mới vào CUỐI urls_chotot.txt (append) ──────────────────
+  # QUAN TRỌNG: phải APPEND vào cuối file, KHÔNG prepend.
+  # scrap_chotot.R (Step B) dùng checkpoint dạng "đã xử lý N dòng đầu của file"
+  # để biết phải resume từ đâu (log: "checkpoint = 19777 → resume từ #19778").
+  # Nếu prepend URL mới lên đầu, toàn bộ URL cũ sẽ bị lệch vị trí xuống dưới
+  # -> checkpoint cũ trỏ sai chỗ -> một phần URL cũ bị bỏ qua vĩnh viễn
+  # (đây là nguyên nhân "ghi đè URL cũ"). Append vào cuối giữ nguyên vị trí
+  # các URL cũ (checkpoint cũ vẫn đúng), URL mới sẽ được Step B xử lý ở
+  # lượt kế tiếp.
+  urls_to_write <- rev(new_urls)  # giữ thứ tự mới nhất -> cũ nhất
   dir.create(dirname(URLS_FILE), recursive = TRUE, showWarnings = FALSE)
-  existing_content <- if (file.exists(URLS_FILE)) readLines(URLS_FILE, warn = FALSE) else character(0)
-  existing_content <- existing_content[nchar(trimws(existing_content)) > 0]
-  writeLines(c(urls_to_write, existing_content), URLS_FILE)
-  log_message(SCRIPT_NAME, sprintf("Đã ghi %d URL mới vào đầu file: %s", n_new, URLS_FILE))
+  con_urls <- file(URLS_FILE, open = if (file.exists(URLS_FILE)) "a" else "w")
+  writeLines(urls_to_write, con_urls)
+  close(con_urls)
+  log_message(SCRIPT_NAME, sprintf("Đã ghi %d URL mới vào cuối file: %s", n_new, URLS_FILE))
 
   # ── BƯỚC 3: Cào chi tiết từng URL mới ───────────────────────────────────────
   assign("b", sess, envir = .GlobalEnv)
@@ -177,21 +225,28 @@ run_realtime_chotot <- function(con_master = NULL) {
 
     batch[[length(batch) + 1]] <- clean_row
 
-    # INSERT vào init_db
-    tryCatch({
-      DBI::dbWriteTable(con_init, TABLE_NAME, clean_row, append = TRUE, row.names = FALSE)
+    # INSERT vào init_db (OR IGNORE -> không lỗi khi URL đã tồn tại)
+    n_ins_init <- tryCatch(
+      insert_or_ignore(con_init, TABLE_NAME, clean_row),
+      error = function(e) {
+        log_message(SCRIPT_NAME, sprintf("init_db INSERT lỗi (%s): %s", u, e$message), "WARN")
+        0L
+      })
+    if (n_ins_init > 0) {
       inserted_init <- inserted_init + 1L
-    }, error = function(e) {
-      log_message(SCRIPT_NAME, sprintf("init_db INSERT lỗi (%s): %s", u, e$message), "WARN")
-    })
+    } else {
+      log_message(SCRIPT_NAME, sprintf("init_db: URL đã tồn tại, bỏ qua (%s)", u))
+    }
 
-    # INSERT vào master_data.db
-    tryCatch({
-      DBI::dbWriteTable(con_master, TABLE_NAME, clean_row, append = TRUE, row.names = FALSE)
-      inserted_master <- inserted_master + 1L
-    }, error = function(e) {
-      log_message(SCRIPT_NAME, sprintf("master INSERT lỗi (%s): %s", u, e$message), "WARN")
-    })
+    # INSERT vào master_data.db (tự reconnect nếu connection bị đóng/invalid)
+    con_master <- ensure_master_con(con_master)
+    n_ins_master <- tryCatch(
+      insert_or_ignore(con_master, TABLE_NAME, clean_row),
+      error = function(e) {
+        log_message(SCRIPT_NAME, sprintf("master INSERT lỗi (%s): %s", u, e$message), "WARN")
+        0L
+      })
+    if (n_ins_master > 0) inserted_master <- inserted_master + 1L
 
     Sys.sleep(runif(1, 1, 2))
   }
@@ -212,4 +267,7 @@ run_realtime_chotot <- function(con_master = NULL) {
     "=== Hoàn thành. %d URL mới | %d dòng vào init_db | %d dòng vào master ===",
     n_new, inserted_init, inserted_master))
   return(inserted_init)
+}
+if (!exists("RUN_REALTIME_ORCHESTRATOR") || !isTRUE(RUN_REALTIME_ORCHESTRATOR)) {
+  run_realtime_chotot()
 }

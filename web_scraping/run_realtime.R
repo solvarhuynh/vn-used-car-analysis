@@ -35,6 +35,11 @@ realtime_scripts <- list(
 con <- DBI::dbConnect(RSQLite::SQLite(), DB_FILE)
 on.exit(DBI::dbDisconnect(con), add = TRUE)
 
+# Báo cho các script realtime_*.R biết đang được orchestrator source() —
+# để chúng KHÔNG tự gọi hàm run_realtime_xxx() của mình (tránh chạy 2 lần:
+# 1 lần tự động khi source, 1 lần do for loop dưới gọi get(task$fn)(con)).
+RUN_REALTIME_ORCHESTRATOR <- TRUE
+
 inserted_total <- 0L
 
 for (task in realtime_scripts) {

@@ -266,3 +266,6 @@ run_realtime_bonbanh <- function(con_master = NULL) {
     n_new, inserted_init, inserted_master))
   return(inserted_init)
 }
+if (!exists("RUN_REALTIME_ORCHESTRATOR") || !isTRUE(RUN_REALTIME_ORCHESTRATOR)) {
+  run_realtime_bonbanh()
+}
