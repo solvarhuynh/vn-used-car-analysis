@@ -7815,3 +7815,143 @@
 [2026-06-15 01:45:55] [web_scraping/run_pipeline.R] - INFO: Starting full pipeline. RUN_SCRAPE=FALSE
 [2026-06-15 01:45:55] [web_scraping/script/clean/clean_chotot.R] - INFO: === Bắt đầu cleaning dữ liệu Chợ Tốt ===
 [2026-06-15 01:45:56] [web_scraping/script/clean/clean_chotot.R] - INFO: Đọc được 19447 dòng từ web_scraping/data/raw/data_chotot_raw.csv
+[2026-06-15 01:49:13] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-15 01:49:13] [scrap_chotot.R] - INFO: Launching headless Chrome browser
+[2026-06-15 01:49:17] [scrap_chotot.R] - INFO: Browser session ready.
+[2026-06-15 01:49:17] [scrap_chotot.R] - INFO: Checkpoint: last completed page = 900. Starting from page 901.
+[2026-06-15 01:49:17] [scrap_chotot.R] - INFO: urlnum checkpoint: last flushed URL index = 19777. STEP B will resume from #19778.
+[2026-06-15 01:49:17] [scrap_chotot.R] - INFO: === Step A+C: Collecting listing URLs ===
+[2026-06-15 01:49:17] [scrap_chotot.R] - INFO: Reached session page limit (900). Stopping URL collection.
+[2026-06-15 01:49:18] [scrap_chotot.R] - INFO: Total new listing URLs collected this session: 0
+[2026-06-15 01:49:18] [scrap_chotot.R] - INFO: Loaded 19777 total URLs from file.
+[2026-06-15 01:49:18] [scrap_chotot.R] - INFO: Launching headless Chrome browser
+[2026-06-15 01:49:20] [scrap_chotot.R] - INFO: Browser session ready.
+[2026-06-15 01:49:20] [scrap_chotot.R] - INFO: Checkpoint: last completed page = 900. Starting from page 901.
+[2026-06-15 01:49:20] [scrap_chotot.R] - INFO: urlnum checkpoint: last flushed URL index = 19777. STEP B will resume from #19778.
+[2026-06-15 01:49:20] [scrap_chotot.R] - INFO: === Step A+C: Collecting listing URLs ===
+[2026-06-15 01:49:20] [scrap_chotot.R] - INFO: Reached session page limit (900). Stopping URL collection.
+[2026-06-15 01:49:20] [scrap_chotot.R] - INFO: Total new listing URLs collected this session: 0
+[2026-06-15 01:49:20] [scrap_chotot.R] - INFO: Loaded 19777 total URLs from file.
+[2026-06-15 01:49:20] [scrap_chotot.R] - INFO: === Step B: Scraping detail pages ===
+[2026-06-15 01:49:20] [scrap_chotot.R] - INFO: Resuming from car #19778 (skipping first 19777 already flushed).
+[2026-06-15 01:49:20] [scrap_chotot.R] - INFO: Session scraped 0 new records. Appended directly to: web_scraping/data/raw/data_chotot_raw.csv
+[2026-06-15 01:49:20] [scrap_chotot.R] - INFO: === Scrape complete ===
+[2026-06-15 01:49:20] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-15 01:49:23] [realtime_chotot.R] - INFO: Kiểm tra trang 1...
+[2026-06-15 01:49:37] [realtime_chotot.R] - INFO: Trang 1: URL cuối đã có trong DB → so ngược từng URL.
+[2026-06-15 01:49:37] [realtime_chotot.R] - INFO: Phát hiện 0 URL mới cần cào.
+[2026-06-15 01:49:37] [realtime_chotot.R] - INFO: Không có URL mới. Kết thúc.
+[2026-06-15 01:49:37] [realtime_chotot.R] - INFO: Đã đóng session.
+[2026-06-15 01:49:37] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-15 01:49:40] [realtime_chotot.R] - INFO: Kiểm tra trang 1...
+[2026-06-15 01:49:53] [realtime_chotot.R] - INFO: Trang 1: URL cuối đã có trong DB → so ngược từng URL.
+[2026-06-15 01:49:53] [realtime_chotot.R] - INFO: Phát hiện 0 URL mới cần cào.
+[2026-06-15 01:49:53] [realtime_chotot.R] - INFO: Không có URL mới. Kết thúc.
+[2026-06-15 01:49:53] [realtime_chotot.R] - INFO: Đã đóng session.
+[2026-06-15 01:49:53] [web_scraping/run_realtime.R] - INFO: Task disabled: web_scraping/script/realtime/realtime_banxehoicu.R — skipping.
+[2026-06-15 01:49:53] [realtime_bonbanh.R] - INFO: === Bắt đầu realtime BonBanh ===
+[2026-06-15 01:49:53] [realtime_bonbanh.R] - INFO: Kiểm tra trang 1...
+[2026-06-15 01:49:54] [realtime_bonbanh.R] - INFO: Trang 1: URL cuối đã có trong DB → tìm được 0/20 URL mới.
+[2026-06-15 01:49:54] [realtime_bonbanh.R] - INFO: Phát hiện 0 URL mới.
+[2026-06-15 01:49:54] [realtime_bonbanh.R] - INFO: Không có URL mới. Kết thúc.
+[2026-06-15 01:49:54] [realtime_bonbanh.R] - INFO: === Bắt đầu realtime BonBanh ===
+[2026-06-15 01:49:54] [realtime_bonbanh.R] - INFO: Kiểm tra trang 1...
+[2026-06-15 01:49:55] [realtime_bonbanh.R] - INFO: Trang 1: URL cuối đã có trong DB → tìm được 0/20 URL mới.
+[2026-06-15 01:49:55] [realtime_bonbanh.R] - INFO: Phát hiện 0 URL mới.
+[2026-06-15 01:49:55] [realtime_bonbanh.R] - INFO: Không có URL mới. Kết thúc.
+[2026-06-15 01:49:55] [web_scraping/run_realtime.R] - INFO: Real-time update cycle completed with 0 new rows.
+[2026-06-15 01:49:55] [web_scraping/run_realtime.R] - INFO: Khong co dong moi, giu nguyen web_scraping/data/master_data.csv.
+[2026-06-15 01:51:45] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-15 01:51:45] [scrap_chotot.R] - INFO: Launching headless Chrome browser
+[2026-06-15 01:51:48] [scrap_chotot.R] - INFO: Browser session ready.
+[2026-06-15 01:51:48] [scrap_chotot.R] - INFO: Checkpoint: last completed page = 900. Starting from page 901.
+[2026-06-15 01:51:48] [scrap_chotot.R] - INFO: urlnum checkpoint: last flushed URL index = 19777. STEP B will resume from #19778.
+[2026-06-15 01:51:48] [scrap_chotot.R] - INFO: === Step A+C: Collecting listing URLs ===
+[2026-06-15 01:51:49] [scrap_chotot.R] - INFO: Reached session page limit (900). Stopping URL collection.
+[2026-06-15 01:51:49] [scrap_chotot.R] - INFO: Total new listing URLs collected this session: 0
+[2026-06-15 01:51:49] [scrap_chotot.R] - INFO: Loaded 19777 total URLs from file.
+[2026-06-15 01:51:49] [scrap_chotot.R] - INFO: Launching headless Chrome browser
+[2026-06-15 02:00:28] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-15 02:00:28] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-15 02:00:31] [realtime_chotot.R] - INFO: Kiểm tra trang 1...
+[2026-06-15 02:00:44] [realtime_chotot.R] - INFO: Trang 1: URL cuối đã có trong DB → so ngược từng URL.
+[2026-06-15 02:00:44] [realtime_chotot.R] - INFO: Phát hiện 0 URL mới cần cào.
+[2026-06-15 02:00:44] [realtime_chotot.R] - INFO: Không có URL mới. Kết thúc.
+[2026-06-15 02:00:44] [realtime_chotot.R] - INFO: Đã đóng session.
+[2026-06-15 02:00:44] [scrap_chotot.R] - INFO: Task disabled: web_scraping/script/realtime/realtime_banxehoicu.R — skipping.
+[2026-06-15 02:00:44] [realtime_bonbanh.R] - INFO: === Bắt đầu realtime BonBanh ===
+[2026-06-15 02:00:44] [realtime_bonbanh.R] - INFO: Kiểm tra trang 1...
+[2026-06-15 02:00:45] [realtime_bonbanh.R] - INFO: Trang 1: URL cuối đã có trong DB → tìm được 0/20 URL mới.
+[2026-06-15 02:00:45] [realtime_bonbanh.R] - INFO: Phát hiện 0 URL mới.
+[2026-06-15 02:00:45] [realtime_bonbanh.R] - INFO: Không có URL mới. Kết thúc.
+[2026-06-15 02:00:45] [scrap_chotot.R] - INFO: Real-time update cycle completed with 0 new rows.
+[2026-06-15 02:00:45] [scrap_chotot.R] - INFO: Khong co dong moi, giu nguyen web_scraping/data/master_data.csv.
+[2026-06-15 02:01:11] [web_scraping/run_pipeline.R] - INFO: Starting full pipeline. RUN_SCRAPE=FALSE
+[2026-06-15 02:01:11] [web_scraping/script/clean/clean_chotot.R] - INFO: === Bắt đầu cleaning dữ liệu Chợ Tốt ===
+[2026-06-15 02:01:11] [web_scraping/script/clean/clean_chotot.R] - INFO: Đọc được 19447 dòng từ web_scraping/data/raw/data_chotot_raw.csv
+[2026-06-15 02:01:41] [web_scraping/run_pipeline.R] - INFO: Starting full pipeline. RUN_SCRAPE=FALSE
+[2026-06-15 02:01:41] [web_scraping/script/clean/clean_chotot.R] - INFO: === Bắt đầu cleaning dữ liệu Chợ Tốt ===
+[2026-06-15 02:01:41] [web_scraping/script/clean/clean_chotot.R] - INFO: Đọc được 19447 dòng từ web_scraping/data/raw/data_chotot_raw.csv
+[2026-06-15 02:02:15] [web_scraping/script/clean/clean_chotot.R] - WARN: Đã xóa 6 dòng lỗi scrape (thiếu brand/posted_date).
+[2026-06-15 02:02:15] [web_scraping/script/clean/clean_chotot.R] - WARN: Đã xóa 442 dòng trùng URL hoặc không hợp lệ.
+[2026-06-15 02:02:15] [utils.R] - INFO: Written 18999 rows to: web_scraping/data/clean/data_chotot_clean.csv
+[2026-06-15 02:02:15] [web_scraping/script/clean/clean_chotot.R] - INFO: === Hoàn thành. Input: 19447 | Sau clean: 18999 dòng | Lưu tại: web_scraping/data/clean/data_chotot_clean.csv ===
+[2026-06-15 02:02:15] [web_scraping/script/clean/clean_banxehoicu.R] - INFO: === Bắt đầu cleaning dữ liệu Bán Xe Hơi Cũ ===
+[2026-06-15 02:02:15] [web_scraping/script/clean/clean_banxehoicu.R] - INFO: Đọc được 19 dòng từ web_scraping/data/raw/data_banxehoicu_raw.csv
+[2026-06-15 02:02:16] [utils.R] - INFO: Written 0 rows to: web_scraping/data/clean/data_banxehoicu_clean.csv
+[2026-06-15 02:02:16] [web_scraping/script/clean/clean_banxehoicu.R] - INFO: === Hoàn thành. 0 dòng đã được lưu tại: web_scraping/data/clean/data_banxehoicu_clean.csv ===
+[2026-06-15 02:02:16] [web_scraping/script/clean/clean_bonbanh.R] - INFO: === Bắt đầu cleaning dữ liệu BonBanh ===
+[2026-06-15 02:02:16] [web_scraping/script/clean/clean_bonbanh.R] - INFO: Đọc được 6371 dòng từ web_scraping/data/raw/data_bonbanh_raw.csv
+[2026-06-15 02:03:30] [web_scraping/run_pipeline.R] - INFO: Starting full pipeline. RUN_SCRAPE=FALSE
+[2026-06-15 02:03:30] [web_scraping/script/clean/clean_chotot.R] - INFO: === Bắt đầu cleaning dữ liệu Chợ Tốt ===
+[2026-06-15 02:03:30] [web_scraping/script/clean/clean_chotot.R] - INFO: Đọc được 19447 dòng từ web_scraping/data/raw/data_chotot_raw.csv
+[2026-06-15 02:06:34] [web_scraping/run_pipeline.R] - INFO: Starting full pipeline. RUN_SCRAPE=TRUE
+[2026-06-15 02:06:34] [web_scraping/script/scrap/scrap_banxehoicu.R] - INFO: Starting BanXeHoiCu scraping for 5 page(s).
+[2026-06-15 02:06:35] [web_scraping/script/scrap/scrap_banxehoicu.R] - INFO: Collected 19 detail URLs.
+[2026-06-15 02:06:35] [web_scraping/script/scrap/scrap_banxehoicu.R] - INFO: Scraping [1/19] https://banxehoicu.vn/ban-oto-cu/hyundai/grand-i10/ban-xe-hyundai-grand-i10-1.2-hatchback-mt-doi-2017-mau-bac-gia-175-trieu-103607.html
+[2026-06-15 02:06:37] [web_scraping/script/scrap/scrap_banxehoicu.R] - INFO: Scraping [2/19] https://banxehoicu.vn/ban-oto-cu/toyota/camry/ban-xe-toyota-camry-2.4g-doi-2004-mau-den-gia-160-trieu-103318.html
+[2026-06-15 02:06:38] [web_scraping/script/scrap/scrap_banxehoicu.R] - INFO: Scraping [3/19] https://banxehoicu.vn/ban-oto-cu/toyota/camry/ban-xe-toyota-camry-2.5g-doi-2013-mau-den-gia-430-trieu-103213.html
+[2026-06-15 02:06:40] [web_scraping/script/scrap/scrap_banxehoicu.R] - INFO: Scraping [4/19] https://banxehoicu.vn/ban-oto-cu/toyota/fortuner/ban-xe-toyota-fortuner-2.4g-4x2-doi-2019-mau-den-nhap-khau-nhat-ban-gia-750-trieu-103277.html
+[2026-06-15 02:06:41] [web_scraping/script/scrap/scrap_banxehoicu.R] - INFO: Scraping [5/19] https://banxehoicu.vn/ban-oto-cu/hyundai/santa-fe/ban-xe-hyundai-santa-fe-2.2-dau-doi-2012-mau-bac-nhap-khau-han-quoc-gia-385-trieu-103082.html
+[2026-06-15 02:06:43] [web_scraping/script/scrap/scrap_banxehoicu.R] - INFO: Scraping [6/19] https://banxehoicu.vn/ban-oto-cu/honda/cr-v/ban-xe-honda-cr-v-2.4-at-doi-2013-mau-nau-gia-410-trieu-102385.html
+[2026-06-15 02:06:44] [web_scraping/script/scrap/scrap_banxehoicu.R] - INFO: Scraping [7/19] https://banxehoicu.vn/ban-oto-cu/hyundai/santa-fe/ban-xe-hyundai-santa-fe-slx-doi-2009-mau-bac-nhap-khau-han-quoc-gia-340-trieu-102189.html
+[2026-06-15 02:06:46] [web_scraping/script/scrap/scrap_banxehoicu.R] - INFO: Scraping [8/19] https://banxehoicu.vn/ban-oto-cu/hyundai/santa-fe/ban-xe-hyundai-santa-fe-slx-doi-2009-mau-bac-gia-340-trieu-101694.html
+[2026-06-15 02:12:06] [web_scraping/run_pipeline.R] - INFO: Starting full pipeline. RUN_SCRAPE=TRUE
+[2026-06-15 02:12:06] [scrap_chotot.R] - INFO: Launching headless Chrome browser
+[2026-06-15 02:12:08] [scrap_chotot.R] - INFO: Browser session ready.
+[2026-06-15 02:12:08] [scrap_chotot.R] - INFO: Checkpoint: last completed page = 0. Starting from page 1.
+[2026-06-15 02:12:08] [scrap_chotot.R] - INFO: urlnum checkpoint: last flushed URL index = 19777. STEP B will resume from #19778.
+[2026-06-15 02:12:08] [scrap_chotot.R] - INFO: === Step A+C: Collecting listing URLs ===
+[2026-06-15 02:12:08] [scrap_chotot.R] - INFO: Navigating to listing page 1: https://xe.chotot.com/mua-ban-oto
+[2026-06-15 02:13:26] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-15 02:13:26] [scrap_chotot.R] - INFO: Launching headless Chrome browser
+[2026-06-15 02:13:28] [scrap_chotot.R] - INFO: Browser session ready.
+[2026-06-15 02:13:28] [scrap_chotot.R] - INFO: Checkpoint: last completed page = 900. Starting from page 901.
+[2026-06-15 02:13:28] [scrap_chotot.R] - INFO: urlnum checkpoint: last flushed URL index = 19777. STEP B will resume from #19778.
+[2026-06-15 02:13:28] [scrap_chotot.R] - INFO: === Step A+C: Collecting listing URLs ===
+[2026-06-15 02:13:28] [scrap_chotot.R] - INFO: Reached session page limit (900). Stopping URL collection.
+[2026-06-15 02:13:28] [scrap_chotot.R] - INFO: Total new listing URLs collected this session: 0
+[2026-06-15 02:13:28] [scrap_chotot.R] - INFO: Loaded 19777 total URLs from file.
+[2026-06-15 02:13:28] [scrap_chotot.R] - INFO: === Step B: Scraping detail pages ===
+[2026-06-15 02:13:28] [scrap_chotot.R] - INFO: Resuming from car #19778 (skipping first 19777 already flushed).
+[2026-06-15 02:13:28] [scrap_chotot.R] - INFO: Session scraped 0 new records. Appended directly to: web_scraping/data/raw/data_chotot_raw.csv
+[2026-06-15 02:13:28] [scrap_chotot.R] - INFO: === Scrape complete ===
+[2026-06-15 02:13:28] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-15 02:13:30] [realtime_chotot.R] - INFO: Kiểm tra trang 1...
+[2026-06-15 02:18:01] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-15 02:18:01] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-15 02:18:05] [realtime_chotot.R] - INFO: Kiểm tra trang 1...
+[2026-06-15 02:18:11] [web_scraping/run_pipeline.R] - INFO: Starting full pipeline. RUN_SCRAPE=TRUE
+[2026-06-15 02:18:12] [scrap_chotot.R] - INFO: Launching headless Chrome browser
+[2026-06-15 02:18:15] [scrap_chotot.R] - INFO: Browser session ready.
+[2026-06-15 02:18:15] [scrap_chotot.R] - INFO: Checkpoint: last completed page = 900. Starting from page 901.
+[2026-06-15 02:18:15] [scrap_chotot.R] - INFO: urlnum checkpoint: last flushed URL index = 19777. STEP B will resume from #19778.
+[2026-06-15 02:18:15] [scrap_chotot.R] - INFO: === Step A+C: Collecting listing URLs ===
+[2026-06-15 02:18:15] [scrap_chotot.R] - INFO: Reached session page limit (900). Stopping URL collection.
+[2026-06-15 02:18:15] [scrap_chotot.R] - INFO: Total new listing URLs collected this session: 0
+[2026-06-15 02:18:15] [scrap_chotot.R] - INFO: Loaded 19777 total URLs from file.
+[2026-06-15 02:18:15] [scrap_chotot.R] - INFO: === Step B: Scraping detail pages ===
+[2026-06-15 02:18:15] [scrap_chotot.R] - INFO: Resuming from car #19778 (skipping first 19777 already flushed).
+[2026-06-15 02:18:15] [scrap_chotot.R] - INFO: Session scraped 0 new records. Appended directly to: web_scraping/data/raw/data_chotot_raw.csv
+[2026-06-15 02:18:15] [scrap_chotot.R] - INFO: === Scrape complete ===
+[2026-06-15 02:18:15] [web_scraping/script/scrap/scrap_banxehoicu.R] - INFO: Starting BanXeHoiCu scraping for 5 page(s).

@@ -9,7 +9,11 @@
 source("web_scraping/script/utils.R")
 
 SCRIPT_NAME <- "web_scraping/run_pipeline.R"
-RUN_SCRAPE <- tolower(Sys.getenv("RUN_SCRAPE", "false")) %in% c("true", "1", "yes", "y")
+RUN_SCRAPE <- tolower(Sys.getenv("RUN_SCRAPE", "true")) %in% c("true", "1", "yes", "y")
+
+# Tắt cờ realtime (nếu bị kẹt trong bộ nhớ do chạy thử) để ép các file scrap chạy luồng batch
+assign(".is_realtime_sourcing", FALSE, envir = globalenv())
+assign("REALTIME_MODE", FALSE, envir = globalenv())
 
 ensure_directories()
 log_message(SCRIPT_NAME, sprintf("Starting full pipeline. RUN_SCRAPE=%s", RUN_SCRAPE))

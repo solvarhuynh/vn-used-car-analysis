@@ -95,7 +95,6 @@ read_checkpoint <- function() {
   if (is.na(val)) 0L else val
 }
 
-# ── Dọn dẹp Chrome/Edge process cũ còn sót lại ────────────────────────────────
 # ── Session helpers ────────────────────────────────────────────────────────────
 make_session <- function(max_tries = 3) {
   for (attempt in seq_len(max_tries)) {
@@ -143,14 +142,11 @@ safe_navigate <- function(sess, url, timeout = 25000) {
   result
 }
 
-# ── Guard: nếu được source từ realtime_chotot.R thì chỉ load hàm/config, không chạy Step A/B ──
-if (!exists("REALTIME_MODE") || !isTRUE(REALTIME_MODE)) {
-
-# ── 3. Launch headless browser ────────────────────────────────────────────────
-log_msg("INFO", "Launching headless Chrome browser")
-
+# ── Dò đường dẫn Chrome/Edge/Brave và set CHROMOTE_CHROME ─────────────────────
+# Đặt NGOÀI guard REALTIME_MODE để cả scrap_chotot.R (chạy trực tiếp) và
+# realtime_chotot.R (source với REALTIME_MODE = TRUE) đều dùng chung logic này.
 if (Sys.getenv("CHROMOTE_CHROME") == "") {
-  candidates <- c(
+  chrome_candidates <- c(
     "C:/Program Files/Google/Chrome/Application/chrome.exe",
     "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe",
     file.path(Sys.getenv("LOCALAPPDATA"), "Google/Chrome/Application/chrome.exe"),
@@ -159,139 +155,17 @@ if (Sys.getenv("CHROMOTE_CHROME") == "") {
     "C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe",
     "C:/Program Files/Chromium/Application/chromium.exe"
   )
-  found <- candidates[file.exists(candidates)]
-  if (length(found) > 0) {
-    Sys.setenv(CHROMOTE_CHROME = found[1])
+  found_browser <- chrome_candidates[file.exists(chrome_candidates)]
+  if (length(found_browser) > 0) {
+    Sys.setenv(CHROMOTE_CHROME = found_browser[1])
   } else {
     stop("Chrome/Edge not found. Set CHROMOTE_CHROME env variable manually.")
   }
 }
 
-b <- make_session()
-log_msg("INFO", "Browser session ready.")
-
-# ── 4. Đọc checkpoint & urlnum ────────────────────────────────────────────────
-if (!dir.exists(OUTPUT_DIR)) dir.create(OUTPUT_DIR, recursive = TRUE)
-
-last_checkpoint <- read_checkpoint()
-start_page      <- last_checkpoint + 1L
-log_msg("INFO", sprintf("Checkpoint: last completed page = %d. Starting from page %d.",
-                        last_checkpoint, start_page))
-
-# Đọc index URL cuối đã flush thành công → dùng để resume STEP B
-last_urlnum <- read_urlnum()
-start_from  <- last_urlnum + 1L
-if (last_urlnum > 0L) {
-  log_msg("INFO", sprintf("urlnum checkpoint: last flushed URL index = %d. STEP B will resume from #%d.",
-                          last_urlnum, start_from))
-}
-
-# ── 5. Collect listing URLs across all pages ──────────────────────────────────
-log_msg("INFO", "=== Step A+C: Collecting listing URLs ===")
-
-all_urls           <- character(0)
-page_num           <- start_page
-pages_this_session <- 0L
-
-repeat {
-  # Giới hạn trang mỗi session
-  if (page_num >= MAX_PAGES) {
-    log_msg("INFO", sprintf("Reached session page limit (%d). Stopping URL collection.", MAX_PAGES))
-    break
-  }
-
-  page_url <- if (page_num == 1) LISTING_URL else
-    paste0(LISTING_URL, "?page=", page_num)
-
-  log_msg("INFO", sprintf("Navigating to listing page %d: %s", page_num, page_url))
-
-  nav_result <- safe_navigate(b, page_url)
-  b <- nav_result$session
-
-  if (!nav_result$ok || is.null(b)) {
-    log_msg("WARN", sprintf("Failed to navigate to page %d. Stopping URL collection.", page_num))
-    break
-  }
-
-  # Scroll to bottom to trigger lazy-load
-  for (i in seq_len(5)) {
-    tryCatch(b$Runtime$evaluate('window.scrollBy(0, window.innerHeight)'),
-             error = function(e) NULL)
-    Sys.sleep(1)
-  }
-
-  # Get rendered HTML
-  html_content <- tryCatch(
-    b$Runtime$evaluate('document.documentElement.outerHTML')$result$value,
-    error = function(e) NULL
-  )
-  if (is.null(html_content)) {
-    log_msg("WARN", sprintf("Page %d: Could not get HTML. Skipping.", page_num))
-    break
-  }
-
-  page_html <- tryCatch(read_html(html_content, encoding = "UTF-8"), error = function(e) NULL)
-  if (is.null(page_html)) {
-    log_msg("WARN", sprintf("Page %d: Could not parse HTML. Skipping.", page_num))
-    break
-  }
-
-  links <- page_html |>
-    html_nodes("a.c15fd2pn") |>
-    html_attr("href") |>
-    na.omit()
-
-  links <- links[str_detect(links, "/\\d+\\.htm")]
-  links <- str_replace(links, "#.*$", "")
-  full_links <- unique(paste0(BASE_URL, links))
-
-  if (length(full_links) == 0) {
-    log_msg("INFO", sprintf("No listings found on page %d — stopping pagination", page_num))
-    break
-  }
-
-  new_only <- setdiff(full_links, all_urls)  # tránh trùng trong session này
-  all_urls <- c(all_urls, new_only)
-
-  log_msg("INFO", sprintf("Page %d: +%d new URLs | Total: %d",
-                          page_num, length(new_only), length(all_urls)))
-
-  # Ghi URLs mới vào file ngay lập tức (append, không mất khi mất kết nối)
-  if (length(new_only) > 0) {
-    write(new_only, file = URLS_FILE, append = TRUE, sep = "\n")
-  }
-
-  # Lưu checkpoint sau mỗi trang thành công
-  save_checkpoint(page_num)
-  pages_this_session <- pages_this_session + 1L
-  page_num <- page_num + 1L
-
-  # Nghỉ mỗi SLEEP_INTERVAL trang
-  if (pages_this_session %% SLEEP_INTERVAL == 0) {
-    sleep_sec <- runif(1, SLEEP_DURATION[1], SLEEP_DURATION[2])
-    log_msg("INFO", sprintf("Pausing %.1f seconds after %d pages...", sleep_sec, pages_this_session))
-    Sys.sleep(sleep_sec)
-  } else {
-    Sys.sleep(runif(1, 1.5, 2.5))
-  }
-}
-
-log_msg("INFO", sprintf("Total new listing URLs collected this session: %d", length(all_urls)))
-
-# Đọc lại toàn bộ URLs từ file (gồm cả session trước)
-if (file.exists(URLS_FILE)) {
-  saved_urls <- tryCatch(readLines(URLS_FILE, warn = FALSE), error = function(e) character(0))
-  all_urls   <- unique(saved_urls[nchar(saved_urls) > 0])
-  log_msg("INFO", sprintf("Loaded %d total URLs from file.", length(all_urls)))
-}
-
-if (length(all_urls) == 0) {
-  log_msg("WARN", "No URLs found. Nothing to scrape.")
-  close_session(b)
-  stop("No listing URLs found.")
-}
-
 # ── 6. Scrape a single car detail page ────────────────────────────────────────
+# Đặt NGOÀI guard REALTIME_MODE vì realtime_chotot.R cần gọi hàm này trực tiếp
+# (thông qua biến session toàn cục `b`).
 scrape_car <- function(url) {
   tryCatch({
     nav_result <- safe_navigate(b, url)
@@ -513,30 +387,13 @@ scrape_car <- function(url) {
   })
 }
 
-# --- LUỒNG THỰC THI CHÍNH ---
-# ── Guard: nếu được source từ realtime_chotot.R thì chỉ load hàm/config, không chạy Step A/B ──
-if (!exists(".is_realtime_sourcing", inherits = TRUE) || !isTRUE(.is_realtime_sourcing)) {
+# --- LUỒNG THỰC THI CHÍNH (Step A + Step B) ---
+# ── Guard: nếu được source từ realtime_chotot.R (REALTIME_MODE = TRUE) thì
+#    chỉ load hàm/config ở trên, KHÔNG chạy Step A/B ──
+if (!exists("REALTIME_MODE") || !isTRUE(REALTIME_MODE)) {
 
 # ── 3. Launch headless browser ────────────────────────────────────────────────
 log_msg("INFO", "Launching headless Chrome browser")
-
-if (Sys.getenv("CHROMOTE_CHROME") == "") {
-  candidates <- c(
-    "C:/Program Files/Google/Chrome/Application/chrome.exe",
-    "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe",
-    file.path(Sys.getenv("LOCALAPPDATA"), "Google/Chrome/Application/chrome.exe"),
-    "C:/Program Files/Microsoft/Edge/Application/msedge.exe",
-    "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe",
-    "C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe",
-    "C:/Program Files/Chromium/Application/chromium.exe"
-  )
-  found <- candidates[file.exists(candidates)]
-  if (length(found) > 0) {
-    Sys.setenv(CHROMOTE_CHROME = found[1])
-  } else {
-    stop("Chrome/Edge not found. Set CHROMOTE_CHROME env variable manually.")
-  }
-}
 
 b <- make_session()
 log_msg("INFO", "Browser session ready.")
@@ -752,4 +609,3 @@ log_msg("INFO", "=== Scrape complete ===")
 close_session(b)
 
 } # end REALTIME_MODE guard
-} # end .is_realtime_sourcing guard

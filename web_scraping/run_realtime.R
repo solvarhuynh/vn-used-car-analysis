@@ -40,6 +40,10 @@ on.exit(DBI::dbDisconnect(con), add = TRUE)
 # 1 lần tự động khi source, 1 lần do for loop dưới gọi get(task$fn)(con)).
 RUN_REALTIME_ORCHESTRATOR <- TRUE
 
+# Bật cờ realtime ở mức Global để các file scrap_xxx.R bỏ qua luồng batch (Step A+B)
+assign(".is_realtime_sourcing", TRUE, envir = globalenv())
+assign("REALTIME_MODE", TRUE, envir = globalenv())
+
 inserted_total <- 0L
 
 for (task in realtime_scripts) {
@@ -89,3 +93,7 @@ if (inserted_total > 0) {
 cat("\n========================================\n")
 cat("   REAL-TIME UPDATE COMPLETED\n")
 cat("========================================\n")
+
+# Dọn dẹp cờ để tránh ảnh hưởng đến các tác vụ khác trong cùng phiên làm việc
+assign(".is_realtime_sourcing", FALSE, envir = globalenv())
+assign("REALTIME_MODE", FALSE, envir = globalenv())
