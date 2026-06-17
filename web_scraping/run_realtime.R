@@ -13,8 +13,9 @@ suppressPackageStartupMessages({
 source("web_scraping/script/utils.R")
 
 SCRIPT_NAME <- "web_scraping/run_realtime.R"
-DB_FILE <- "web_scraping/data/master_data.db"
-OUTPUT_CSV <- "web_scraping/data/master_data.csv"
+DB_FILE     <- "web_scraping/data/master_data.db"
+OUTPUT_CSV  <- "web_scraping/data/master_data.csv"
+INIT_DB_DIR <- "web_scraping/data/init_db"
 
 log_message(SCRIPT_NAME, "Starting real-time delta fetch cycle.")
 cat("\n========================================\n")
@@ -78,16 +79,45 @@ for (task in realtime_scripts) {
 
 log_message(SCRIPT_NAME, sprintf("Real-time update cycle completed with %d new rows.", inserted_total))
 
-# Dong bo lai master_data.csv tu master_data.db de app Shiny doc duoc du lieu moi
+# Rebuild master_data.csv từ tất cả init_db files (an toàn hơn append từng dòng)
+# Với ~27k dòng thì gộp lại nhanh hơn nhiều so với đọc từ master_data.db khi có lỗi kết nối
 if (inserted_total > 0) {
-  master_df <- DBI::dbReadTable(con, "car_listings") %>%
-    align_schema() %>%
-    dplyr::arrange(source, brand, model, year)
+  db_files <- list.files(INIT_DB_DIR, pattern = "\\.db$", full.names = TRUE)
 
-  readr::write_csv(master_df, OUTPUT_CSV, na = "")
-  log_message(SCRIPT_NAME, sprintf("Da cap nhat %s (%d dong).", OUTPUT_CSV, nrow(master_df)))
+  if (length(db_files) == 0) {
+    log_message(SCRIPT_NAME, "Không tìm thấy file .db nào trong init_db/", "WARN")
+  } else {
+    all_data <- lapply(db_files, function(db_path) {
+      tryCatch({
+        con_src <- DBI::dbConnect(RSQLite::SQLite(), db_path)
+        on.exit(DBI::dbDisconnect(con_src), add = TRUE)
+        if (DBI::dbExistsTable(con_src, "car_listings")) {
+          DBI::dbReadTable(con_src, "car_listings")
+        } else {
+          NULL
+        }
+      }, error = function(e) {
+        log_message(SCRIPT_NAME, sprintf("Không đọc được %s: %s", basename(db_path), e$message), "WARN")
+        NULL
+      })
+    })
+
+    all_data <- Filter(Negate(is.null), all_data)
+
+    if (length(all_data) > 0) {
+      master_df <- dplyr::bind_rows(all_data) %>%
+        align_schema() %>%
+        dplyr::arrange(source, brand, model, year)
+
+      readr::write_csv(master_df, OUTPUT_CSV, na = "")
+      log_message(SCRIPT_NAME, sprintf("Đã rebuild %s từ %d init_db files (%d dòng).",
+        OUTPUT_CSV, length(db_files), nrow(master_df)))
+    } else {
+      log_message(SCRIPT_NAME, "Không có data nào đọc được từ init_db.", "WARN")
+    }
+  }
 } else {
-  log_message(SCRIPT_NAME, sprintf("Khong co dong moi, giu nguyen %s.", OUTPUT_CSV))
+  log_message(SCRIPT_NAME, sprintf("Không có dòng mới, giữ nguyên %s.", OUTPUT_CSV))
 }
 
 cat("\n========================================\n")

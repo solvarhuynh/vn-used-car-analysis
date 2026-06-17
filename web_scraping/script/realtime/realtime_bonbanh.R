@@ -131,6 +131,23 @@ scrape_detail_bonbanh <- function(url) {
   )
 }
 
+# ── INSERT OR IGNORE 1 dòng (tránh lỗi UNIQUE constraint khi URL đã tồn tại) ──
+insert_or_ignore <- function(con, table, df) {
+  df <- as.data.frame(df, stringsAsFactors = FALSE)
+  cols <- names(df)
+  placeholders <- paste(rep("?", length(cols)), collapse = ", ")
+  sql <- sprintf("INSERT OR IGNORE INTO %s (%s) VALUES (%s)",
+                  table, paste(sprintf('"%s"', cols), collapse = ", "), placeholders)
+  params <- lapply(seq_along(cols), function(i) df[[i]][[1]])
+  DBI::dbExecute(con, sql, params = params)
+}
+
+# ── Rút gọn URL để log cho gọn ───────────────────────────────────────────────
+short_url <- function(url) {
+  u <- sub("^https?://[^/]+/", "", url)
+  if (nchar(u) > 60) paste0(substr(u, 1, 57), "...") else u
+}
+
 # ── Kiểm tra URL có trong DB chưa ────────────────────────────────────────────
 url_in_db <- function(con, url) {
   res <- DBI::dbGetQuery(con,
@@ -146,10 +163,27 @@ run_realtime_bonbanh <- function(con_master = NULL) {
   dir.create(dirname(URLS_FILE), recursive = TRUE, showWarnings = FALSE)
 
   owns_master <- is.null(con_master)
+  master_conns_created <- list()
   if (owns_master) {
     con_master <- DBI::dbConnect(RSQLite::SQLite(), MASTER_DB)
-    on.exit(DBI::dbDisconnect(con_master), add = TRUE)
+    master_conns_created[[1L]] <- con_master
   }
+  on.exit({
+    for (cc in master_conns_created) {
+      if (DBI::dbIsValid(cc)) DBI::dbDisconnect(cc)
+    }
+  }, add = TRUE)
+
+  # Tự reconnect master DB nếu connection bị đóng/invalid giữa chừng
+  ensure_master_con <- function(con) {
+    if (is.null(con) || !DBI::dbIsValid(con)) {
+      new_con <- DBI::dbConnect(RSQLite::SQLite(), MASTER_DB)
+      master_conns_created[[length(master_conns_created) + 1L]] <<- new_con
+      return(new_con)
+    }
+    con
+  }
+
   if (!file.exists(INIT_DB_FILE)) {
     log_message(SCRIPT_NAME, paste("Không tìm thấy init DB:", INIT_DB_FILE), "ERROR")
     return(0L)
@@ -218,10 +252,10 @@ run_realtime_bonbanh <- function(con_master = NULL) {
 
   for (i in seq_along(new_urls)) {
     u <- new_urls[i]
-    cat(sprintf("[bonbanh-rt] %d/%d: %s\n", i, n_new, u))
+    cat(sprintf("[bonbanh-rt] %d/%d\n", i, n_new))
 
     raw_row <- tryCatch(scrape_detail_bonbanh(u), error = function(e) {
-      log_message(SCRIPT_NAME, sprintf("Lỗi cào %s: %s", u, e$message), "WARN")
+      log_message(SCRIPT_NAME, sprintf("Lỗi cào %s: %s", short_url(u), e$message), "WARN")
       NULL
     })
     if (is.null(raw_row)) next
@@ -233,19 +267,28 @@ run_realtime_bonbanh <- function(con_master = NULL) {
 
     batch[[length(batch) + 1]] <- clean_row
 
-    tryCatch({
-      DBI::dbWriteTable(con_init, TABLE_NAME, clean_row, append = TRUE, row.names = FALSE)
+    # INSERT vào init_db (OR IGNORE -> không lỗi khi URL đã tồn tại)
+    n_ins_init <- tryCatch(
+      insert_or_ignore(con_init, TABLE_NAME, clean_row),
+      error = function(e) {
+        log_message(SCRIPT_NAME, sprintf("init_db INSERT lỗi (%s): %s", short_url(u), e$message), "WARN")
+        0L
+      })
+    if (n_ins_init > 0) {
       inserted_init <- inserted_init + 1L
-    }, error = function(e) {
-      log_message(SCRIPT_NAME, sprintf("init_db INSERT lỗi (%s): %s", u, e$message), "WARN")
-    })
+    } else {
+      log_message(SCRIPT_NAME, sprintf("init_db: URL đã tồn tại, bỏ qua (%s)", short_url(u)))
+    }
 
-    tryCatch({
-      DBI::dbWriteTable(con_master, TABLE_NAME, clean_row, append = TRUE, row.names = FALSE)
-      inserted_master <- inserted_master + 1L
-    }, error = function(e) {
-      log_message(SCRIPT_NAME, sprintf("master INSERT lỗi (%s): %s", u, e$message), "WARN")
-    })
+    # INSERT vào master_data.db (tự reconnect nếu connection bị đóng/invalid)
+    con_master <- ensure_master_con(con_master)
+    n_ins_master <- tryCatch(
+      insert_or_ignore(con_master, TABLE_NAME, clean_row),
+      error = function(e) {
+        log_message(SCRIPT_NAME, sprintf("master INSERT lỗi (%s): %s", short_url(u), e$message), "WARN")
+        0L
+      })
+    if (n_ins_master > 0) inserted_master <- inserted_master + 1L
 
     Sys.sleep(runif(1, 0.8, 1.5))
   }
@@ -266,6 +309,6 @@ run_realtime_bonbanh <- function(con_master = NULL) {
     n_new, inserted_init, inserted_master))
   return(inserted_init)
 }
-if (!exists("RUN_REALTIME_ORCHESTRATOR") || !isTRUE(RUN_REALTIME_ORCHESTRATOR)) {
-  run_realtime_bonbanh()
-}
+# if (!exists("RUN_REALTIME_ORCHESTRATOR") || !isTRUE(RUN_REALTIME_ORCHESTRATOR)) {
+#   run_realtime_bonbanh()
+# }

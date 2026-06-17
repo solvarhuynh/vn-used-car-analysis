@@ -45,6 +45,12 @@ RT_OUTPUT_DIR <- "web_scraping/data/realtime"
 RT_OUTPUT     <- file.path(RT_OUTPUT_DIR, "data_chotot_rt.csv")
 MAX_PAGES_RT  <- 10   # Giới hạn số trang kiểm tra trong 1 lần realtime
 
+# ── Rút gọn URL để log cho gọn ───────────────────────────────────────────────
+short_url <- function(url) {
+  u <- sub("^https?://[^/]+/", "", url)
+  if (nchar(u) > 60) paste0(substr(u, 1, 57), "...") else u
+}
+
 # ── Lấy URLs từ 1 trang listing ───────────────────────────────────────────────
 fetch_listing_page_urls <- function(sess, page_num) {
   url <- if (page_num == 1) LISTING_URL else
@@ -209,10 +215,10 @@ run_realtime_chotot <- function(con_master = NULL) {
 
   for (i in seq_along(new_urls)) {
     u <- new_urls[i]
-    cat(sprintf("[chotot-rt] %d/%d: %s\n", i, n_new, u))
+    cat(sprintf("[chotot-rt] %d/%d\n", i, n_new))
 
     raw_row <- tryCatch(scrape_car(u), error = function(e) {
-      log_message(SCRIPT_NAME, sprintf("Lỗi cào %s: %s", u, e$message), "WARN")
+      log_message(SCRIPT_NAME, sprintf("Lỗi cào %s: %s", short_url(u), e$message), "WARN")
       NULL
     })
 
@@ -229,13 +235,13 @@ run_realtime_chotot <- function(con_master = NULL) {
     n_ins_init <- tryCatch(
       insert_or_ignore(con_init, TABLE_NAME, clean_row),
       error = function(e) {
-        log_message(SCRIPT_NAME, sprintf("init_db INSERT lỗi (%s): %s", u, e$message), "WARN")
+        log_message(SCRIPT_NAME, sprintf("init_db INSERT lỗi (%s): %s", short_url(u), e$message), "WARN")
         0L
       })
     if (n_ins_init > 0) {
       inserted_init <- inserted_init + 1L
     } else {
-      log_message(SCRIPT_NAME, sprintf("init_db: URL đã tồn tại, bỏ qua (%s)", u))
+      log_message(SCRIPT_NAME, sprintf("init_db: URL đã tồn tại, bỏ qua (%s)", short_url(u)))
     }
 
     # INSERT vào master_data.db (tự reconnect nếu connection bị đóng/invalid)
@@ -243,7 +249,7 @@ run_realtime_chotot <- function(con_master = NULL) {
     n_ins_master <- tryCatch(
       insert_or_ignore(con_master, TABLE_NAME, clean_row),
       error = function(e) {
-        log_message(SCRIPT_NAME, sprintf("master INSERT lỗi (%s): %s", u, e$message), "WARN")
+        log_message(SCRIPT_NAME, sprintf("master INSERT lỗi (%s): %s", short_url(u), e$message), "WARN")
         0L
       })
     if (n_ins_master > 0) inserted_master <- inserted_master + 1L
@@ -268,6 +274,6 @@ run_realtime_chotot <- function(con_master = NULL) {
     n_new, inserted_init, inserted_master))
   return(inserted_init)
 }
-if (!exists("RUN_REALTIME_ORCHESTRATOR") || !isTRUE(RUN_REALTIME_ORCHESTRATOR)) {
-  run_realtime_chotot()
-}
+# if (!exists("RUN_REALTIME_ORCHESTRATOR") || !isTRUE(RUN_REALTIME_ORCHESTRATOR)) {
+#   run_realtime_chotot()
+# }
