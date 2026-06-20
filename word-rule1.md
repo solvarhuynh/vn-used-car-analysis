@@ -645,20 +645,24 @@ Nên đưa các đoạn sau vào phụ lục nếu cần:
 
 Nội dung cần triển khai/viết gì ở đây?
 
-Phần này mô tả phân công công việc trong nhóm tối đa 4 thành viên. Có thể trình bày theo bảng.
+Phần này mô tả phân công công việc trong nhóm gồm 5 thành viên. Do đồ án tập trung mạnh vào các khối lượng phân tích cốt lõi (Clean - XSTK, Visual, Model), các thành viên đều tham gia phối hợp chéo vào các phần này để đảm bảo khối lượng học thuật đồng đều.
 
 Gợi ý phân công:
 
 | Thành viên | Vai trò chính | Công việc cụ thể | File/module phụ trách |
-|---|---|---|---|
-| Thành viên 1 | Scraping & Database | Xây dựng script cào dữ liệu, chuẩn hóa nguồn raw, khởi tạo SQLite, gộp master data | `web_scraping/script/scrap/`, `web_scraping/script/init_database.R`, `web_scraping/script/merge_data.R` |
-| Thành viên 2 | Cleaning, Realtime & Data Quality | Làm sạch dữ liệu từng nguồn, kiểm tra chất lượng, xử lý realtime update | `web_scraping/script/clean/`, `web_scraping/script/validate_clean_data.R`, `web_scraping/run_realtime.R`, `web_scraping/script/realtime/` |
-| Thành viên 3 | Visualization & Statistical Analysis | Thống kê mô tả, xác suất, kiểm định, xây dựng biểu đồ và nhận xét | `insights/descriptive_analytics/`, `insights/visualization/Visualization.R`, `insights/visualization/plots/` |
-| Thành viên 4 | Machine Learning, Shiny App & Report | Xây dựng mô hình hồi quy/phân cụm/cây quyết định, tích hợp Shiny App, tổng hợp báo cáo | `machine_learning/`, `app.R`, file báo cáo cuối |
+|-----------------|-----------------|-----------------|-----------------|
+| Thành viên 1 | Data Scraping & Core Clean | - Xây dựng script cào dữ liệu (Chợ Tốt, BonBanh).<br>- Chuẩn hóa cấu trúc thô và tham gia pha **Làm sạch dữ liệu (Clean)**.<br>- Phối hợp xây dựng **Mô hình 2 (Clustering)** để phân nhóm phân khúc xe. | `web_scraping/script/scrap/`, `web_scraping/script/clean/clean_chotot.R`, `machine_learning/model2_clustering.R` |
+
+| Thành viên 2 | Pipeline Automation & Data Quality | - Xây dựng script cào dữ liệu (Bán Xe Hơi Cũ), thiết lập **Realtime update**.<br>- Chủ trì **Validate dữ liệu sạch**, xử lý trùng lặp và outliers.<br>- Phối hợp xây dựng **Mô hình 3 (Decision Tree)** để phân loại mức giá. | `web_scraping/script/scrap/`, `web_scraping/script/validate_clean_data.R`, `web_scraping/run_realtime.R`, `machine_learning/model3_decision_tree.R` |
+
+| Thành viên 3 | Database & Probability Statistics | - Khởi tạo SQLite, gộp master dữ liệu.<br>- Chủ trì module **Xác suất Thống kê (XSTK)** và thực hiện kiểm định.<br>- Phối hợp xử lý dữ liệu đầu vào cho **Mô hình 1 (Regression)**. | `web_scraping/script/init_database.R`, `web_scraping/script/merge_data.R`, `insights/descriptive_analytics/`, `machine_learning/model1_regression.R` |
+
+| Thành viên 4 | Data Visualization & Predictive Modeling | - Chủ trì thiết kế hệ thống **Trực quan hóa (Visual)** bằng ggplot2/plotly.<br>- Phân tích xu hướng thị trường trên biểu đồ.<br>- Chủ trì huấn luyện và tối ưu **Mô hình 1 (Regression)** dự đoán giá xe. | `insights/visualization/Visualization.R`, `insights/visualization/plots/`, `machine_learning/model1_regression.R` |
+
+| Thành viên 5 | Shiny Application & Advanced Modeling | - Xây dựng cấu trúc tương tác và giao diện **Shiny App**.<br>- Tích hợp dữ liệu và hệ thống biểu đồ lên Web.<br>- Chủ trì huấn luyện **Mô hình 2 (Clustering)** và **Mô hình 3 (Decision Tree)**. | `app.R`, `machine_learning/model2_clustering.R`, `machine_learning/model3_decision_tree.R` |
 
 Cách viết học thuật:
-- Nêu rằng các thành viên phối hợp theo pipeline dữ liệu: thu thập -> xử lý -> phân tích -> mô hình hóa -> ứng dụng -> báo cáo.
-- Nếu nhóm ít hơn 4 người, có thể gộp vai trò; nếu nhóm 1 người, ghi rõ cá nhân thực hiện toàn bộ và chia theo nhóm nhiệm vụ.
+- Báo cáo nhấn mạnh mô hình làm việc cộng tác: Pha xử lý dữ liệu (Clean) gắn liền với cấu trúc cào (Thành viên 1, 2); Pha Phân tích dữ liệu (Visual - XSTK) bổ trợ trực tiếp cho chọn biến; Khối lượng học máy (Model) được chia nhỏ theo thuật toán và tích hợp trực tiếp lên sản phẩm Shiny App (Thành viên 4, 5).
 
 ================================================================================
 10. THAM KHẢO (REFERENCES)
@@ -729,16 +733,21 @@ Gợi ý mẫu:
 
 Nội dung cần triển khai/viết gì ở đây?
 
-Thiết kế bảng đánh giá chéo mức độ đóng góp của từng thành viên. Bảng nên có phần định lượng và định tính.
+Thiết kế bảng đánh giá chéo mức độ đóng góp của từng thành viên. Bảng được mở rộng cấu trúc cho nhóm 5 người, đảm bảo tính minh bạch và ghi nhận đúng vai trò phối hợp module.
 
 11.1. Bảng đánh giá tổng quan
 
 | Thành viên | Tỷ lệ đóng góp (%) | Công việc chính | Ưu điểm | Hạn chế/cần cải thiện | Xác nhận |
-|---|---:|---|---|---|---|
-| Thành viên 1 | [..]% | Scraping, database | [ghi ưu điểm] | [ghi hạn chế] | Đồng ý/Chưa đồng ý |
-| Thành viên 2 | [..]% | Cleaning, realtime, validation | [ghi ưu điểm] | [ghi hạn chế] | Đồng ý/Chưa đồng ý |
-| Thành viên 3 | [..]% | Thống kê, visualization | [ghi ưu điểm] | [ghi hạn chế] | Đồng ý/Chưa đồng ý |
-| Thành viên 4 | [..]% | Machine learning, Shiny App, report | [ghi ưu điểm] | [ghi hạn chế] | Đồng ý/Chưa đồng ý |
+|---------------|---------------|---------------|---------------|---------------|---------------|
+| Thành viên 1 | 20% | Scraping, Clean & Clustering Model | Thu thập dữ liệu ổn định, làm sạch kỹ, đóng góp tốt vào logic phân cụm xe. | Cần chú thích code rõ ràng hơn ở module scraping. | Đồng ý/Chưa đồng ý |
+
+| Thành viên 2 | 20% | Realtime, Quality Validation & Tree Model | Cấu hình realtime nhạy bén, kiểm định chất lượng nghiêm ngặt, đóng góp tốt vào phân loại cây quyết định. | Tốc độ xử lý đồng bộ realtime cần được tối ưu thêm. | Đồng ý/Chưa đồng ý |
+
+| Thành viên 3 | 20% | Database, XSTK & Regression Model | Thiết kế DB tối ưu, tính toán xác suất và kiểm định chính xác, hỗ trợ tốt phần xử lý biến hồi quy. | Cần phân tích sâu hơn ý nghĩa kinh tế của các kết quả kiểm định. | Đồng ý/Chưa đồng ý |
+
+| Thành viên 4 | 20% | Visualization & Regression Model | Biểu đồ trực quan và đẹp mắt, xây dựng mô hình hồi quy dự đoán giá xe có độ chính xác cao. | Cần điều chỉnh giảm bớt các điểm ngoại lai trên boxplot để dễ quan sát hơn. | Đồng ý/Chưa đồng ý |
+
+| Thành viên 5 | 20% | Shiny App, Clustering & Tree Model | Giao diện Web tương tác mượt mà, tối ưu tốt thuật toán phân cụm và cây quyết định trên hệ thống. | Cần bổ sung thêm tài liệu hướng dẫn sử dụng nhanh cho các tính năng trên App. | Đồng ý/Chưa đồng ý |
 
 11.2. Bảng tiêu chí chi tiết
 
@@ -746,41 +755,45 @@ Thiết kế bảng đánh giá chéo mức độ đóng góp của từng thàn
 |---|---|---:|
 | Hoàn thành nhiệm vụ | Mức độ hoàn thành phần được giao đúng hạn | 0-10 |
 | Chất lượng kỹ thuật | Code chạy được, rõ ràng, có cấu trúc, ít lỗi | 0-10 |
-| Chất lượng phân tích | Nhận xét có cơ sở dữ liệu, lập luận hợp lý | 0-10 |
-| Phối hợp nhóm | Chủ động trao đổi, hỗ trợ thành viên khác | 0-10 |
+| Chất lượng phân tích | Nhận xét có cơ sở dữ liệu, lập luận hợp lý (Clean/XSTK/Visual/Model) | 0-10 |
+| Phối hợp nhóm | Chủ động trao đổi, hỗ trợ các thành viên phối hợp module chéo | 0-10 |
 | Đóng góp báo cáo | Tham gia viết, chỉnh sửa, kiểm tra nội dung | 0-10 |
 
 11.3. Mẫu nhận xét từng thành viên
 
 Thành viên 1:
-- Mức độ hoàn thành: [..]%.
-- Ưu điểm: [ví dụ: chủ động xây dựng pipeline scraping, xử lý tốt dữ liệu nhiều nguồn].
-- Hạn chế: [ví dụ: cần ghi chú code rõ hơn hoặc bổ sung kiểm thử].
+- Mức độ hoàn thành: 100%.
+- Ưu điểm: Chủ động giải quyết xung đột cấu trúc dữ liệu thô, phối hợp tốt với Thành viên 5 để giải thích kết quả phân cụm K-means.
+- Hạn chế: Cần bổ sung thêm các đoạn log lỗi cho script clean ban đầu.
 
 Thành viên 2:
-- Mức độ hoàn thành: [..]%.
-- Ưu điểm: [ví dụ: xử lý tốt dữ liệu lỗi, xây dựng validation và realtime].
-- Hạn chế: [ví dụ: cần tối ưu tốc độ xử lý hoặc chuẩn hóa thêm tên trường].
+- Mức độ hoàn thành: 100%.
+- Ưu điểm: Xây dựng bộ quy tắc validate chặt chẽ giúp master data sạch hoàn toàn, hỗ trợ Thành viên 5 cấu hình hiệu quả thuật toán cây quyết định.
+- Hạn chế: Cần tối ưu thời gian phản hồi khi script realtime chạy tác vụ gộp dữ liệu.
 
 Thành viên 3:
-- Mức độ hoàn thành: [..]%.
-- Ưu điểm: [ví dụ: biểu đồ trực quan, nhận xét bám sát dữ liệu].
-- Hạn chế: [ví dụ: cần liên hệ sâu hơn giữa biểu đồ và mô hình].
+- Mức độ hoàn thành: 100%.
+- Ưu điểm: Đóng gói dữ liệu SQLite rất khoa học, triển khai các công thức xác suất thực tế, chuẩn bị tốt ma trận biến cho mô hình hồi quy tuyến tính.
+- Hạn chế: Phần viết báo cáo chương XSTK cần diễn giải gãy gọn hơn ở các đoạn kiểm định phức tạp.
 
 Thành viên 4:
-- Mức độ hoàn thành: [..]%.
-- Ưu điểm: [ví dụ: triển khai mô hình học máy, tích hợp Shiny App, tổng hợp báo cáo].
-- Hạn chế: [ví dụ: cần bổ sung kiểm định mô hình hoặc cải thiện giao diện].
+- Mức độ hoàn thành: 100%.
+- Ưu điểm: Làm chủ các thư viện đồ họa mạnh (ggplot2, plotly), làm nổi bật xu hướng giá thị trường và làm mịn tốt sai số của mô hình hồi quy (RMSE, MAE).
+- Hạn chế: Cần đồng bộ màu sắc đồng nhất giữa các biểu đồ tĩnh và biểu đồ tương tác.
+
+Thành viên 5:
+- Mức độ hoàn thành: 100%.
+- Ưu điểm: Thiết kế cấu trúc UI/UX của Shiny App logic, đóng gói thành công các thuật toán phân tích nâng cao (K-means, rpart) lên môi trường web tương tác.
+- Hạn chế: Cần tối ưu hóa phần hiển thị bảng tin (DT) khi lượng bản ghi master data tăng lên.
 
 11.4. Gợi ý tổng tỷ lệ đóng góp
 
-Nếu nhóm 4 người đóng góp tương đương, có thể đặt:
-- Thành viên 1: 25%.
-- Thành viên 2: 25%.
-- Thành viên 3: 25%.
-- Thành viên 4: 25%.
-
-Nếu có khác biệt thực tế, cần điều chỉnh để tổng bằng 100% và có giải thích ngắn gọn, minh bạch.
+Vì khối lượng công việc cốt lõi (Clean, XSTK, Visual, Model) đã được xé nhỏ và phân bổ đan xen đồng đều cho cả 5 người, tỷ lệ đóng góp của các thành viên được thống nhất chia đều:
+- Thành viên 1: 20%.
+- Thành viên 2: 20%.
+- Thành viên 3: 20%.
+- Thành viên 4: 20%.
+- Thành viên 5: 20%.
 
 ================================================================================
 KẾT THÚC KHUNG SƯỜN
