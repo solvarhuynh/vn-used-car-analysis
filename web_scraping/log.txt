@@ -8307,3 +8307,93 @@
 [2026-06-19 13:10:58] [realtime_bonbanh.R] - INFO: === Hoàn thành. 48 URL mới | 43 vào init_db | 43 vào master ===
 [2026-06-19 13:10:58] [scrap_chotot.R] - INFO: Real-time update cycle completed with 96 new rows.
 [2026-06-19 13:10:59] [scrap_chotot.R] - INFO: Đã rebuild web_scraping/data/master_data.csv từ 3 init_db files (27304 dòng).
+[2026-06-19 20:16:03] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-19 20:16:04] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-19 20:16:07] [realtime_chotot.R] - INFO: Kiểm tra trang 1...
+[2026-06-19 20:16:23] [realtime_chotot.R] - INFO: Trang 1: URL cuối chưa có trong DB → lấy hết 28 URL, sang trang tiếp.
+[2026-06-19 20:16:23] [realtime_chotot.R] - INFO: Kiểm tra trang 2...
+[2026-06-19 20:16:34] [realtime_chotot.R] - INFO: Trang 2: URL cuối đã có trong DB → so ngược từng URL.
+[2026-06-19 20:16:34] [realtime_chotot.R] - INFO: Phát hiện 28 URL mới cần cào.
+[2026-06-19 20:16:34] [realtime_chotot.R] - INFO: Đã ghi 28 URL mới vào cuối file: web_scraping/data/raw/meta/urls_chotot.txt
+[2026-06-19 20:16:40] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-huyen-hong-ngu-dong-thap/132055535.htm)
+[2026-06-19 20:16:57] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-thanh-pho-thuan-an-binh-duong/132594119.htm)
+[2026-06-19 20:17:13] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-quan-bac-tu-liem-ha-noi/132638596.htm)
+[2026-06-19 20:17:28] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-quan-binh-tan-tp-ho-chi-minh/126755071.htm)
+[2026-06-19 20:17:37] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-quan-7-tp-ho-chi-minh/131084095.htm)
+[2026-06-19 20:17:59] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-quan-tan-binh-tp-ho-chi-minh/132777217.htm)
+[2026-06-19 20:18:06] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-quan-cau-giay-ha-noi/132742971.htm)
+[2026-06-19 20:18:19] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-quan-hoang-mai-ha-noi/132614813.htm?ad_delive...)
+[2026-06-19 20:18:27] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-quan-4-tp-ho-chi-minh/131417592.htm)
+[2026-06-19 20:18:40] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-quan-7-tp-ho-chi-minh/131180210.htm)
+[2026-06-19 20:18:48] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-quan-dong-da-ha-noi/124488962.htm?ad_delivery...)
+[2026-06-19 20:18:56] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-huyen-soc-son-ha-noi/131194284.htm)
+[2026-06-19 20:19:05] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-thanh-pho-bien-hoa-dong-nai/132363174.htm)
+[2026-06-19 20:19:14] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-quan-binh-tan-tp-ho-chi-minh/132767034.htm)
+[2026-06-19 20:19:28] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-thanh-pho-thu-duc-tp-ho-chi-minh/132527926.htm)
+[2026-06-19 20:19:44] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-quan-binh-tan-tp-ho-chi-minh/116140612.htm)
+[2026-06-20 04:51:48] [scrap_chotot.R] - WARN: Nav error 'https://xe.chotot.com/mua-ban-oto-thi-xa-ben-cat-binh-duong/132905533.htm': Session has been closed.
+[34mℹ[39m Call session$respawn() to create a new session that connects to the same target. — restarting session
+[2026-06-20 04:52:04] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-thi-xa-ben-cat-binh-duong/132905533.htm)
+[2026-06-20 04:52:12] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-quan-7-tp-ho-chi-minh/131102712.htm)
+[2026-06-20 04:52:25] [realtime_chotot.R] - INFO: Đã ghi 28 dòng vào: web_scraping/data/realtime/data_chotot_rt.csv
+[2026-06-20 04:52:25] [realtime_chotot.R] - INFO: === Hoàn thành. 28 URL mới | 10 dòng vào init_db | 10 dòng vào master ===
+[2026-06-20 04:52:25] [realtime_chotot.R] - INFO: Đã đóng session.
+[2026-06-20 04:52:25] [scrap_chotot.R] - INFO: Task disabled: web_scraping/script/realtime/realtime_banxehoicu.R — skipping.
+[2026-06-20 04:52:25] [realtime_bonbanh.R] - INFO: === Bắt đầu realtime BonBanh ===
+[2026-06-20 04:52:25] [realtime_bonbanh.R] - INFO: Kiểm tra trang 1...
+[2026-06-20 04:52:27] [realtime_bonbanh.R] - INFO: Trang 1: URL cuối chưa có trong DB → lấy 16/20 URL mới.
+[2026-06-20 04:52:28] [realtime_bonbanh.R] - INFO: Kiểm tra trang 2...
+[2026-06-20 04:52:30] [realtime_bonbanh.R] - INFO: Trang 2: URL cuối chưa có trong DB → lấy 10/20 URL mới.
+[2026-06-20 04:52:31] [realtime_bonbanh.R] - INFO: Kiểm tra trang 3...
+[2026-06-20 04:52:32] [realtime_bonbanh.R] - INFO: Trang 3: URL cuối chưa có trong DB → lấy 9/20 URL mới.
+[2026-06-20 04:52:33] [realtime_bonbanh.R] - INFO: Kiểm tra trang 4...
+[2026-06-20 04:52:32] [realtime_bonbanh.R] - INFO: Trang 4: URL cuối đã có trong DB → tìm được 10/20 URL mới.
+[2026-06-20 04:52:32] [realtime_bonbanh.R] - INFO: Phát hiện 45 URL mới.
+[2026-06-20 04:52:32] [realtime_bonbanh.R] - INFO: Đã ghi 45 URL mới vào đầu: web_scraping/data/raw/meta/urls_bonbanh.txt
+[2026-06-20 04:54:03] [realtime_bonbanh.R] - INFO: Đã ghi 43 dòng vào: web_scraping/data/realtime/data_bonbanh_rt.csv
+[2026-06-20 04:54:03] [realtime_bonbanh.R] - INFO: === Hoàn thành. 45 URL mới | 43 vào init_db | 43 vào master ===
+[2026-06-20 04:54:03] [scrap_chotot.R] - INFO: Real-time update cycle completed with 53 new rows.
+[2026-06-20 04:54:04] [scrap_chotot.R] - INFO: Đã rebuild web_scraping/data/master_data.csv từ 3 init_db files (27357 dòng).
+[2026-06-21 02:53:37] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-21 02:53:38] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-21 02:53:42] [realtime_chotot.R] - INFO: Kiểm tra trang 1...
+[2026-06-21 02:53:57] [realtime_chotot.R] - INFO: Trang 1: URL cuối chưa có trong DB → lấy hết 28 URL, sang trang tiếp.
+[2026-06-21 02:53:57] [realtime_chotot.R] - INFO: Kiểm tra trang 2...
+[2026-06-21 02:54:10] [realtime_chotot.R] - INFO: Trang 2: URL cuối đã có trong DB → so ngược từng URL.
+[2026-06-21 02:54:10] [realtime_chotot.R] - INFO: Phát hiện 28 URL mới cần cào.
+[2026-06-21 02:54:10] [realtime_chotot.R] - INFO: Đã ghi 28 URL mới vào cuối file: web_scraping/data/raw/meta/urls_chotot.txt
+[2026-06-21 02:54:17] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-quan-10-tp-ho-chi-minh/132788617.htm)
+[2026-06-21 02:54:34] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-quan-7-tp-ho-chi-minh/132246298.htm)
+[2026-06-21 02:54:41] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-quan-binh-tan-tp-ho-chi-minh/123811127.htm)
+[2026-06-21 02:55:00] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-quan-go-vap-tp-ho-chi-minh/131317447.htm?ad_d...)
+[2026-06-21 02:55:08] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-quan-binh-tan-tp-ho-chi-minh/133055027.htm)
+[2026-06-21 02:55:23] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-thanh-pho-thu-duc-tp-ho-chi-minh/132767665.htm)
+[2026-06-21 02:55:29] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-quan-dong-da-ha-noi/124488962.htm?ad_delivery...)
+[2026-06-21 02:55:38] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-quan-cam-le-da-nang/132571550.htm)
+[2026-06-21 02:55:46] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-thanh-pho-kon-tum-kon-tum/132282403.htm)
+[2026-06-21 02:56:02] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-thanh-pho-thu-duc-tp-ho-chi-minh/130441612.ht...)
+[2026-06-21 02:56:11] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-thanh-pho-thu-duc-tp-ho-chi-minh/132379353.htm)
+[2026-06-21 02:56:24] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-thanh-pho-thu-duc-tp-ho-chi-minh/132649035.htm)
+[2026-06-21 02:56:31] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-quan-phu-nhuan-tp-ho-chi-minh/122559063.htm?a...)
+[2026-06-21 02:56:50] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-quan-7-tp-ho-chi-minh/131426294.htm)
+[2026-06-21 02:57:12] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-quan-12-tp-ho-chi-minh/132418904.htm)
+[2026-06-21 02:57:42] [realtime_chotot.R] - INFO: init_db: URL đã tồn tại, bỏ qua (mua-ban-oto-quan-7-tp-ho-chi-minh/132945299.htm)
+[2026-06-21 02:57:53] [realtime_chotot.R] - INFO: Đã ghi 28 dòng vào: web_scraping/data/realtime/data_chotot_rt.csv
+[2026-06-21 02:57:53] [realtime_chotot.R] - INFO: === Hoàn thành. 28 URL mới | 12 dòng vào init_db | 12 dòng vào master ===
+[2026-06-21 02:57:53] [realtime_chotot.R] - INFO: Đã đóng session.
+[2026-06-21 02:57:53] [scrap_chotot.R] - INFO: Task disabled: web_scraping/script/realtime/realtime_banxehoicu.R — skipping.
+[2026-06-21 02:57:53] [realtime_bonbanh.R] - INFO: === Bắt đầu realtime BonBanh ===
+[2026-06-21 02:57:53] [realtime_bonbanh.R] - INFO: Kiểm tra trang 1...
+[2026-06-21 02:57:54] [realtime_bonbanh.R] - INFO: Trang 1: URL cuối chưa có trong DB → lấy 6/20 URL mới.
+[2026-06-21 02:57:55] [realtime_bonbanh.R] - INFO: Kiểm tra trang 2...
+[2026-06-21 02:57:56] [realtime_bonbanh.R] - INFO: Trang 2: URL cuối chưa có trong DB → lấy 8/20 URL mới.
+[2026-06-21 02:57:57] [realtime_bonbanh.R] - INFO: Kiểm tra trang 3...
+[2026-06-21 02:57:58] [realtime_bonbanh.R] - INFO: Trang 3: URL cuối chưa có trong DB → lấy 9/20 URL mới.
+[2026-06-21 02:57:59] [realtime_bonbanh.R] - INFO: Kiểm tra trang 4...
+[2026-06-21 02:58:00] [realtime_bonbanh.R] - INFO: Trang 4: URL cuối đã có trong DB → tìm được 9/20 URL mới.
+[2026-06-21 02:58:00] [realtime_bonbanh.R] - INFO: Phát hiện 32 URL mới.
+[2026-06-21 02:58:00] [realtime_bonbanh.R] - INFO: Đã ghi 32 URL mới vào đầu: web_scraping/data/raw/meta/urls_bonbanh.txt
+[2026-06-21 02:58:51] [realtime_bonbanh.R] - INFO: Đã ghi 30 dòng vào: web_scraping/data/realtime/data_bonbanh_rt.csv
+[2026-06-21 02:58:51] [realtime_bonbanh.R] - INFO: === Hoàn thành. 32 URL mới | 30 vào init_db | 30 vào master ===
+[2026-06-21 02:58:51] [scrap_chotot.R] - INFO: Real-time update cycle completed with 42 new rows.
+[2026-06-21 02:58:51] [scrap_chotot.R] - INFO: Đã rebuild web_scraping/data/master_data.csv từ 3 init_db files (27399 dòng).
