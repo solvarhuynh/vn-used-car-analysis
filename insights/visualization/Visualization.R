@@ -126,14 +126,14 @@ p2 <- ggplot(data_clean, aes(x = year, y = price)) +
   scale_y_log10(labels = label_number()) +
   scale_x_continuous(breaks = seq(min(data_clean$year, na.rm = TRUE), max(data_clean$year, na.rm = TRUE), by = 2)) +
   labs(
-    title = "[WHEN] Xu hướng giá xe cũ theo năm sản xuất",
+    title = "[WHEN] Xu hướng giá xe cũ qua từng năm",
     x = "Năm sản xuất",
     y = "Giá bán (VNĐ)"
   ) +
   theme_minimal(base_size = 12) +
   theme(plot.title = element_text(face = "bold", size = 14), axis.text.x = element_text(angle = 45, hjust = 1))
 
-ggsave(file.path(PLOT_DIR, "02_WHEN_scatter_trend_khau_hao_nam.png"), p2, width = 10, height = 7, dpi = 300)
+ggsave(file.path(PLOT_DIR, "02_WHEN_scatter_trend_nam.png"), p2, width = 10, height = 7, dpi = 300)
 
 # 03. Mileage-price by transmission
 data_plot3 <- data_clean %>%
