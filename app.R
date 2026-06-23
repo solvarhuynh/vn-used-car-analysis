@@ -316,13 +316,13 @@ if (!nrow(data_clean)) stop(paste0(DATA_FILE, " không có dữ liệu hợp l�
 
 BRANDS <- sort(unique(data_clean$brand))
 YEARS <- seq(min(data_clean$year, na.rm = TRUE), max(data_clean$year, na.rm = TRUE))
-REGIONS <- sort(unique(data_clean$region))
-FUELS <- sort(unique(data_clean$fuel))
-TRANSMISSIONS <- sort(unique(data_clean$transmission))
+REGION_OPTIONS <- sort(unique(data_clean$region))
+FUEL_OPTIONS <- sort(unique(data_clean$fuel))
+TRANSMISSION_OPTIONS <- sort(unique(data_clean$transmission))
 PRICE_MAX <- ceiling(max(data_clean$price, na.rm = TRUE) / 1e8) * 1e8
 KM_MAX <- ceiling(max(data_clean$km, na.rm = TRUE) / 10000) * 10000
 DEFAULT_BRAND <- if ("TOYOTA" %in% BRANDS) "TOYOTA" else BRANDS[1]
-DEFAULT_REGION <- if ("Tp Hồ Chí Minh" %in% REGIONS) "Tp Hồ Chí Minh" else if ("TP HCM" %in% REGIONS) "TP HCM" else if ("Hà Nội" %in% REGIONS) "Hà Nội" else REGIONS[1]
+DEFAULT_REGION <- if ("Tp Hồ Chí Minh" %in% REGION_OPTIONS) "Tp Hồ Chí Minh" else if ("TP HCM" %in% REGION_OPTIONS) "TP HCM" else if ("Hà Nội" %in% REGION_OPTIONS) "Hà Nội" else REGION_OPTIONS[1]
 DEFAULT_YEAR <- min(2022, max(YEARS))
 
 models_for_brand <- function(brand) {
@@ -755,7 +755,7 @@ ui <- fluidPage(
       .gauge-wrap { display: inline-flex; flex-direction: column; align-items: center; }
       .gauge-label { margin-top: 4px; font-family: 'Space Grotesk'; font-size: 22px; font-weight: 650; color: #fff; text-align: center; }
       .gauge-caption { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.7); text-align: center; }
-      .grid { display: grid; gap: 16px; }
+      .grid { display: grid; gap: 16px; align-items: start; }
       .grid-kpi { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       @media (min-width: 768px) { .grid-kpi { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
       @media (min-width: 1280px) { .grid-kpi { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
@@ -1188,9 +1188,9 @@ ui <- fluidPage(
             div(
               class = "data-toolbar",
               div(class = "toolbar-search", icon_svg("search"), textInput("data_query", NULL, placeholder = "Tìm hãng, dòng, phiên bản…", width = "100%")),
-              div(class = "pill-select", span("Nhiên liệu"), select_field("data_fuel", c("Tất cả" = "all", FUELS), "all")),
-              div(class = "pill-select", span("Hộp số"), select_field("data_transmission", c("Tất cả" = "all", TRANSMISSIONS), "all")),
-              div(class = "pill-select", span("Khu vực"), select_field("data_region", c("Toàn quốc" = "all", REGIONS), "all"))
+              div(class = "pill-select", span("Nhiên liệu"), select_field("data_fuel", c("Tất cả" = "all", FUEL_OPTIONS), "all")),
+              div(class = "pill-select", span("Hộp số"), select_field("data_transmission", c("Tất cả" = "all", TRANSMISSION_OPTIONS), "all")),
+              div(class = "pill-select", span("Khu vực"), select_field("data_region", c("Toàn quốc" = "all", REGION_OPTIONS), "all"))
             ),
             DTOutput("data_table")
           )
@@ -1200,11 +1200,10 @@ ui <- fluidPage(
           div(
             class = "report-hero",
             div(span(class = "report-badge", icon_svg("file"), "Báo cáo tự động"), h2("Tổng hợp nhận xét — dữ liệu Master"), p(textOutput("report_intro", inline = TRUE))),
-            div(class = "report-actions", tags$button(class = "btn btn-outline", type = "button", onclick = "window.print()", span(class = "btn-ico", icon_svg("download")), "Tải PDF"), download_button("download_csv", "Tải CSV"), tags$button(id = "copy-insights", class = "btn btn-primary", type = "button", span(class = "btn-ico", icon_svg("copy")), "Sao chép nhận xét"))
+            div(class = "report-actions", download_button("download_csv", "Tải CSV"), tags$button(id = "copy-insights", class = "btn btn-primary", type = "button", span(class = "btn-ico", icon_svg("copy")), "Sao chép nhận xét"))
           ),
           div(
-            class = "grid",
-            style = "grid-template-columns: repeat(4, minmax(0, 1fr));",
+            class = "grid grid-kpi",
             kpi_card("Tổng số mẫu", "report_total", "car", "ocean"),
             kpi_card("Giá trung vị", "report_median", "dollar", "navy"),
             kpi_card("Hãng phổ biến", "report_brand", "trophy", "success"),

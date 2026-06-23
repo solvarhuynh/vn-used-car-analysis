@@ -26,13 +26,8 @@ clean_text <- function(x) {
 }
 
 normalize_transmission <- function(x) {
-  y <- str_to_lower(clean_text(x))
-  case_when(
-    y %in% c("automatic", "auto", "at", "số tự động", "so tu dong", "tự động", "tu dong") ~ "Tự động",
-    y %in% c("manual", "mt", "số sàn", "so san", "sàn", "san", "số tay") ~ "Số sàn",
-    y == "cvt" ~ "CVT",
-    TRUE ~ NA_character_
-  )
+  # Dùng chuẩn hoá chung của pipeline thay vì tự ép về NA với mọi giá trị lạ.
+  clean_transmission(x)
 }
 
 data_raw <- read_master_data()
@@ -61,7 +56,7 @@ data_clean <- data_raw %>%
     !is.na(brand),
     !is.na(year), year >= 1990, year <= CURRENT_YEAR,
     !is.na(price), price >= 5e7, price <= 1.5e10,
-    !is.na(mileage), mileage >= 0, mileage <= 1e6,
+    is.na(mileage) | (mileage >= 0 & mileage <= 1e6),
     !is.na(transmission)
   )
 

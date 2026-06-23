@@ -8397,3 +8397,76 @@
 [2026-06-21 02:58:51] [realtime_bonbanh.R] - INFO: === Hoàn thành. 32 URL mới | 30 vào init_db | 30 vào master ===
 [2026-06-21 02:58:51] [scrap_chotot.R] - INFO: Real-time update cycle completed with 42 new rows.
 [2026-06-21 02:58:51] [scrap_chotot.R] - INFO: Đã rebuild web_scraping/data/master_data.csv từ 3 init_db files (27399 dòng).
+[2026-06-23 23:44:20] [clean.R] - INFO: === Start cleaning trim directly in init_db/*.db ===
+[2026-06-23 23:44:20] [clean.R] - INFO: Found 3 .db files. Processing...
+[2026-06-23 23:44:20] [clean.R] - INFO: [data_banxehoicu.db] Updated 310 rows out of 2018.
+[2026-06-23 23:44:21] [clean.R] - INFO: [data_bonbanh.db] Updated 161 rows out of 6245.
+[2026-06-23 23:44:23] [clean.R] - INFO: [data_chotot.db] Updated 4817 rows out of 19136.
+[2026-06-23 23:44:23] [clean.R] - INFO: === Done. Cleaned 3 file(s), updated 5288 row(s) in init_db ===
+[2026-06-23 23:44:28] [web_scraping/script/clean/clean_numeric_backfill.R] - INFO: Found 3 init_db files. Starting numeric backfill...
+[2026-06-23 23:44:28] [web_scraping/script/clean/clean_numeric_backfill.R] - INFO: [data_banxehoicu.db] 1854 rows updated | engine<0.5: 0->0 | engine>8: 0->0 | seat>16: 0->0 | mileage<0: 0->0 | mileage>500: 1854->0 | is_imported NA: NA->0
+[2026-06-23 23:44:28] [web_scraping/script/clean/clean_numeric_backfill.R] - INFO: [data_bonbanh.db] 6226 rows updated | engine<0.5: 1->0 | engine>8: 2->0 | seat>16: 9->0 | mileage<0: 0->0 | mileage>500: 4417->0 | is_imported NA: NA->0
+[2026-06-23 23:44:29] [web_scraping/script/clean/clean_numeric_backfill.R] - INFO: [data_chotot.db] 19082 rows updated | engine<0.5: 3010->0 | engine>8: 1->0 | seat>16: 0->0 | mileage<0: 0->0 | mileage>500: 16074->0 | is_imported NA: NA->6447
+[2026-06-23 23:44:29] [web_scraping/script/clean/clean_numeric_backfill.R] - INFO: Numeric backfill complete. 3 file(s) changed, 27162 row(s) updated.
+[2026-06-23 23:44:47] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-23 23:44:47] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-23 23:44:51] [realtime_chotot.R] - INFO: Kiểm tra trang 1...
+[2026-06-23 23:45:05] [realtime_chotot.R] - INFO: Trang 1: URL cuối chưa có trong DB → lấy hết 26 URL, sang trang tiếp.
+[2026-06-23 23:45:05] [realtime_chotot.R] - INFO: Kiểm tra trang 2...
+[2026-06-23 23:45:18] [realtime_chotot.R] - INFO: Trang 2: URL cuối đã có trong DB → so ngược từng URL.
+[2026-06-23 23:45:18] [realtime_chotot.R] - INFO: Phát hiện 26 URL mới cần cào.
+[2026-06-23 23:45:18] [realtime_chotot.R] - INFO: Đã ghi 26 URL mới vào cuối file: web_scraping/data/raw/meta/urls_chotot.txt
+[2026-06-23 23:48:55] [realtime_chotot.R] - INFO: Đã ghi 26 dòng vào: web_scraping/data/realtime/data_chotot_rt.csv
+[2026-06-23 23:48:55] [realtime_chotot.R] - INFO: === Hoàn thành. 26 URL mới | 26 dòng vào init_db | 13 dòng vào master ===
+[2026-06-23 23:48:55] [realtime_chotot.R] - INFO: Đã đóng session.
+[2026-06-23 23:48:55] [scrap_chotot.R] - INFO: Task disabled: web_scraping/script/realtime/realtime_banxehoicu.R — skipping.
+[2026-06-23 23:48:55] [realtime_bonbanh.R] - INFO: === Bắt đầu realtime BonBanh ===
+[2026-06-23 23:48:55] [realtime_bonbanh.R] - INFO: Kiểm tra trang 1...
+[2026-06-23 23:48:55] [realtime_bonbanh.R] - INFO: Trang 1: URL cuối đã có trong DB → tìm được 7/20 URL mới.
+[2026-06-23 23:48:55] [realtime_bonbanh.R] - INFO: Phát hiện 7 URL mới.
+[2026-06-23 23:48:55] [realtime_bonbanh.R] - INFO: Đã ghi 7 URL mới vào đầu: web_scraping/data/raw/meta/urls_bonbanh.txt
+[2026-06-23 23:49:06] [realtime_bonbanh.R] - INFO: Đã ghi 7 dòng vào: web_scraping/data/realtime/data_bonbanh_rt.csv
+[2026-06-23 23:49:06] [realtime_bonbanh.R] - INFO: === Hoàn thành. 7 URL mới | 7 vào init_db | 7 vào master ===
+[2026-06-23 23:49:06] [scrap_chotot.R] - INFO: Real-time update cycle completed with 33 new rows.
+[2026-06-23 23:49:07] [scrap_chotot.R] - INFO: Đã rebuild web_scraping/data/master_data.csv từ 3 init_db files (27292 dòng).
+[2026-06-23 23:49:07] [init_database.R] - INFO: Starting per-source SQLite database initialization.
+[2026-06-23 23:49:08] [init_database.R] - INFO: Imported 2018 records from web_scraping/data/clean/data_banxehoicu_clean.csv into web_scraping/data/init_db//data_banxehoicu.db
+[2026-06-23 23:49:13] [init_database.R] - INFO: Imported 6025 records from web_scraping/data/clean/data_bonbanh_clean.csv into web_scraping/data/init_db//data_bonbanh.db
+[2026-06-23 23:49:24] [init_database.R] - INFO: Imported 18999 records from web_scraping/data/clean/data_chotot_clean.csv into web_scraping/data/init_db//data_chotot.db
+[2026-06-23 23:49:24] [init_database.R] - INFO: === Per-source database initialization complete. ===
+[2026-06-23 23:49:24] [web_scraping/script/merge_data.R] - INFO: Starting merge of individual SQLite databases into master outputs.
+[2026-06-23 23:49:24] [web_scraping/script/merge_data.R] - INFO: Merged 2018/2018 records from web_scraping/data/init_db/data_banxehoicu.db
+[2026-06-23 23:49:24] [web_scraping/script/merge_data.R] - INFO: Merged 6025/6025 records from web_scraping/data/init_db/data_bonbanh.db
+[2026-06-23 23:49:24] [web_scraping/script/merge_data.R] - INFO: Merged 18999/18999 records from web_scraping/data/init_db/data_chotot.db
+[2026-06-23 23:49:25] [web_scraping/script/merge_data.R] - INFO: === Merge complete. 27042 unique records -> web_scraping/data/master_data.db and web_scraping/data/master_data.csv ===
+[2026-06-23 23:49:25] [web_scraping/script/validate_clean_data.R] - INFO: === Bắt đầu validation dữ liệu clean ===
+[2026-06-23 23:49:26] [web_scraping/script/validate_clean_data.R] - INFO: === Validation hoàn thành. 27042 dòng clean, report tại web_scraping/data/quality_report ===
+[2026-06-23 23:54:04] [clean.R] - INFO: === Start cleaning trim directly in init_db/*.db ===
+[2026-06-23 23:54:04] [clean.R] - INFO: Found 3 .db files. Processing...
+[2026-06-23 23:54:05] [clean.R] - INFO: [data_banxehoicu.db] Updated 310 rows out of 2018.
+[2026-06-23 23:54:06] [clean.R] - INFO: [data_bonbanh.db] Updated 13 rows out of 6025.
+[2026-06-23 23:54:08] [clean.R] - INFO: [data_chotot.db] Updated 4780 rows out of 18999.
+[2026-06-23 23:54:08] [clean.R] - INFO: === Done. Cleaned 3 file(s), updated 5103 row(s) in init_db ===
+[2026-06-23 23:54:22] [web_scraping/script/clean/clean_numeric_backfill.R] - INFO: Found 3 init_db files. Starting numeric backfill...
+[2026-06-23 23:54:22] [web_scraping/script/clean/clean_numeric_backfill.R] - INFO: [data_banxehoicu.db] 1854 rows updated | engine<0.5: 0->0 | engine>8: 0->0 | seat>16: 0->0 | mileage<0: 0->0 | mileage>500: 1854->0 | is_imported NA: NA->0
+[2026-06-23 23:54:22] [web_scraping/script/clean/clean_numeric_backfill.R] - INFO: [data_bonbanh.db] 6006 rows updated | engine<0.5: 1->0 | engine>8: 2->0 | seat>16: 8->0 | mileage<0: 0->0 | mileage>500: 4242->0 | is_imported NA: NA->0
+[2026-06-23 23:54:23] [web_scraping/script/clean/clean_numeric_backfill.R] - INFO: [data_chotot.db] 18945 rows updated | engine<0.5: 3010->0 | engine>8: 1->0 | seat>16: 0->0 | mileage<0: 0->0 | mileage>500: 15967->0 | is_imported NA: NA->6398
+[2026-06-23 23:54:23] [web_scraping/script/clean/clean_numeric_backfill.R] - INFO: Numeric backfill complete. 3 file(s) changed, 26805 row(s) updated.
+[2026-06-24 00:02:21] [clean.R] - INFO: === Start cleaning trim directly in init_db/*.db ===
+[2026-06-24 00:02:21] [clean.R] - INFO: Found 3 .db files. Processing...
+[2026-06-24 00:02:22] [clean.R] - INFO: [data_banxehoicu.db] Updated 310 rows out of 2018.
+[2026-06-24 00:02:22] [clean.R] - INFO: [data_bonbanh.db] Updated 161 rows out of 6245.
+[2026-06-24 00:02:24] [clean.R] - INFO: [data_chotot.db] Updated 4817 rows out of 19136.
+[2026-06-24 00:02:24] [clean.R] - INFO: === Done. Cleaned 3 file(s), updated 5288 row(s) in init_db ===
+[2026-06-24 00:02:25] [web_scraping/script/clean/clean_numeric_backfill.R] - INFO: Found 3 init_db files. Starting numeric backfill...
+[2026-06-24 00:02:25] [web_scraping/script/clean/clean_numeric_backfill.R] - INFO: [data_banxehoicu.db] 1854 rows updated | engine<0.5: 0->0 | engine>8: 0->0 | seat>16: 0->0 | mileage<0: 0->0 | mileage>500: 1854->0 | is_imported NA: NA->0
+[2026-06-24 00:02:25] [web_scraping/script/clean/clean_numeric_backfill.R] - INFO: [data_bonbanh.db] 6226 rows updated | engine<0.5: 1->0 | engine>8: 2->0 | seat>16: 9->0 | mileage<0: 0->0 | mileage>500: 4417->0 | is_imported NA: NA->0
+[2026-06-24 00:02:26] [web_scraping/script/clean/clean_numeric_backfill.R] - INFO: [data_chotot.db] 19082 rows updated | engine<0.5: 3010->0 | engine>8: 1->0 | seat>16: 0->0 | mileage<0: 0->0 | mileage>500: 16074->0 | is_imported NA: NA->6447
+[2026-06-24 00:02:26] [web_scraping/script/clean/clean_numeric_backfill.R] - INFO: Numeric backfill complete. 3 file(s) changed, 27162 row(s) updated.
+[2026-06-24 00:02:34] [web_scraping/script/merge_data.R] - INFO: Starting merge of individual SQLite databases into master outputs.
+[2026-06-24 00:02:35] [web_scraping/script/merge_data.R] - INFO: Merged 2018/2018 records from web_scraping/data/init_db/data_banxehoicu.db
+[2026-06-24 00:02:35] [web_scraping/script/merge_data.R] - INFO: Merged 6202/6202 records from web_scraping/data/init_db/data_bonbanh.db
+[2026-06-24 00:02:35] [web_scraping/script/merge_data.R] - INFO: Merged 19039/19039 records from web_scraping/data/init_db/data_chotot.db
+[2026-06-24 00:02:36] [web_scraping/script/merge_data.R] - INFO: === Merge complete. 27259 unique records -> web_scraping/data/master_data.db and web_scraping/data/master_data.csv ===
+[2026-06-24 00:03:08] [web_scraping/script/validate_clean_data.R] - INFO: === Bắt đầu validation dữ liệu clean ===
+[2026-06-24 00:03:09] [web_scraping/script/validate_clean_data.R] - INFO: === Validation hoàn thành. 27042 dòng clean, report tại web_scraping/data/quality_report ===
