@@ -1087,7 +1087,7 @@ ui <- fluidPage(
           ),
           div(
             class = "chart-grid-2",
-            section_card("Giá theo năm sản xuất", "Đường trung vị và vùng Q1-Q3 cho các năm đủ mẫu", "trend",
+            section_card("Giá thị trường qua từng năm", "Đường trung vị và vùng Q1-Q3 cho các năm đủ mẫu", "trend",
               div(class = "plotly-wrap", div(class = "plotly-output", plotlyOutput("viz_when", height = "420px")))),
             section_card("Odo và hộp số", "Giá trung vị theo nhóm số km đã đi", "activity",
               div(class = "plotly-wrap", div(class = "plotly-output", plotlyOutput("viz_why", height = "420px"))))
