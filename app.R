@@ -1021,7 +1021,7 @@ ui <- fluidPage(
           ),
           div(
             class = "chart-grid-3",
-            section_card("Xu hướng giá theo năm sản xuất", "Trung vị và trung bình theo từng năm", "trend",
+            section_card("Xu hướng giá thị trường xe cũ qua từng năm", "Trung vị và trung bình theo từng năm", "trend",
               div(class = 'plotly-wrap', div(class='plotly-output', plotlyOutput("overview_price_year", height = "260px")), div(class='gg-output', plotOutput("overview_price_year_gg", height = "260px")))
               , class = "lg-span-2"),
             section_card("Cơ cấu nhiên liệu", "Tỷ trọng theo loại nhiên liệu", NULL,
@@ -1070,7 +1070,7 @@ ui <- fluidPage(
                   section_card("Cơ cấu hộp số", NULL, "gauge",
                     div(class = 'plotly-wrap', div(class='plotly-output', plotlyOutput("market_transmission_chart", height = "280px")), div(class='gg-output', plotOutput("market_transmission_chart_gg", height = "280px"))))
                 ),
-                section_card("Xu hướng giá theo năm sản xuất", "Median (đường đặc) và mean (đường đứt)", "trend",
+                section_card("Xu hướng giá thị trường xe cũ qua từng năm", "Median (đường đặc) và mean (đường đứt)", "trend",
                   div(class = 'plotly-wrap', div(class='plotly-output', plotlyOutput("market_price_year", height = "300px")), div(class='gg-output', plotOutput("market_price_year_gg", height = "300px"))))
               )
             )
