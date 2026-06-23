@@ -304,6 +304,7 @@ clean_brand <- function(x) {
 
 clean_model <- function(x) {
   x <- normalize_na(x)
+  x <- str_replace_all(x, "\\s+", "")
   toupper(x)
 }
 
@@ -403,6 +404,76 @@ read_master_data <- function(master_file = "web_scraping/data/master_data.csv",
   }
 
   bind_rows(lapply(clean_files, read_clean_csv))
+}
+
+# ── clean_trim_column: Chuẩn hóa cột trim trong master_df ────────────────────
+# Bước 1: Nếu trim (sau khi bỏ dấu cách + chữ thường) giống hệt model → "Tiêu chuẩn"
+# Bước 2: Hợp nhất các biến thể chính tả bằng canonicalization theo nhóm brand+model
+clean_trim_column <- function(df) {
+  if (!"trim" %in% names(df) || !"model" %in% names(df) || !"brand" %in% names(df)) {
+    warning("clean_trim_column: thiếu cột 'brand', 'model' hoặc 'trim'. Bỏ qua.")
+    return(df)
+  }
+
+  # ── Hàm normalize nội bộ: chữ thường, xóa dấu cách và ký tự đặc biệt ──────
+  normalize_for_compare <- function(x) {
+    x <- tolower(x)
+    x <- gsub("[^a-z0-9àáâãèéêìíòóôõùúýăđơưạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỷỹ]", "", x)
+    x
+  }
+
+  # ── Bước 1: trim trùng với model → "Tiêu chuẩn" ──────────────────────────
+  locked_standard <- rep(FALSE, nrow(df))
+
+  trim_norm  <- normalize_for_compare(ifelse(is.na(df$trim),  "", df$trim))
+  model_norm <- normalize_for_compare(ifelse(is.na(df$model), "", df$model))
+
+  is_duplicate <- (!is.na(df$trim)) & (trim_norm == model_norm) & (model_norm != "")
+  df$trim[is_duplicate]      <- "Tiêu chuẩn"
+  locked_standard[is_duplicate] <- TRUE
+
+  # ── Bước 2: Hợp nhất biến thể chính tả bằng canonicalization ──────────────
+  # Tạo canonical key (chữ thường, bỏ dấu cách) — chỉ cho các dòng chưa bị khóa
+  canonical_trim <- ifelse(
+    locked_standard | is.na(df$trim),
+    NA_character_,
+    normalize_for_compare(df$trim)
+  )
+
+  # Bảng ánh xạ: với mỗi (brand, model, canonical_trim) → giá trị trim xuất hiện nhiều nhất
+  mapping_df <- data.frame(
+    brand          = df$brand,
+    model          = df$model,
+    canonical_trim = canonical_trim,
+    trim_orig      = df$trim,
+    stringsAsFactors = FALSE
+  ) %>%
+    dplyr::filter(!is.na(canonical_trim), canonical_trim != "") %>%
+    dplyr::group_by(brand, model, canonical_trim) %>%
+    dplyr::summarise(
+      trim_standard = {
+        tbl <- sort(table(trim_orig), decreasing = TRUE)
+        names(tbl)[1]
+      },
+      .groups = "drop"
+    )
+
+  # Áp dụng bảng ánh xạ: chỉ cập nhật những dòng chưa bị khóa
+  for (i in seq_len(nrow(df))) {
+    if (locked_standard[i] || is.na(canonical_trim[i]) || canonical_trim[i] == "") next
+
+    match_row <- which(
+      mapping_df$brand          == df$brand[i] &
+      mapping_df$model          == df$model[i] &
+      mapping_df$canonical_trim == canonical_trim[i]
+    )
+
+    if (length(match_row) == 1L) {
+      df$trim[i] <- mapping_df$trim_standard[match_row]
+    }
+  }
+
+  df
 }
 
 # ── Safe write CSV ─────────────────────────────────────────────────────────────

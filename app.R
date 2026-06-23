@@ -6,6 +6,7 @@ suppressPackageStartupMessages({
   library(ggplot2)
   library(scales)
   library(rpart)
+  library(grid)
 })
 
 # -------------------------------------------------------------------------
@@ -230,9 +231,24 @@ assign_clusters_vectorized <- function(df) {
   }
   
   cols <- c("price_billion", "car_age", "mileage_k", "engine_size")
-  valid_idx <- complete.cases(df[, cols])
+  cols <- intersect(cols, names(df))
+  center_cols <- intersect(cols, names(centers))
+  if (length(cols) == 0 || length(center_cols) == 0) {
+    df$cluster_id <- NA_integer_
+    df$cluster_name <- "Chưa có model"
+    return(df)
+  }
+
+  valid_idx <- complete.cases(df[, cols, drop = FALSE])
   if (sum(valid_idx) == 0) return(df)
   
+  cols <- intersect(cols, center_cols)
+  if (length(cols) == 0) {
+    df$cluster_id <- NA_integer_
+    df$cluster_name <- "Chưa có model"
+    return(df)
+  }
+
   X <- as.matrix(df[valid_idx, cols, drop = FALSE])
   C <- as.matrix(centers[, cols, drop = FALSE])
   
@@ -358,7 +374,10 @@ nearest_cluster <- function(price_billion, form) {
     mileage_k = form$km / 1000,
     engine_size = form$engine_size
   )
-  center_mat <- as.matrix(centers[, names(features)])
+  cols <- intersect(names(features), names(centers))
+  if (!length(cols)) return(list(id = NA_integer_, name = "Chưa xác định"))
+  center_mat <- as.matrix(centers[, cols, drop = FALSE])
+  features <- features[cols]
   scale_vec <- apply(center_mat, 2, sd, na.rm = TRUE)
   scale_vec[!is.finite(scale_vec) | scale_vec == 0] <- 1
   diff_mat <- center_mat - matrix(rep(as.numeric(features), each = nrow(center_mat)), nrow = nrow(center_mat))
@@ -936,7 +955,6 @@ ui <- fluidPage(
         $(window).on('hashchange', activateFromHash);
         $('.menu-trigger').on('click', function(){ $('body').toggleClass('sidebar-open'); resizePlots(); });
         $('#refresh-demo').on('click', function(){ toast('Dữ liệu Master đã sẵn sàng'); });
-        $('#export-demo').on('click', function(){ toast('Mở báo cáo tổng hợp'); setTab('report','Báo cáo','Tổng hợp nhận xét tự động'); });
         $('#copy-insights').on('click', function(){
           var text = $('#insight-copy-source').text();
           if (navigator.clipboard) navigator.clipboard.writeText(text);
@@ -987,7 +1005,7 @@ ui <- fluidPage(
             class = "header-actions",
             div(class = "searchbox", icon_svg("search"), tags$input(type = "text", placeholder = "Tìm hãng xe, dòng xe…")),
               div(class = "badge-demo", icon_svg("database"), "Master Data + ML"),
-            tags$button(id = "export-demo", class = "btn btn-outline hide-sm", type = "button", span(class = "btn-ico", icon_svg("download")), "Xuất báo cáo"),
+            downloadButton("downloadReportPDF", label = tagList(span(class = "btn-ico", icon_svg("download")), "Xuất báo cáo"), class = "btn btn-outline hide-sm"),
             actionButton("refresh_data", label = tagList(span(class = "btn-ico", icon_svg("refresh")), "Cập nhật dữ liệu"), class = "btn btn-primary")
           )
         )
@@ -1021,7 +1039,7 @@ ui <- fluidPage(
           ),
           div(
             class = "chart-grid-3",
-            section_card("Xu hướng giá thị trường xe cũ qua từng năm", "Trung vị và trung bình theo từng năm", "trend",
+            section_card("Xu hướng giá theo năm sản xuất", "Trung vị và trung bình theo từng năm", "trend",
               div(class = 'plotly-wrap', div(class='plotly-output', plotlyOutput("overview_price_year", height = "260px")), div(class='gg-output', plotOutput("overview_price_year_gg", height = "260px")))
               , class = "lg-span-2"),
             section_card("Cơ cấu nhiên liệu", "Tỷ trọng theo loại nhiên liệu", NULL,
@@ -1070,7 +1088,7 @@ ui <- fluidPage(
                   section_card("Cơ cấu hộp số", NULL, "gauge",
                     div(class = 'plotly-wrap', div(class='plotly-output', plotlyOutput("market_transmission_chart", height = "280px")), div(class='gg-output', plotOutput("market_transmission_chart_gg", height = "280px"))))
                 ),
-                section_card("Xu hướng giá thị trường xe cũ qua từng năm", "Median (đường đặc) và mean (đường đứt)", "trend",
+                section_card("Xu hướng giá theo năm sản xuất", "Median (đường đặc) và mean (đường đứt)", "trend",
                   div(class = 'plotly-wrap', div(class='plotly-output', plotlyOutput("market_price_year", height = "300px")), div(class='gg-output', plotOutput("market_price_year_gg", height = "300px"))))
               )
             )
@@ -1087,7 +1105,7 @@ ui <- fluidPage(
           ),
           div(
             class = "chart-grid-2",
-            section_card("Giá thị trường qua từng năm", "Đường trung vị và vùng Q1-Q3 cho các năm đủ mẫu", "trend",
+            section_card("Giá theo năm sản xuất", "Đường trung vị và vùng Q1-Q3 cho các năm đủ mẫu", "trend",
               div(class = "plotly-wrap", div(class = "plotly-output", plotlyOutput("viz_when", height = "420px")))),
             section_card("Odo và hộp số", "Giá trung vị theo nhóm số km đã đi", "activity",
               div(class = "plotly-wrap", div(class = "plotly-output", plotlyOutput("viz_why", height = "420px"))))
@@ -1151,6 +1169,7 @@ ui <- fluidPage(
             class = "grid grid-kpi",
             kpi_card("R² hồi quy", "model_r2", "trend", "ocean", hint = "Linear Regression"),
             kpi_card("RMSE dự đoán", "model_rmse", "gauge", "navy", hint = "Đơn vị: tỷ VNĐ"),
+            kpi_card("MAE dự đoán", "model_mae", "chart", "violet", hint = "Đơn vị: tỷ VNĐ"),
             kpi_card("Accuracy cây quyết định", "model_tree_acc", "trophy", "success", hint = "Price segment"),
             kpi_card("Silhouette K-Means", "model_silhouette", "activity", "cyan", hint = "Độ tách cụm")
           ),
@@ -1979,6 +1998,10 @@ server <- function(input, output, session) {
     req(is_tab("models"))
     format_metric(artifact("reg_metrics", list())$rmse_billion, 3)
   })
+  output$model_mae <- renderText({
+    req(is_tab("models"))
+    format_metric(artifact("reg_metrics", list())$mae_billion, 3)
+  })
   output$model_tree_acc <- renderText({
     req(is_tab("models"))
     format_metric(artifact("tree_accuracy", NA), 3)
@@ -2168,6 +2191,92 @@ server <- function(input, output, session) {
       p(HTML("<strong>Giới hạn:</strong> giá dự đoán là tham khảo học thuật, chưa thay thế thẩm định xe thực tế, lịch sử bảo dưỡng, tình trạng tai nạn/ngập nước hoặc thương lượng giao dịch."))
     )
   })
+
+  output$downloadReportPDF <- downloadHandler(
+    filename = function() {
+      paste0("Bao_Cao_Thong_Ke_", format(Sys.Date(), "%Y%m%d"), ".pdf")
+    },
+    contentType = "application/pdf",
+    content = function(file) {
+
+      # In toàn bộ nội dung text (đã đọc từ report) ra 1 file PDF bằng thiết bị
+      # đồ họa gốc của R (cairo_pdf + grid). Cách này KHÔNG cần Pandoc/LaTeX/
+      # TinyTeX nên không bị lỗi "pandoc ... was not found", và vẫn hiển thị
+      # đúng tiếng Việt vì cairo_pdf render Unicode trực tiếp qua hệ thống.
+      .render_text_to_pdf <- function(text, out_file,
+                                       lines_per_page = 72,
+                                       font_family = "mono",
+                                       font_size = 6.7) {
+        lines <- strsplit(text, "\n", fixed = TRUE)[[1]]
+        if (length(lines) == 0) lines <- ""
+        n <- length(lines)
+        page_idx <- split(seq_len(n), ceiling(seq_len(n) / lines_per_page))
+
+        open_pdf <- function(path) {
+          if (capabilities("cairo")) {
+            grDevices::cairo_pdf(path, width = 11.69, height = 8.27, onefile = TRUE,
+                                  family = font_family)
+          } else {
+            grDevices::pdf(path, width = 11.69, height = 8.27, onefile = TRUE,
+                            family = font_family)
+          }
+        }
+
+        open_pdf(out_file)
+        on.exit(grDevices::dev.off(), add = TRUE)
+
+        for (pg in page_idx) {
+          grid::grid.newpage()
+          grid::pushViewport(grid::viewport(
+            x = 0.015, y = 0.985, width = 0.97, height = 0.97,
+            just = c("left", "top")
+          ))
+          grid::grid.text(
+            paste(lines[pg], collapse = "\n"),
+            x = 0, y = 1, just = c("left", "top"),
+            gp = grid::gpar(fontfamily = font_family, fontsize = font_size, lineheight = 1.05)
+          )
+          grid::popViewport()
+        }
+      }
+
+      tryCatch({
+
+        withProgress(message = 'Đang tạo báo cáo', value = 0, {
+
+          incProgress(0.15, detail = "Bước 1: Làm sạch dữ liệu...")
+          source("insights/descriptive_analytics/Cleaning_Data_For statistics.R", local = TRUE)
+
+          incProgress(0.4, detail = "Bước 2: Tính toán xác suất - thống kê...")
+          source("insights/descriptive_analytics/Probability_statistics.R", local = TRUE)
+
+          incProgress(0.65, detail = "Bước 3: Đọc nội dung báo cáo...")
+          report_txt_path <- "insights/descriptive_analytics/output_probability_statistics/Bao_Cao_Xac_Suat_Thong_Ke.txt"
+          if (!file.exists(report_txt_path)) {
+            stop("Không tìm thấy file báo cáo văn bản: ", report_txt_path)
+          }
+          report_content <- paste(readLines(report_txt_path, warn = FALSE, encoding = "UTF-8"), collapse = "\n")
+
+          incProgress(0.85, detail = "Bước 4: Xuất file PDF...")
+          .render_text_to_pdf(report_content, file)
+
+          incProgress(1, detail = "Hoàn tất!")
+        })
+
+      }, error = function(e) {
+        showNotification(
+          paste0("Lỗi khi tạo báo cáo PDF: ", e$message),
+          type = "error", duration = 10
+        )
+        # Du van bao loi, tao 1 file PDF thong bao loi de downloadHandler luon
+        # tra ve dung dinh dang PDF (khong bi browser luu nham thanh .htm).
+        .render_text_to_pdf(
+          paste0("LOI KHI TAO BAO CAO PDF\n\n", conditionMessage(e)),
+          file
+        )
+      })
+    }
+  )
 
   output$download_csv <- downloadHandler(
     filename = function() "hcmute-autoinsight-master.csv",

@@ -24,16 +24,29 @@ reg_metrics <- list(
 )
 
 coef_raw <- as.data.frame(summary(model_regression)$coefficients)
-coef_df  <- data.frame(
-  term_vn = c("Hằng số", "Tuổi xe (năm)", "Số km đã đi (nghìn km)",
-               "Dung tích động cơ (L)", "Hộp số tự động",
-               "Nhập khẩu", "Số chỗ ngồi"),
-  estimate  = round(coef_raw[, 1], 6),
-  std_error = round(coef_raw[, 2], 6),
-  t_value   = round(coef_raw[, 3], 4),
-  p_value   = round(coef_raw[, 4], 6),
-  significant = ifelse(coef_raw[, 4] < 0.05, "***", "")
+term_map <- c(
+  "(Intercept)" = "Hằng số",
+  "car_age" = "Tuổi xe (năm)",
+  "mileage_k" = "Số km đã đi (nghìn km)",
+  "engine_size" = "Dung tích động cơ (L)",
+  "is_auto" = "Hộp số tự động",
+  "is_imported" = "Nhập khẩu",
+  "seat_count" = "Số chỗ ngồi"
 )
+
+coef_df <- data.frame(
+  term = rownames(coef_raw),
+  term_vn = unname(term_map[rownames(coef_raw)]),
+  estimate = round(coef_raw[, 1], 6),
+  std_error = round(coef_raw[, 2], 6),
+  t_value = round(coef_raw[, 3], 4),
+  p_value = round(coef_raw[, 4], 6),
+  significant = ifelse(coef_raw[, 4] < 0.05, "***", ""),
+  row.names = NULL,
+  stringsAsFactors = FALSE
+)
+
+coef_df$term_vn[is.na(coef_df$term_vn)] <- coef_df$term[is.na(coef_df$term_vn)]
 
 reg_test_result <- data.frame(
   actual_billion    = round(test_reg$price_billion, 3),

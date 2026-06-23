@@ -45,10 +45,10 @@ if (length(clean_files) == 0) {
       data_df <- read_clean_csv(csv_path) %>%
         mutate(
           year = as.integer(year),
-          engine_size = as.numeric(engine_size),
-          seat_count = as.integer(seat_count),
           price = as.numeric(price), # Dùng numeric vì giá VND có thể vượt giới hạn 32-bit integer của R
-          mileage = as.integer(mileage),
+          engine_size = clean_engine_size(engine_size),
+          seat_count = clean_seat_count(seat_count),
+          mileage = clean_mileage(mileage),
           # Chuyển đổi posted_date về định dạng YYYY-MM-DD chuẩn của SQLite DATE
           posted_date = as.character(as.Date(posted_date, tryFormats = c("%d-%m-%Y", "%Y-%m-%d", "%d/%m/%Y")))
         )

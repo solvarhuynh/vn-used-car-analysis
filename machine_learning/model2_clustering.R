@@ -1,20 +1,40 @@
 suppressPackageStartupMessages(library(cluster))
 
-df_clust <- df[complete.cases(df[, c("price_billion", "car_age",
-                                      "mileage_k", "engine_size")]),
-               c("price_billion", "car_age", "mileage_k", "engine_size")]
+clust_cols <- c("price_billion", "car_age", "mileage_k", "engine_size")
+df_clust <- df[complete.cases(df[, clust_cols]), clust_cols]
+df_clust <- df_clust[apply(df_clust, 1, function(x) all(is.finite(x))), , drop = FALSE]
 
-df_scaled <- scale(df_clust)
+safe_scale <- function(x) {
+  x <- as.matrix(x)
+  sds <- apply(x, 2, sd)
+  keep <- is.finite(sds) & sds > 0
+  if (!all(keep)) {
+    x <- x[, keep, drop = FALSE]
+  }
+  if (ncol(x) == 0) stop("No numeric variance available for clustering.")
+  scaled <- scale(x)
+  scaled
+}
+
+df_scaled <- safe_scale(df_clust)
+
+if (nrow(df_scaled) < 2) {
+  stop("Not enough rows for clustering.")
+}
 
 set.seed(42)
 elbow_df <- data.frame(
   k   = 2:8,
   wss = sapply(2:8, function(k) {
+    if (nrow(df_scaled) <= k) return(NA_real_)
     kmeans(df_scaled, centers = k, nstart = 20, iter.max = 100)$tot.withinss
   })
 )
 
 OPTIMAL_K <- 4
+if (nrow(df_scaled) <= OPTIMAL_K) {
+  stop(sprintf("Not enough rows for kmeans with k=%d.", OPTIMAL_K))
+}
 set.seed(42)
 model_kmeans <- kmeans(df_scaled, centers = OPTIMAL_K, nstart = 25, iter.max = 100)
 
@@ -23,8 +43,12 @@ if (length(sil_idx) > 5000) {
   set.seed(42)
   sil_idx <- sample(sil_idx, 5000)
 }
-sil <- silhouette(model_kmeans$cluster[sil_idx], dist(df_scaled[sil_idx, , drop = FALSE]))
-avg_silhouette <- round(mean(sil[, 3]), 4)
+if (length(unique(model_kmeans$cluster)) > 1 && length(sil_idx) > 1) {
+  sil <- silhouette(model_kmeans$cluster[sil_idx], dist(df_scaled[sil_idx, , drop = FALSE]))
+  avg_silhouette <- round(mean(sil[, 3]), 4)
+} else {
+  avg_silhouette <- NA_real_
+}
 
 cluster_profiles_raw <- aggregate(
   df_clust,

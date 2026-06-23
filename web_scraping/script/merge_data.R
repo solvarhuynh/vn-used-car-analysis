@@ -44,7 +44,7 @@ CREATE_TABLE_SQL <- "
   );
 "
 
-coerce_master_types <- function(df) {
+  coerce_master_types <- function(df) {
   align_schema(df) %>%
     mutate(
       year = suppressWarnings(as.integer(year)),
