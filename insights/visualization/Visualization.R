@@ -126,7 +126,7 @@ p2 <- ggplot(data_clean, aes(x = year, y = price)) +
   scale_y_log10(labels = label_number()) +
   scale_x_continuous(breaks = seq(min(data_clean$year, na.rm = TRUE), max(data_clean$year, na.rm = TRUE), by = 2)) +
   labs(
-    title = "[WHEN] Xu hướng giá xe cũ qua từng năm",
+    title = "[WHEN] Xu hướng giá xe cũ theo năm sản xuất",
     x = "Năm sản xuất",
     y = "Giá bán (VNĐ)"
   ) +

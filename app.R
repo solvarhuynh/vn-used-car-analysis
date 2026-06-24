@@ -133,6 +133,10 @@ clean_fuel <- function(x) {
   )
 }
 
+is_electric_fuel <- function(x) {
+  clean_fuel(x) == "Điện"
+}
+
 clean_origin <- function(x) {
   y <- tolower(trimws(as.character(x)))
   ifelse(grepl("nhập|nhap|import", y), "Nhập khẩu", "Trong nước")
@@ -186,6 +190,7 @@ prepare_master_data <- function(raw) {
       mileage_k = mileage / 1000,
       transmission = clean_transmission(transmission),
       fuel_type = clean_fuel(fuel_type),
+      is_electric = as.integer(fuel_type == "Điện"),
       origin = clean_origin(origin),
       is_auto = as.integer(transmission %in% c("Tự động", "CVT")),
       is_imported = as.integer(origin == "Nhập khẩu"),
@@ -217,6 +222,7 @@ prepare_master_data <- function(raw) {
     ungroup() %>%
     mutate(
       mileage_k = ifelse(is.na(mileage_k), median_safe(mileage_k), mileage_k),
+      engine_size = ifelse(is.na(engine_size) & is_electric == 1, 0, engine_size),
       engine_size = ifelse(is.na(engine_size), median_safe(engine_size), engine_size),
       seat_count = ifelse(is.na(seat_count), median_safe(seat_count), seat_count)
     )
@@ -289,6 +295,7 @@ data_clean <- source_data %>%
     seat_count = as.integer(round(as.numeric(seat_count))),
     transmission = clean_transmission(transmission),
     fuel = clean_fuel(fuel_type),
+    is_electric = as.integer(fuel == "Điện"),
     origin = clean_origin(origin),
     region = ifelse(is.na(city) | city == "", "Không rõ", trimws(as.character(city))),
     age = CURRENT_YEAR - year,
@@ -303,7 +310,7 @@ data_clean <- source_data %>%
   ) %>%
   filter(
     !is.na(brand), brand != "", !is.na(model), model != "", !is.na(year),
-    !is.na(price), !is.na(km), !is.na(engine_size), !is.na(seat_count),
+    !is.na(price), !is.na(km), !is.na(seat_count),
     year >= 1990, year <= CURRENT_YEAR, price > 0, km >= 0
   ) %>%
   select(
@@ -372,7 +379,8 @@ nearest_cluster <- function(price_billion, form) {
     price_billion = price_billion,
     car_age = CURRENT_YEAR - form$year,
     mileage_k = form$km / 1000,
-    engine_size = form$engine_size
+    engine_size = form$engine_size,
+    is_electric = as.integer(form$fuel == "Điện")
   )
   cols <- intersect(names(features), names(centers))
   if (!length(cols)) return(list(id = NA_integer_, name = "Chưa xác định"))
@@ -397,7 +405,9 @@ estimate_price <- function(form) {
   pred_input <- data.frame(
     car_age = max(0, CURRENT_YEAR - form$year),
     mileage_k = max(0, form$km / 1000),
-    engine_size = form$engine_size,
+    engine_size = ifelse(is.na(form$engine_size), median_lookup(form$brand, form$model, "engine_size", 2), form$engine_size),
+    engine_non_ev = ifelse(form$fuel == "Điện", 0, ifelse(is.na(form$engine_size), median_lookup(form$brand, form$model, "engine_size", 2), form$engine_size)),
+    fuel = factor(form$fuel, levels = c("Xăng", "Dầu", "Hybrid", "Điện")),
     is_auto = as.integer(form$transmission %in% c("Tự động", "CVT")),
     is_imported = as.integer(form$origin == "Nhập khẩu"),
     seat_count = form$seat_count
@@ -419,6 +429,38 @@ estimate_price <- function(form) {
     trans_adj <- if (form$transmission %in% c("Tự động", "CVT")) 1.02 else 0.97
     point <- base * km_adj * trans_adj
     source <- "Heuristic fallback"
+  }
+
+  if (identical(form$fuel, "Điện")) {
+    ev_similar <- data_clean %>%
+      filter(
+        .data$fuel == "Điện",
+        .data$brand == form$brand,
+        .data$model == form$model,
+        abs(.data$year - form$year) <= 2
+      )
+    if (!nrow(ev_similar)) {
+      ev_similar <- data_clean %>%
+        filter(
+          .data$fuel == "Điện",
+          .data$brand == form$brand
+        )
+    }
+    if (!nrow(ev_similar)) {
+      ev_similar <- data_clean %>%
+        filter(.data$fuel == "Điện")
+    }
+    ev_ref <- median_safe(ev_similar$price)
+    if (is.finite(ev_ref) && ev_ref > 0) {
+      ev_age <- max(0, CURRENT_YEAR - form$year)
+      ev_km_factor <- 1 - min(0.18, (form$km / 220000) * 0.18)
+      ev_condition_factor <- if (form$condition == "Như mới") 1.02 else if (form$condition == "Tốt") 1 else 0.96
+      ev_region_factor <- if (form$region %in% c("Tp Hồ Chí Minh", "TP HCM", "TP. Hồ Chí Minh", "Hà Nội")) 1.01 else 1
+      ev_target <- ev_ref * (0.94 ^ ev_age) * ev_km_factor * ev_condition_factor * ev_region_factor
+      point <- 0.2 * point + 0.8 * ev_target
+      point <- min(point, ev_target * 1.08)
+      point <- max(point, ev_target * 0.92)
+    }
   }
 
   condition_adj <- if (form$condition == "Như mới") 1.04 else if (form$condition == "Tốt") 1 else 0.94
@@ -1129,6 +1171,25 @@ ui <- fluidPage(
         tags$section(
           id = "estimate", class = "page space-y",
           div(class = "demo-banner", icon_svg("database"), "Định giá bằng mô hình Linear Regression, phân khúc bằng Decision Tree và cụm xe bằng K-Means."),
+          tags$script(HTML("
+            (function() {
+              function toggleEngineField() {
+                var fuel = document.getElementById('est_fuel');
+                var engineWrap = document.getElementById('engine_field_wrap');
+                if (!fuel || !engineWrap) return;
+                var isElectric = (fuel.value === 'Điện');
+                engineWrap.style.display = isElectric ? 'none' : '';
+              }
+              document.addEventListener('DOMContentLoaded', function() {
+                toggleEngineField();
+                var fuel = document.getElementById('est_fuel');
+                if (fuel) fuel.addEventListener('change', toggleEngineField);
+              });
+              document.addEventListener('shiny:connected', toggleEngineField);
+              document.addEventListener('shiny:value', toggleEngineField);
+              document.addEventListener('shiny:inputchanged', toggleEngineField);
+            })();
+          ")),
           div(
             class = "estimate-layout",
             section_card(
@@ -1141,7 +1202,10 @@ ui <- fluidPage(
                 field("Số km đã đi", numericInput("est_km", NULL, value = 60000, min = 0, step = 1000, width = "100%")),
                 filter_select("Hộp số", "est_transmission", TRANSMISSIONS, "Tự động"),
                 filter_select("Nhiên liệu", "est_fuel", FUELS, "Xăng"),
-                field("Dung tích động cơ (L)", numericInput("est_engine", NULL, value = 2.0, min = 0.4, max = 12.7, step = 0.1, width = "100%")),
+                div(
+                  id = "engine_field_wrap",
+                  field("Dung tích động cơ (L)", numericInput("est_engine", NULL, value = 2.0, min = 0, max = 12.7, step = 0.1, width = "100%"))
+                ),
                 field("Số chỗ ngồi", numericInput("est_seats", NULL, value = 5, min = 2, max = 47, step = 1, width = "100%")),
                 filter_select("Nguồn gốc", "est_origin", ORIGINS, "Trong nước"),
                 filter_select("Khu vực", "est_region", REGIONS, DEFAULT_REGION),
@@ -1168,8 +1232,8 @@ ui <- fluidPage(
           div(
             class = "grid grid-kpi",
             kpi_card("R² hồi quy", "model_r2", "trend", "ocean", hint = "Linear Regression"),
-            kpi_card("RMSE dự đoán", "model_rmse", "gauge", "navy", hint = "Đơn vị: tỷ VNĐ"),
-            kpi_card("MAE dự đoán", "model_mae", "chart", "violet", hint = "Đơn vị: tỷ VNĐ"),
+            kpi_card("RMSE dự đoán", "model_rmse", "gauge", "navy", hint = "Sai số trung bình"),
+            kpi_card("MAE dự đoán", "model_mae", "chart", "violet", hint = "Sai số trung bình"),
             kpi_card("Accuracy cây quyết định", "model_tree_acc", "trophy", "success", hint = "Price segment"),
             kpi_card("Silhouette K-Means", "model_silhouette", "activity", "cyan", hint = "Độ tách cụm")
           ),
@@ -1277,6 +1341,16 @@ server <- function(input, output, session) {
   observeEvent(input$est_model, {
     updateNumericInput(session, "est_engine", value = median_lookup(input$est_brand, input$est_model, "engine_size", 2))
     updateNumericInput(session, "est_seats", value = median_lookup(input$est_brand, input$est_model, "seat_count", 5))
+  }, ignoreInit = TRUE)
+
+  observeEvent(input$est_fuel, {
+    if (identical(input$est_fuel, "Điện")) {
+      updateNumericInput(session, "est_engine", value = 0)
+    } else if (is.null(input$est_engine) || is.na(input$est_engine) || identical(input$est_engine, 0)) {
+      brand <- input$est_brand %||% DEFAULT_BRAND
+      model <- input$est_model %||% models_for_brand(brand)[1]
+      updateNumericInput(session, "est_engine", value = median_lookup(brand, model, "engine_size", 2))
+    }
   }, ignoreInit = TRUE)
 
   for (i in 1:3) {
@@ -2056,6 +2130,7 @@ server <- function(input, output, session) {
   estimate_form <- reactive({
     brand <- input$est_brand %||% DEFAULT_BRAND
     model <- input$est_model %||% models_for_brand(brand)[1]
+    engine_default <- if ((input$est_fuel %||% "Xăng") == "Điện") 0 else median_lookup(brand, model, "engine_size", 2)
     list(
       brand = brand,
       model = model,
@@ -2063,7 +2138,7 @@ server <- function(input, output, session) {
       km = as.numeric(input$est_km %||% 60000),
       transmission = input$est_transmission %||% "Tự động",
       fuel = input$est_fuel %||% "Xăng",
-      engine_size = as.numeric(input$est_engine %||% median_lookup(brand, model, "engine_size", 2)),
+      engine_size = as.numeric(input$est_engine %||% engine_default),
       seat_count = as.numeric(input$est_seats %||% median_lookup(brand, model, "seat_count", 5)),
       origin = input$est_origin %||% "Trong nước",
       region = input$est_region %||% DEFAULT_REGION,

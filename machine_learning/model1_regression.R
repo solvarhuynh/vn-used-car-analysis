@@ -1,5 +1,5 @@
 df_reg <- df[complete.cases(df[, c("log_price", "car_age", "mileage_k",
-                                    "engine_size", "is_auto", "is_imported",
+                                    "engine_non_ev", "fuel", "is_auto", "is_imported",
                                     "seat_count")]), ]
 
 set.seed(42)
@@ -8,7 +8,7 @@ train_reg <- df_reg[idx_reg, ]
 test_reg  <- df_reg[-idx_reg, ]
 
 model_regression <- lm(
-  log_price ~ car_age + mileage_k + engine_size + is_auto + is_imported + seat_count,
+  log_price ~ car_age + mileage_k + engine_non_ev + fuel + is_auto + is_imported + seat_count,
   data = train_reg
 )
 
@@ -28,7 +28,10 @@ term_map <- c(
   "(Intercept)" = "Hằng số",
   "car_age" = "Tuổi xe (năm)",
   "mileage_k" = "Số km đã đi (nghìn km)",
-  "engine_size" = "Dung tích động cơ (L)",
+  "engine_non_ev" = "Dung tích động cơ (L, xe xăng/dầu)",
+  "fuelDầu" = "Nhiên liệu: Dầu",
+  "fuelHybrid" = "Nhiên liệu: Hybrid",
+  "fuelĐiện" = "Nhiên liệu: Điện",
   "is_auto" = "Hộp số tự động",
   "is_imported" = "Nhập khẩu",
   "seat_count" = "Số chỗ ngồi"
