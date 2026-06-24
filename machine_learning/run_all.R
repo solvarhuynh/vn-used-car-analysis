@@ -41,6 +41,17 @@ normalize_origin_ml <- function(x) {
   )
 }
 
+normalize_fuel_ml <- function(x) {
+  y <- str_to_lower(str_squish(as.character(x)))
+  case_when(
+    y %in% c("petrol", "gasoline", "xăng", "xang") ~ "Xăng",
+    y %in% c("diesel", "dầu", "dau") ~ "Dầu",
+    y %in% c("hybrid") ~ "Hybrid",
+    y %in% c("electric", "điện", "dien") ~ "Điện",
+    TRUE ~ NA_character_
+  )
+}
+
 df <- read_master_data() %>%
   mutate(
     year = suppressWarnings(as.integer(year)),
@@ -49,7 +60,8 @@ df <- read_master_data() %>%
     engine_size = suppressWarnings(as.numeric(engine_size)),
     seat_count = suppressWarnings(as.integer(seat_count)),
     transmission = normalize_transmission_ml(transmission),
-    origin = normalize_origin_ml(origin)
+    origin = normalize_origin_ml(origin),
+    fuel_type = normalize_fuel_ml(fuel_type)
   ) %>%
   filter(
     !is.na(year), year >= 1990, year <= CURRENT_YEAR,
@@ -62,6 +74,9 @@ df <- read_master_data() %>%
     price_billion = price / 1e9,
     log_price = log(price),
     mileage_k = mileage / 1000,
+    is_electric = as.integer(fuel_type == "Điện"),
+    fuel = factor(fuel_type, levels = c("Xăng", "Dầu", "Hybrid", "Điện")),
+    engine_non_ev = ifelse(is_electric == 1, 0, engine_size),
     is_auto = as.integer(transmission %in% c("Tự động", "Số tự động", "CVT")),
     is_imported = as.integer(origin == "Nhập khẩu"),
     price_segment = factor(
@@ -92,15 +107,18 @@ df <- read_master_data() %>%
   ungroup() %>%
   mutate(
     mileage_k = ifelse(is.na(mileage_k), median_safe(mileage_k, 0), mileage_k),
+    engine_size = ifelse(is.na(engine_size) & is_electric == 1, 0, engine_size),
     engine_size = ifelse(is.na(engine_size), median_safe(engine_size, 1.5), engine_size),
+    engine_non_ev = ifelse(is_electric == 1, 0, engine_size),
     seat_count = ifelse(is.na(seat_count), round(median_safe(seat_count, 5)), seat_count)
   ) %>%
   filter(
     is.finite(log_price),
     is.finite(car_age),
     is.finite(mileage_k),
-    is.finite(engine_size),
-    is.finite(seat_count)
+    is.finite(engine_non_ev),
+    is.finite(seat_count),
+    !is.na(is_electric)
   )
 
 if (nrow(df) < 100) {
@@ -115,7 +133,7 @@ df_final <- df %>%
   select(
     brand, model, trim, year, car_age,
     body_type, body_type_clean, fuel_type, transmission,
-    engine_size, seat_count, drivetrain,
+    engine_size, engine_non_ev, seat_count, drivetrain,
     price, price_billion, price_segment,
     mileage, mileage_k, origin, color, city, posted_date, source, url,
     is_auto, is_imported, cluster_id, cluster_name
