@@ -41,7 +41,7 @@ fix_numeric_quality <- function(df) {
   mileage_num <- suppressWarnings(as.numeric(df$mileage))
 
   mileage_num[!is.na(mileage_num) & mileage_num < 0] <- NA_real_
-  mileage_num[!is.na(mileage_num) & mileage_num > 500] <- NA_real_
+  mileage_num[!is.na(mileage_num) & mileage_num > 500000] <- NA_real_ # Giữ nguyên giá trị nếu hợp lý, đặt NA nếu quá cao (ví dụ > 500,000 km)
 
   df$mileage <- as.integer(mileage_num)
 

@@ -56,27 +56,21 @@ normalize_na <- function(x) {
   str_squish(x)
 }
 
-# ── Price → numeric VND ───────────────────────────────────────────────────────
-# Xử lý: "340.000.000 đ", "300 triệu", "1.5 tỷ", "1 tỷ 250 triệu",
-#         "300,000,000", "8.49e+08"
-# Dùng numeric (double) thay vì integer để chứa được giá trị > 2.1 tỷ
+
 clean_price <- function(x) {
   x <- normalize_na(x)
   result <- sapply(x, function(v) {
     if (is.na(v)) return(NA_real_)
     v <- str_to_lower(str_trim(v))
 
-    # Loại bỏ ký tự tiền tệ và khoảng trắng thừa
     v <- str_remove_all(v, "[đ$]")
     v <- str_trim(v)
 
-    # Giá đã ở dạng số hoặc scientific notation, ví dụ "849000000", "8.49e+08"
     direct_num <- suppressWarnings(as.numeric(v))
     if (!is.na(direct_num) && direct_num > 0 && !str_detect(v, "tỷ|ty|triệu|trieu|tr\\b")) {
       return(direct_num)
     }
 
-    # "1.5 tỷ", "1,5 tỷ", "1 tỷ 250 triệu"
     if (str_detect(v, "tỷ|ty")) {
       val_ty <- suppressWarnings(as.numeric(str_replace_all(
         str_extract(v, "[0-9]+[.,]?[0-9]*(?=\\s*(tỷ|ty))"), ",", ".")))
@@ -86,14 +80,12 @@ clean_price <- function(x) {
       if (total > 0) return(round(total))
     }
 
-    # "300 triệu" hoặc "300tr"
     if (str_detect(v, "triệu|trieu|tr\\b")) {
       num <- suppressWarnings(as.numeric(str_replace_all(
         str_extract(v, "[0-9]+[.,]?[0-9]*"), ",", ".")))
       return(round(num * 1e6))
     }
 
-    # "340.000.000" hoặc "340,000,000" (dấu chấm/phẩy là phân cách nghìn)
     v_clean <- str_remove_all(v, "[.,\\s]")
     num <- suppressWarnings(as.numeric(v_clean))
     if (!is.na(num) && num > 0) return(num)

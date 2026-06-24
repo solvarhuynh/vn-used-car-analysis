@@ -1,0 +1,188 @@
+SCRIPT THUYẾT TRÌNH - THÀNH VIÊN B
+Đề tài: Phân tích thị trường ô tô cũ tại Việt Nam
+Phạm vi: Slide 3, 4, 5, 6
+
+--------------------------------------------------------------------------------
+1. LỜI MỞ ĐẦU CHO PHẦN TRÌNH BÀY CỦA B
+--------------------------------------------------------------------------------
+
+Kính chào thầy/cô và các bạn,
+Phần trình bày của mình sẽ đi sâu vào phần "hậu trường" của hệ thống web scraping, tức là cách chúng mình tổ chức toàn bộ pipeline để dữ liệu sau khi thu thập về không chỉ nằm rời rạc, mà được chuẩn hóa, kiểm định, hợp nhất và cập nhật tự động.
+
+Nếu như phần trước đã giới thiệu về việc lấy dữ liệu từ các website, thì ở phần của mình, mình sẽ trình bày 4 ý chính:
+1. Cách xử lý nhiều nguồn dữ liệu cùng lúc bằng module dùng chung `utils.R`.
+2. Quy trình làm sạch và kiểm định dữ liệu bằng `validate_clean_data.R`.
+3. Kiến trúc cơ sở dữ liệu và cách hợp nhất dữ liệu vào `master_data.db`.
+4. Hệ thống cập nhật realtime bằng `run_pipeline.R` và `run_realtime.R`.
+
+Mục tiêu cuối cùng là biến dữ liệu thô từ web thành một nguồn dữ liệu tin cậy, có thể dùng cho phân tích và hiển thị trên Shiny App.
+
+--------------------------------------------------------------------------------
+2. LỜI THUYẾT TRÌNH CHI TIẾT THEO TỪNG SLIDE
+--------------------------------------------------------------------------------
+
+SLIDE 3: TỔNG QUAN CÁC NGUỒN CÀO KHÁC & GIẢI PHÁP VƯỢT RÀO CẢN (WEB ĐỘNG)
+
+Ở slide này, mình muốn nhấn mạnh rằng thách thức lớn nhất của dự án không chỉ là “cào được dữ liệu”, mà là “cào được nhiều nguồn khác nhau một cách ổn định”.
+
+Trong thực tế, mỗi website có cấu trúc HTML khác nhau, cách đặt class, id, hoặc cách render nội dung cũng khác nhau. Có nguồn là web tĩnh, có nguồn lại là web động, tức là dữ liệu chỉ xuất hiện sau khi trang web chạy JavaScript. Vì vậy, nếu chỉ dùng một cách scraping duy nhất thì rất dễ bị lỗi hoặc thiếu dữ liệu.
+
+Để giải quyết vấn đề đó, nhóm mình thiết kế các hàm dùng chung trong `utils.R`. File này giống như “bộ công cụ trung tâm”, chứa những hàm hỗ trợ tái sử dụng cho nhiều nguồn khác nhau, chẳng hạn như:
+- hàm chuẩn hóa chuỗi,
+- hàm xử lý lỗi,
+- hàm retry khi request thất bại,
+- và các hàm bóc tách dữ liệu có cấu trúc tương tự.
+
+Điểm quan trọng ở đây là thay vì viết code riêng lẻ cho từng trang rồi bị trùng lặp rất nhiều, chúng mình gom các logic chung vào một chỗ. Cách này giúp code dễ bảo trì hơn, dễ mở rộng hơn, và khi một nguồn thay đổi cấu trúc thì mình chỉ cần sửa ở module liên quan.
+
+Với các nguồn động như Chotot, vấn đề không chỉ là đọc HTML mà còn là xử lý việc trang tải nội dung sau. Do đó, nhóm sử dụng công cụ phù hợp như `chromote` hoặc `RSelenium` để mô phỏng trình duyệt thật. Ngoài ra, trong quá trình chạy thực tế, đôi khi còn gặp các lỗi như timeout, chặn request, hoặc phản hồi không ổn định. Vì vậy, trong pipeline có cơ chế tự retry để tăng độ bền cho quá trình cào dữ liệu.
+
+Nếu nói ngắn gọn, slide này thể hiện tư duy hệ thống: không chỉ scrape từng trang, mà phải xây dựng một kiến trúc có thể chịu lỗi, mở rộng và dùng chung được.
+
+Chuyển sang phần tiếp theo, sau khi đã cào được dữ liệu từ nhiều nguồn, câu hỏi quan trọng là: dữ liệu đó có sạch và đáng tin không? Đó là lý do chúng mình cần bước làm sạch và kiểm định dữ liệu.
+
+SLIDE 4: QUY TRÌNH LÀM SẠCH VÀ KIỂM ĐỊNH DỮ LIỆU (DATA CLEANING)
+
+Ở bước này, dữ liệu thô sau khi thu thập thường chưa thể dùng ngay. Lý do là vì dữ liệu web thường có khá nhiều vấn đề: bản ghi trùng nhau, trường bị thiếu, định dạng không đồng nhất, hoặc thậm chí có những giá trị phi logic.
+
+Ví dụ, cùng một thông tin giá xe có thể được ghi dưới dạng "750 triệu", "750,000,000", hoặc "0.75 tỷ". Nếu không chuẩn hóa lại, thì khi phân tích sẽ sai hoàn toàn.
+
+Trong dự án, file `validate_clean_data.R` đóng vai trò như một lớp kiểm tra chất lượng dữ liệu. Tại đây, chúng mình áp dụng các quy tắc logic để phát hiện dữ liệu bất thường. Chẳng hạn:
+- Năm sản xuất không thể lớn hơn năm hiện tại,
+- Số kilomet đã đi không thể là số âm,
+- Giá xe phải được chuyển về cùng một đơn vị,
+- Những bản ghi thiếu quá nhiều thông tin quan trọng thì có thể loại bỏ hoặc đánh dấu để xử lý riêng.
+
+Mục đích của bước này là đảm bảo dữ liệu đầu vào đủ tin cậy cho các bước phân tích sau này. Nếu dữ liệu bẩn mà vẫn đưa thẳng vào mô hình hoặc dashboard thì kết quả sẽ lệch rất nhiều.
+
+Nói cách khác, cleaning không chỉ là làm đẹp dữ liệu, mà là một bước bắt buộc để bảo vệ chất lượng toàn bộ pipeline.
+
+Sau khi dữ liệu đã được làm sạch, mình sẽ chuyển sang phần kiến trúc lưu trữ, tức là làm sao để hợp nhất dữ liệu từ nhiều nguồn vào một nơi duy nhất và truy vấn hiệu quả.
+
+SLIDE 5: KIẾN TRÚC CƠ SỞ DỮ LIỆU & HỢP NHẤT (MERGE DATA)
+
+Ở bước này, nhóm mình chọn SQLite cho `master_data.db`. Lý do là SQLite khá gọn nhẹ, không cần dựng server riêng, nhưng vẫn đủ mạnh để lưu trữ và truy vấn dữ liệu có cấu trúc. Với một đồ án phân tích dữ liệu, đây là lựa chọn hợp lý vì dễ triển khai và dễ tích hợp với R.
+
+`merge_data.R` là file chịu trách nhiệm hợp nhất toàn bộ dữ liệu từ nhiều nguồn về một chuẩn chung. Có thể hiểu đây là nơi gom các bảng rời rạc thành một master schema thống nhất. Việc này rất quan trọng vì mỗi website có thể đặt tên cột khác nhau, hoặc cùng một thông tin nhưng định dạng lại khác nhau.
+
+Một điểm nữa là khử trùng lặp. Trong dữ liệu xe cũ, một tin đăng có thể xuất hiện nhiều lần, hoặc cùng một xe được đăng lại ở nhiều thời điểm khác nhau. Vì vậy, nhóm dựa trên các khóa như URL hoặc ID tin đăng để phát hiện và loại bỏ bản ghi trùng, tránh làm lệch thống kê.
+
+Sau khi merge xong, dữ liệu không còn là những mảnh ghép riêng lẻ nữa mà đã trở thành một nguồn dữ liệu tập trung, có thể truy vấn nhanh, hỗ trợ tốt cho bước phân tích và hiển thị.
+
+Từ nền tảng lưu trữ này, nhóm tiếp tục xây dựng hệ thống cập nhật tự động để dữ liệu luôn mới, thay vì chỉ chụp một thời điểm cố định.
+
+SLIDE 6: HỆ THỐNG TỰ ĐỘNG CẬP NHẬT REALTIME
+
+Đây là phần mình thấy kỹ thuật nhất và cũng là điểm nhấn của toàn bộ pipeline.
+
+`run_pipeline.R` có thể xem là “trái tim” của hệ thống. File này điều phối toàn bộ luồng xử lý từ đầu đến cuối: gọi các script cào dữ liệu, chạy bước làm sạch, kiểm định, merge và cuối cùng lưu vào database.
+
+Sau đó, `run_realtime.R` đóng vai trò cập nhật gia tăng, tức là chỉ lấy những tin mới phát sinh trong ngày hoặc trong một khoảng thời gian gần đây. Cách làm này giúp tiết kiệm thời gian hơn rất nhiều so với việc cào lại toàn bộ dữ liệu từ đầu mỗi lần chạy.
+
+Ý nghĩa của realtime ở đây là gì?
+Là dữ liệu không bị “đóng băng” tại một thời điểm cũ, mà được cập nhật liên tục để hệ thống luôn phản ánh đúng tình hình thị trường.
+
+Điều này đặc biệt quan trọng với thị trường ô tô cũ, vì giá cả, số lượng tin đăng, và trạng thái bán hàng thay đổi khá nhanh. Nhờ cơ chế cập nhật định kỳ, dashboard hoặc Shiny App phía sau có thể hiển thị thông tin mới hơn, thực tế hơn, và hữu ích hơn cho người dùng.
+
+Nếu gói gọn toàn bộ phần này trong một câu, thì:
+chúng mình không chỉ thu thập dữ liệu, mà xây dựng một pipeline có khả năng vận hành lâu dài, tự làm mới, và phục vụ phân tích theo thời gian thực.
+
+--------------------------------------------------------------------------------
+3. ĐOẠN KẾT CHO PHẦN TRÌNH BÀY CỦA B
+--------------------------------------------------------------------------------
+
+Trên đây là phần mình trình bày về backend pipeline của dự án, từ khâu quản lý nhiều nguồn scraping, làm sạch dữ liệu, hợp nhất vào database, cho đến cập nhật realtime.
+
+Thông điệp chính mà nhóm muốn truyền tải là: dữ liệu web scraping chỉ thực sự có giá trị khi nó được chuẩn hóa, kiểm định và vận hành như một hệ thống hoàn chỉnh.
+
+Mình xin hết phần trình bày của mình, cảm ơn thầy/cô và các bạn đã lắng nghe.
+
+--------------------------------------------------------------------------------
+4. GỢI Ý NỘI DUNG VÀ THIẾT KẾ SLIDE CHỈ CHO PHẦN CỦA B
+--------------------------------------------------------------------------------
+
+SLIDE 3 - Nguồn dữ liệu động và cách vượt rào cản
+
+Nội dung nên đưa vào slide:
+- Tên các nguồn dữ liệu
+- 1 sơ đồ nhỏ: Website -> Scraper -> Utils.R -> Raw Data
+- 3 ý chính:
+  + nhiều nguồn, nhiều cấu trúc
+  + dùng module chung `utils.R`
+  + cơ chế retry và xử lý lỗi
+
+Thiết kế gợi ý:
+- Dùng layout dạng sơ đồ, ít chữ, nhiều mũi tên
+- Tô nổi bật `utils.R` bằng một ô màu riêng
+- Có thể chèn ảnh minh họa code hoặc luồng pipeline ở góc phải
+
+Điểm nhấn khi nói:
+- “Mỗi website một kiểu, nên mình cần một bộ công cụ dùng chung để tránh code bị rời rạc.”
+
+SLIDE 4 - Làm sạch và kiểm định dữ liệu
+
+Nội dung nên đưa vào slide:
+- Các lỗi dữ liệu thường gặp: trùng, thiếu, sai đơn vị, sai logic
+- `validate_clean_data.R`
+- Ví dụ chuyển đổi giá về numeric
+- Ví dụ rule kiểm tra: năm SX, ODO, giá
+
+Thiết kế gợi ý:
+- Chia slide thành 2 cột: bên trái là lỗi dữ liệu, bên phải là cách xử lý
+- Dùng icon hoặc nhãn màu đỏ cho “lỗi” và màu xanh cho “đã xử lý”
+- Có thể thêm một biểu đồ nhỏ trước/sau cleaning nếu có số liệu thật
+
+Điểm nhấn khi nói:
+- “Cleaning không phải bước phụ, mà là bước quyết định độ tin cậy của toàn bộ phân tích.”
+
+SLIDE 5 - Database và merge data
+
+Nội dung nên đưa vào slide:
+- `master_data.db`
+- `merge_data.R`
+- Deduplication bằng URL/ID
+- Master schema thống nhất
+
+Thiết kế gợi ý:
+- Vẽ hình database ở trung tâm
+- Các nguồn dữ liệu đi vào database bằng mũi tên hội tụ
+- Dùng màu trung tính, tạo cảm giác hệ thống và gọn gàng
+
+Điểm nhấn khi nói:
+- “Mục tiêu của merge không chỉ là gộp dữ liệu, mà là chuẩn hóa để truy vấn và phân tích dễ hơn.”
+
+SLIDE 6 - Realtime pipeline
+
+Nội dung nên đưa vào slide:
+- `run_pipeline.R`
+- `run_realtime.R`
+- Cập nhật gia tăng
+- Dữ liệu luôn mới
+
+Thiết kế gợi ý:
+- Dùng timeline hoặc flow từ trái sang phải
+- Có thể thêm hình chiếc đồng hồ hoặc biểu tượng refresh
+- Nếu có video log chạy thật, nên đặt ở phần minh họa phụ
+
+Điểm nhấn khi nói:
+- “Dữ liệu của chúng em không phải là dữ liệu chết, mà là dữ liệu sống và được cập nhật liên tục.”
+
+--------------------------------------------------------------------------------
+5. CÂU CHỐT NGẮN GỌN ĐỂ BẠN DÙNG KHI THUYẾT TRÌNH
+--------------------------------------------------------------------------------
+
+- “`utils.R` là nơi gom các hàm dùng chung để hệ thống cào dữ liệu ổn định hơn.”
+- “`validate_clean_data.R` giúp đảm bảo dữ liệu đầu vào đủ sạch và đủ logic.”
+- “SQLite là lựa chọn gọn nhẹ nhưng hiệu quả để quản lý master data.”
+- “`run_pipeline.R` và `run_realtime.R` giúp dữ liệu luôn được cập nhật thay vì bị đóng băng.”
+- “Giá trị lớn nhất của pipeline này là biến dữ liệu thô thành dữ liệu có thể dùng ngay cho phân tích.”
+
+--------------------------------------------------------------------------------
+6. GỢI Ý NGẮN VỀ PHONG CÁCH TRÌNH BÀY
+--------------------------------------------------------------------------------
+
+- Nói chậm ở các từ khóa: `utils.R`, `validate_clean_data.R`, `master_data.db`, `realtime`.
+- Khi chuyển slide, luôn nối ý theo mạch: nhiều nguồn -> làm sạch -> merge -> realtime.
+- Nếu cần nhấn mạnh kỹ thuật, hãy ưu tiên nói về logic hệ thống hơn là đi quá sâu vào cú pháp code.
+- Giữ giọng tự tin, vì phần của bạn là phần “chứng minh hệ thống hoạt động bền vững”.
+

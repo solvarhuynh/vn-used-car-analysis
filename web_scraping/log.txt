@@ -8470,3 +8470,19 @@
 [2026-06-24 00:02:36] [web_scraping/script/merge_data.R] - INFO: === Merge complete. 27259 unique records -> web_scraping/data/master_data.db and web_scraping/data/master_data.csv ===
 [2026-06-24 00:03:08] [web_scraping/script/validate_clean_data.R] - INFO: === Bắt đầu validation dữ liệu clean ===
 [2026-06-24 00:03:09] [web_scraping/script/validate_clean_data.R] - INFO: === Validation hoàn thành. 27042 dòng clean, report tại web_scraping/data/quality_report ===
+[2026-06-24 09:41:15] [clean.R] - INFO: === Start cleaning trim directly in init_db/*.db ===
+[2026-06-24 09:41:15] [clean.R] - INFO: Found 3 .db files. Processing...
+[2026-06-24 09:41:15] [clean.R] - INFO: [data_banxehoicu.db] Updated 0 rows out of 2018.
+[2026-06-24 09:41:16] [clean.R] - INFO: [data_bonbanh.db] Updated 161 rows out of 6245.
+[2026-06-24 09:41:18] [clean.R] - INFO: [data_chotot.db] Updated 4817 rows out of 19136.
+[2026-06-24 09:41:18] [clean.R] - INFO: === Done. Cleaned 3 file(s), updated 4978 row(s) in init_db ===
+[2026-06-24 09:41:18] [web_scraping/script/clean/clean_numeric_backfill.R] - INFO: Found 3 init_db files. Starting numeric backfill...
+[2026-06-24 09:41:18] [web_scraping/script/clean/clean_numeric_backfill.R] - INFO: [data_banxehoicu.db] 0 rows updated | engine<0.5: 0->0 | engine>8: 0->0 | seat>16: 0->0 | mileage<0: 0->0 | mileage>500: 0->0 | is_imported NA: 0->0
+[2026-06-24 09:41:19] [web_scraping/script/clean/clean_numeric_backfill.R] - INFO: [data_bonbanh.db] 6225 rows updated | engine<0.5: 1->0 | engine>8: 2->0 | seat>16: 9->0 | mileage<0: 0->0 | mileage>500: 4417->4385 | is_imported NA: NA->0
+[2026-06-24 09:41:19] [web_scraping/script/clean/clean_numeric_backfill.R] - INFO: [data_chotot.db] 18976 rows updated | engine<0.5: 3010->0 | engine>8: 1->0 | seat>16: 0->0 | mileage<0: 0->0 | mileage>500: 16074->15870 | is_imported NA: NA->6447
+[2026-06-24 09:41:19] [web_scraping/script/clean/clean_numeric_backfill.R] - INFO: Numeric backfill complete. 2 file(s) changed, 25201 row(s) updated.
+[2026-06-24 09:41:33] [web_scraping/script/merge_data.R] - INFO: Starting merge of individual SQLite databases into master outputs.
+[2026-06-24 09:41:34] [web_scraping/script/merge_data.R] - INFO: Merged 2018/2018 records from web_scraping/data/init_db/data_banxehoicu.db
+[2026-06-24 09:41:34] [web_scraping/script/merge_data.R] - INFO: Merged 6202/6202 records from web_scraping/data/init_db/data_bonbanh.db
+[2026-06-24 09:41:34] [web_scraping/script/merge_data.R] - INFO: Merged 19039/19039 records from web_scraping/data/init_db/data_chotot.db
+[2026-06-24 09:41:35] [web_scraping/script/merge_data.R] - INFO: === Merge complete. 27259 unique records -> web_scraping/data/master_data.db and web_scraping/data/master_data.csv ===
