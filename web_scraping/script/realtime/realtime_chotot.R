@@ -10,10 +10,11 @@
 #     -> bắt buộc append vì Step B của scrap_chotot.R dùng checkpoint dạng
 #        "đã xử lý N dòng đầu file" để resume; prepend sẽ làm lệch vị trí
 #        toàn bộ URL cũ và khiến chúng bị bỏ qua vĩnh viễn.
-#   - Cào chi tiết từng URL mới → data/realtime/data_chotot_rt.csv
+#   - Cào chi tiết từng URL mới
 #   - INSERT OR IGNORE vào init_db/data_chotot.db và master_data.db
 #
-# Output: web_scraping/data/realtime/data_chotot_rt.csv
+# Output: Dữ liệu ghi thẳng vào init_db/data_chotot.db và master_data.db.
+#         File CSV trung gian (data_chotot_rt.csv) đã bị vô hiệu hóa.
 # ==============================================================================
 # Lưu ý: việc dò đường dẫn Chrome/Edge (CHROMOTE_CHROME) đã được xử lý trong
 # scrap_chotot.R (đặt ngoài guard REALTIME_MODE) nên sẽ tự chạy khi source()
@@ -144,6 +145,22 @@ run_realtime_chotot <- function(con_master = NULL) {
   con_init <- DBI::dbConnect(RSQLite::SQLite(), INIT_DB_FILE)
   on.exit(DBI::dbDisconnect(con_init), add = TRUE)
 
+  # Dọn dẹp session/browser cũ còn sót từ lần chạy trước (nếu có).
+  # Dùng chromote API thay vì taskkill để tránh kill nhầm Edge đang dùng bình thường.
+  # Thứ tự: đóng session global `b` → đóng default Chromote browser → tạo session mới.
+  tryCatch({
+    if (exists("b", envir = .GlobalEnv) && !is.null(get("b", envir = .GlobalEnv))) {
+      tryCatch(get("b", envir = .GlobalEnv)$close(), error = function(e) NULL)
+      assign("b", NULL, envir = .GlobalEnv)
+    }
+    cb <- tryCatch(chromote::default_chromote_object(), error = function(e) NULL)
+    if (!is.null(cb)) {
+      tryCatch(cb$close(), error = function(e) NULL)
+      chromote::set_default_chromote_object(NULL)
+    }
+    Sys.sleep(2)
+  }, error = function(e) NULL)
+
   # Khởi session Chromote
   sess <- make_session()
   on.exit({ close_session(sess); log_message(SCRIPT_NAME, "Đã đóng session.") }, add = TRUE)
@@ -257,17 +274,19 @@ run_realtime_chotot <- function(con_master = NULL) {
     Sys.sleep(runif(1, 1, 2))
   }
 
-  # ── BƯỚC 4: Ghi ra rt.csv ────────────────────────────────────────────────────
-  if (length(batch) > 0) {
-    rt_df <- bind_rows(batch)
-    # Append vào rt.csv (tạo mới nếu chưa có, thêm header chỉ lần đầu)
-    if (!file.exists(RT_OUTPUT)) {
-      readr::write_csv(rt_df, RT_OUTPUT, na = "")
-    } else {
-      readr::write_csv(rt_df, RT_OUTPUT, na = "", append = TRUE, col_names = FALSE)
-    }
-    log_message(SCRIPT_NAME, sprintf("Đã ghi %d dòng vào: %s", nrow(rt_df), RT_OUTPUT))
-  }
+  # ── BƯỚC 4: Ghi ra rt.csv (đã vô hiệu hóa — dữ liệu đã có trong DB) ──────────
+  # Bỏ qua việc ghi file CSV trung gian để tiết kiệm dung lượng lưu trữ.
+  # Dữ liệu đã được INSERT trực tiếp vào init_db và master_data.db ở Bước 3.
+  # if (length(batch) > 0) {
+  #   rt_df <- bind_rows(batch)
+  #   # Append vào rt.csv (tạo mới nếu chưa có, thêm header chỉ lần đầu)
+  #   if (!file.exists(RT_OUTPUT)) {
+  #     readr::write_csv(rt_df, RT_OUTPUT, na = "")
+  #   } else {
+  #     readr::write_csv(rt_df, RT_OUTPUT, na = "", append = TRUE, col_names = FALSE)
+  #   }
+  #   log_message(SCRIPT_NAME, sprintf("Đã ghi %d dòng vào: %s", nrow(rt_df), RT_OUTPUT))
+  # }
 
   log_message(SCRIPT_NAME, sprintf(
     "=== Hoàn thành. %d URL mới | %d dòng vào init_db | %d dòng vào master ===",

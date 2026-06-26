@@ -8486,3 +8486,161 @@
 [2026-06-24 09:41:34] [web_scraping/script/merge_data.R] - INFO: Merged 6202/6202 records from web_scraping/data/init_db/data_bonbanh.db
 [2026-06-24 09:41:34] [web_scraping/script/merge_data.R] - INFO: Merged 19039/19039 records from web_scraping/data/init_db/data_chotot.db
 [2026-06-24 09:41:35] [web_scraping/script/merge_data.R] - INFO: === Merge complete. 27259 unique records -> web_scraping/data/master_data.db and web_scraping/data/master_data.csv ===
+[2026-06-26 12:28:32] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-26 12:28:33] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-26 12:28:36] [realtime_chotot.R] - INFO: Kiểm tra trang 1...
+[2026-06-26 12:28:50] [realtime_chotot.R] - INFO: Trang 1: URL cuối đã có trong DB → so ngược từng URL.
+[2026-06-26 12:28:50] [realtime_chotot.R] - INFO: Phát hiện 0 URL mới cần cào.
+[2026-06-26 12:28:50] [realtime_chotot.R] - INFO: Không có URL mới. Kết thúc.
+[2026-06-26 12:28:50] [realtime_chotot.R] - INFO: Đã đóng session.
+[2026-06-26 12:28:50] [scrap_chotot.R] - INFO: Task disabled: web_scraping/script/realtime/realtime_banxehoicu.R — skipping.
+[2026-06-26 12:28:50] [realtime_bonbanh.R] - INFO: === Bắt đầu realtime BonBanh ===
+[2026-06-26 12:28:50] [realtime_bonbanh.R] - INFO: Kiểm tra trang 1...
+[2026-06-26 12:28:51] [realtime_bonbanh.R] - INFO: Trang 1: URL cuối chưa có trong DB → lấy 13/20 URL mới.
+[2026-06-26 12:28:52] [realtime_bonbanh.R] - INFO: Kiểm tra trang 2...
+[2026-06-26 12:28:53] [realtime_bonbanh.R] - INFO: Trang 2: URL cuối chưa có trong DB → lấy 15/20 URL mới.
+[2026-06-26 12:28:54] [realtime_bonbanh.R] - INFO: Kiểm tra trang 3...
+[2026-06-26 12:28:54] [realtime_bonbanh.R] - INFO: Trang 3: URL cuối đã có trong DB → tìm được 16/20 URL mới.
+[2026-06-26 12:28:54] [realtime_bonbanh.R] - INFO: Phát hiện 44 URL mới.
+[2026-06-26 12:28:54] [realtime_bonbanh.R] - INFO: Đã ghi 44 URL mới vào đầu: web_scraping/data/raw/meta/urls_bonbanh.txt
+[2026-06-26 12:30:03] [realtime_bonbanh.R] - INFO: Đã ghi 42 dòng vào: web_scraping/data/realtime/data_bonbanh_rt.csv
+[2026-06-26 12:30:03] [realtime_bonbanh.R] - INFO: === Hoàn thành. 44 URL mới | 42 vào init_db | 42 vào master ===
+[2026-06-26 12:30:03] [scrap_chotot.R] - INFO: Real-time update cycle completed with 42 new rows.
+[2026-06-26 12:30:03] [scrap_chotot.R] - INFO: Có 42 dòng mới, đang rebuild master_data.csv từ master DB...
+[2026-06-26 12:30:03] [scrap_chotot.R] - ERROR: Lỗi khi rebuild CSV từ master DB: Invalid or closed connection
+[2026-06-26 13:07:29] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-26 13:07:29] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-26 13:07:32] [realtime_chotot.R] - INFO: Kiểm tra trang 1...
+[2026-06-26 13:07:46] [realtime_chotot.R] - INFO: Trang 1: URL cuối đã có trong DB → so ngược từng URL.
+[2026-06-26 13:07:46] [realtime_chotot.R] - INFO: Phát hiện 0 URL mới cần cào.
+[2026-06-26 13:07:46] [realtime_chotot.R] - INFO: Không có URL mới. Kết thúc.
+[2026-06-26 13:07:46] [realtime_chotot.R] - INFO: Đã đóng session.
+[2026-06-26 13:07:46] [scrap_chotot.R] - INFO: Task disabled: web_scraping/script/realtime/realtime_banxehoicu.R — skipping.
+[2026-06-26 13:07:46] [realtime_bonbanh.R] - INFO: === Bắt đầu realtime BonBanh ===
+[2026-06-26 13:07:46] [realtime_bonbanh.R] - INFO: Kiểm tra trang 1...
+[2026-06-26 13:07:46] [realtime_bonbanh.R] - INFO: Trang 1: URL cuối đã có trong DB → tìm được 13/20 URL mới.
+[2026-06-26 13:07:46] [realtime_bonbanh.R] - INFO: Phát hiện 13 URL mới.
+[2026-06-26 13:07:46] [realtime_bonbanh.R] - INFO: Đã ghi 13 URL mới vào đầu: web_scraping/data/raw/meta/urls_bonbanh.txt
+[2026-06-26 13:08:09] [realtime_bonbanh.R] - INFO: === Hoàn thành. 13 URL mới | 13 vào init_db | 13 vào master ===
+[2026-06-26 13:08:09] [scrap_chotot.R] - INFO: Real-time update cycle completed with 13 new rows.
+[2026-06-26 13:08:09] [scrap_chotot.R] - INFO: Có 13 dòng mới, đang rebuild master_data.csv từ master DB...
+[2026-06-26 13:08:09] [scrap_chotot.R] - INFO: Đã rebuild thành công master_data.csv từ master DB (27314 dòng).
+[2026-06-26 13:08:09] [clean_master_db.R] - INFO: === Bắt đầu clean master_data.db ===
+[2026-06-26 13:11:08] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-26 13:11:08] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-26 13:11:25] [scrap_chotot.R] - WARN: Session launch attempt 1 failed: Cannot find an available port. Please try again.
+[2026-06-26 13:12:00] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-26 13:12:00] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-26 13:12:09] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-26 13:12:09] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-26 13:12:41] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-26 13:12:41] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-26 13:13:12] [scrap_chotot.R] - WARN: Session launch attempt 1 failed: Cannot find an available port. Please try again.
+[2026-06-26 13:13:56] [scrap_chotot.R] - WARN: Session launch attempt 2 failed: Cannot find an available port. Please try again.
+[2026-06-26 13:14:41] [scrap_chotot.R] - WARN: Session launch attempt 3 failed: Cannot find an available port. Please try again.
+[2026-06-26 13:14:44] [scrap_chotot.R] - ERROR: run_realtime_chotot failed: Cannot launch ChromoteSession after multiple attempts.
+[2026-06-26 13:14:44] [scrap_chotot.R] - INFO: Task disabled: web_scraping/script/realtime/realtime_banxehoicu.R — skipping.
+[2026-06-26 13:14:45] [realtime_bonbanh.R] - INFO: === Bắt đầu realtime BonBanh ===
+[2026-06-26 13:14:45] [realtime_bonbanh.R] - INFO: Kiểm tra trang 1...
+[2026-06-26 13:14:46] [realtime_bonbanh.R] - INFO: Trang 1: URL cuối chưa có trong DB → lấy 12/20 URL mới.
+[2026-06-26 13:14:47] [realtime_bonbanh.R] - INFO: Kiểm tra trang 2...
+[2026-06-26 13:14:48] [realtime_bonbanh.R] - INFO: Trang 2: URL cuối chưa có trong DB → lấy 11/20 URL mới.
+[2026-06-26 13:14:49] [realtime_bonbanh.R] - INFO: Kiểm tra trang 3...
+[2026-06-26 13:14:49] [realtime_bonbanh.R] - INFO: Trang 3: URL cuối đã có trong DB → tìm được 13/20 URL mới.
+[2026-06-26 13:14:49] [realtime_bonbanh.R] - INFO: Phát hiện 36 URL mới.
+[2026-06-26 13:14:49] [realtime_bonbanh.R] - INFO: Đã ghi 36 URL mới vào đầu: web_scraping/data/raw/meta/urls_bonbanh.txt
+[2026-06-26 13:15:55] [realtime_bonbanh.R] - INFO: === Hoàn thành. 36 URL mới | 34 vào init_db | 34 vào master ===
+[2026-06-26 13:15:55] [scrap_chotot.R] - INFO: Real-time update cycle completed with 34 new rows.
+[2026-06-26 13:15:55] [scrap_chotot.R] - INFO: Có 34 dòng mới, đang rebuild master_data.csv từ master DB...
+[2026-06-26 13:15:56] [scrap_chotot.R] - INFO: Đã rebuild thành công master_data.csv từ master DB (27348 dòng).
+[2026-06-26 13:15:56] [clean_master_db.R] - INFO: === Bắt đầu clean master_data.db ===
+[2026-06-26 14:15:36] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-26 14:15:36] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-26 14:15:59] [scrap_chotot.R] - WARN: Session launch attempt 1 failed: Cannot find an available port. Please try again.
+[2026-06-26 14:16:47] [scrap_chotot.R] - WARN: Session launch attempt 2 failed: Cannot find an available port. Please try again.
+[2026-06-26 14:17:46] [scrap_chotot.R] - WARN: Session launch attempt 3 failed: Cannot find an available port. Please try again.
+[2026-06-26 14:17:49] [scrap_chotot.R] - ERROR: run_realtime_chotot failed: Cannot launch ChromoteSession after multiple attempts.
+[2026-06-26 14:17:49] [scrap_chotot.R] - INFO: Task disabled: web_scraping/script/realtime/realtime_banxehoicu.R — skipping.
+[2026-06-26 14:17:50] [realtime_bonbanh.R] - INFO: === Bắt đầu realtime BonBanh ===
+[2026-06-26 14:17:50] [realtime_bonbanh.R] - INFO: Kiểm tra trang 1...
+[2026-06-26 14:17:51] [realtime_bonbanh.R] - INFO: Trang 1: URL cuối đã có trong DB → tìm được 7/20 URL mới.
+[2026-06-26 14:17:51] [realtime_bonbanh.R] - INFO: Phát hiện 7 URL mới.
+[2026-06-26 14:17:51] [realtime_bonbanh.R] - INFO: Đã ghi 7 URL mới vào đầu: web_scraping/data/raw/meta/urls_bonbanh.txt
+[2026-06-26 14:18:08] [realtime_bonbanh.R] - INFO: === Hoàn thành. 7 URL mới | 6 vào init_db | 6 vào master ===
+[2026-06-26 14:18:09] [scrap_chotot.R] - INFO: Real-time update cycle completed with 6 new rows.
+[2026-06-26 14:18:09] [scrap_chotot.R] - INFO: Có 6 dòng mới — bắt đầu clean master DB và rebuild CSV...
+[2026-06-26 14:18:11] [scrap_chotot.R] - INFO: Clean & rebuild: đọc 27354 dòng từ master DB.
+[2026-06-26 14:18:11] [scrap_chotot.R] - WARN:   Xoá 1 dòng xe >= 16 chỗ.
+[2026-06-26 14:18:12] [scrap_chotot.R] - INFO:   Bước 1 (numeric fix) hoàn thành.
+[2026-06-26 14:18:21] [scrap_chotot.R] - INFO:   Bước 2 (trim canonicalization) hoàn thành.
+[2026-06-26 14:18:25] [scrap_chotot.R] - INFO:   Đã ghi lại 27353 dòng vào master DB.
+[2026-06-26 14:18:28] [scrap_chotot.R] - INFO:   Đã rebuild master_data.csv (27353 dòng). CSV sẵn sàng cho visual/model.
+[2026-06-26 14:31:01] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-26 14:31:01] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-26 14:31:19] [scrap_chotot.R] - WARN: Session launch attempt 1 failed: Cannot find an available port. Please try again.
+[2026-06-26 14:46:45] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-26 14:46:45] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-26 14:47:01] [scrap_chotot.R] - WARN: Session launch attempt 1 failed: Cannot find an available port. Please try again.
+[2026-06-26 14:47:08] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-26 14:47:09] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-26 14:47:37] [scrap_chotot.R] - WARN: Session launch attempt 1 failed: Cannot find an available port. Please try again.
+[2026-06-26 14:48:05] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-26 14:48:05] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-26 14:48:37] [scrap_chotot.R] - WARN: Session launch attempt 1 failed: Cannot find an available port. Please try again.
+[2026-06-26 14:49:38] [scrap_chotot.R] - WARN: Session launch attempt 2 failed: Cannot find an available port. Please try again.
+[2026-06-26 14:53:25] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-26 14:53:25] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-26 14:53:46] [scrap_chotot.R] - WARN: Session launch attempt 1 failed: Cannot find an available port. Please try again.
+[2026-06-26 14:55:00] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-26 14:55:02] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-26 14:55:08] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-26 14:55:08] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-26 15:16:49] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-26 15:16:50] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-26 15:16:56] [realtime_chotot.R] - INFO: Kiểm tra trang 1...
+[2026-06-26 15:17:11] [realtime_chotot.R] - INFO: Trang 1: URL cuối chưa có trong DB → lấy hết 24 URL, sang trang tiếp.
+[2026-06-26 15:17:11] [realtime_chotot.R] - INFO: Kiểm tra trang 2...
+[2026-06-26 15:17:24] [realtime_chotot.R] - INFO: Trang 2: URL cuối chưa có trong DB → lấy hết 25 URL, sang trang tiếp.
+[2026-06-26 15:17:24] [realtime_chotot.R] - INFO: Kiểm tra trang 3...
+[2026-06-26 15:17:37] [realtime_chotot.R] - INFO: Trang 3: URL cuối đã có trong DB → so ngược từng URL.
+[2026-06-26 15:17:37] [realtime_chotot.R] - INFO: Phát hiện 49 URL mới cần cào.
+[2026-06-26 15:17:37] [realtime_chotot.R] - INFO: Đã ghi 49 URL mới vào cuối file: web_scraping/data/raw/meta/urls_chotot.txt
+[2026-06-26 15:31:26] [scrap_chotot.R] - WARN: Failed to scrape https://xe.chotot.com/mua-ban-oto-huyen-hoc-mon-tp-ho-chi-minh/133104881.htm — Could not get HTML
+[2026-06-26 15:31:27] [scrap_chotot.R] - WARN: Nav error 'https://xe.chotot.com/mua-ban-oto-thanh-pho-thu-duc-tp-ho-chi-minh/132274978.htm': Session has been closed.
+[34mℹ[39m Call session$respawn() to create a new session that connects to the same target. — restarting session
+[2026-06-26 15:40:16] [realtime_chotot.R] - INFO: === Hoàn thành. 49 URL mới | 48 dòng vào init_db | 48 dòng vào master ===
+[2026-06-26 15:40:16] [realtime_chotot.R] - INFO: Đã đóng session.
+[2026-06-26 15:40:16] [scrap_chotot.R] - INFO: Task disabled: web_scraping/script/realtime/realtime_banxehoicu.R — skipping.
+[2026-06-26 15:40:16] [realtime_bonbanh.R] - INFO: === Bắt đầu realtime BonBanh ===
+[2026-06-26 15:40:16] [realtime_bonbanh.R] - INFO: Kiểm tra trang 1...
+[2026-06-26 15:40:17] [realtime_bonbanh.R] - INFO: Trang 1: URL cuối chưa có trong DB → lấy 12/20 URL mới.
+[2026-06-26 15:40:18] [realtime_bonbanh.R] - INFO: Kiểm tra trang 2...
+[2026-06-26 15:40:18] [realtime_bonbanh.R] - INFO: Trang 2: URL cuối chưa có trong DB → lấy 15/20 URL mới.
+[2026-06-26 15:40:19] [realtime_bonbanh.R] - INFO: Kiểm tra trang 3...
+[2026-06-26 15:40:20] [realtime_bonbanh.R] - INFO: Trang 3: URL cuối chưa có trong DB → lấy 9/20 URL mới.
+[2026-06-26 15:40:21] [realtime_bonbanh.R] - INFO: Kiểm tra trang 4...
+[2026-06-26 15:40:21] [realtime_bonbanh.R] - INFO: Trang 4: URL cuối chưa có trong DB → lấy 13/20 URL mới.
+[2026-06-26 15:40:22] [realtime_bonbanh.R] - INFO: Kiểm tra trang 5...
+[2026-06-26 15:40:23] [realtime_bonbanh.R] - INFO: Trang 5: URL cuối chưa có trong DB → lấy 16/20 URL mới.
+[2026-06-26 15:40:24] [realtime_bonbanh.R] - INFO: Kiểm tra trang 6...
+[2026-06-26 15:40:24] [realtime_bonbanh.R] - INFO: Trang 6: URL cuối chưa có trong DB → lấy 16/20 URL mới.
+[2026-06-26 15:40:25] [realtime_bonbanh.R] - INFO: Kiểm tra trang 7...
+[2026-06-26 15:40:26] [realtime_bonbanh.R] - INFO: Trang 7: URL cuối chưa có trong DB → lấy 12/20 URL mới.
+[2026-06-26 15:40:27] [realtime_bonbanh.R] - INFO: Kiểm tra trang 8...
+[2026-06-26 15:40:27] [realtime_bonbanh.R] - INFO: Trang 8: URL cuối chưa có trong DB → lấy 12/20 URL mới.
+[2026-06-26 15:40:28] [realtime_bonbanh.R] - INFO: Kiểm tra trang 9...
+[2026-06-26 15:40:29] [realtime_bonbanh.R] - INFO: Trang 9: URL cuối chưa có trong DB → lấy 13/20 URL mới.
+[2026-06-26 15:40:30] [realtime_bonbanh.R] - INFO: Kiểm tra trang 10...
+[2026-06-26 15:40:30] [realtime_bonbanh.R] - INFO: Trang 10: URL cuối đã có trong DB → tìm được 14/20 URL mới.
+[2026-06-26 15:40:30] [realtime_bonbanh.R] - INFO: Phát hiện 132 URL mới.
+[2026-06-26 15:40:30] [realtime_bonbanh.R] - INFO: Đã ghi 132 URL mới vào đầu: web_scraping/data/raw/meta/urls_bonbanh.txt
+[2026-06-26 15:43:57] [realtime_bonbanh.R] - INFO: === Hoàn thành. 132 URL mới | 129 vào init_db | 129 vào master ===
+[2026-06-26 15:43:57] [scrap_chotot.R] - INFO: Real-time update cycle completed with 177 new rows.
+[2026-06-26 15:43:57] [scrap_chotot.R] - INFO: Có 177 dòng mới — bắt đầu clean master DB và rebuild CSV...
+[2026-06-26 15:43:57] [scrap_chotot.R] - INFO: Clean & rebuild: đọc 27530 dòng từ master DB.
+[2026-06-26 15:43:57] [scrap_chotot.R] - INFO:   Bước 1 (numeric fix) hoàn thành.
+[2026-06-26 15:44:01] [scrap_chotot.R] - INFO:   Bước 2 (trim canonicalization) hoàn thành.
+[2026-06-26 15:44:02] [scrap_chotot.R] - INFO:   Đã ghi lại 27530 dòng vào master DB.
+[2026-06-26 15:44:02] [scrap_chotot.R] - INFO:   Đã rebuild master_data.csv (27530 dòng). CSV sẵn sàng cho visual/model.
+[2026-06-26 17:24:02] [web_scraping/script/validate_clean_data.R] - INFO: === Bắt đầu validation dữ liệu clean ===
+[2026-06-26 17:24:04] [web_scraping/script/validate_clean_data.R] - INFO: === Validation hoàn thành. 27042 dòng clean, report tại web_scraping/data/quality_report ===

@@ -1,2 +1,3 @@
-﻿sửa nhiều quá quên note lại, ae thông cảm, coi commit ở đâu thì ae check nhé
-hihi
+﻿update trước khi nộp code 
+- fix realtime chưa tối ưu bộ nhớ
+- chạy lại các file dùng dữ liệu mới

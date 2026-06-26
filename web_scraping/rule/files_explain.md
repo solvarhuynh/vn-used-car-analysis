@@ -17,27 +17,19 @@ Below is a concise, human‑readable description of every important file in the 
 | **script/merge_data.R**                | Merges per-source SQLite databases into `web_scraping/data/master_data.db` and `web_scraping/data/master_data.csv`, handling deduplication on `url`. 
 
 | **script/clean/clean_chotot.R**        | Cleans raw Chợ Tốt data into a standardized format.
-                                                  
-| **script/clean/clean_carpla.R**        | Cleans raw Carpla data into a standardized format.
                                                    
 | **script/clean/clean_banxehoicu.R**    | Cleans raw Bán Xe Hơi Cũ data into a standardized format.
                                             
 | **script/scrap/scrap_chotot.R**        | Batch scraper for Chợ Tốt: uses **Chromote** to extract listing details and writes to `data/raw/`.
-   
-| **script/scrap/scrap_carpla.R**        | Batch scraper for Carpla: uses **Chromote** to extract listing details and writes to `data/raw/`.
-   
+    
 | **script/scrap/scrap_banxehoicu.R**    | Static‑HTML scraper for Bán Xe Hơi Cũ: uses **httr/rvest** with checkpoint handling.
                  
 | **script/realtime/realtime_chotot.R**  | Real‑time delta‑fetcher for Chợ Tốt: checks Page 1 against SQLite and inserts new rows until a duplicate is found.
-                                               |
-| **script/realtime/realtime_carpla.R**  | Real‑time delta‑fetcher for Carpla (same logic as Chợ Tốt).
-                                          
+                                               |                                         
 | **script/realtime/realtime_banxehoicu.R**| Real‑time delta‑fetcher for Bán Xe Hơi Cũ (static HTML).
                                            
 | **data/clean/data_chotot_clean.csv**   | Cleaned Chợ Tốt listings ready for merging.
-                                                          
-| **data/clean/data_carpla_clean.csv**   | Cleaned Carpla listings.
-                                                                             
+                                                                                                                                      
 | **data/clean/data_banxehoicu_clean.csv**| Cleaned Bán Xe Hơi Cũ listings.
                                                                      
 | **data/clean/data_bonbanh_clean.csv**  | Sample cleaned dataset (kept for reference).

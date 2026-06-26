@@ -7,10 +7,11 @@
 #   - Nếu URL cuối CHƯA có trong DB → cả trang chưa cào → sang trang 2
 #   - Nếu URL cuối đã có → so từng URL từ cuối lên, dừng khi gặp URL đã có
 #   - Ghi URLs mới vào urls_bonbanh.txt (prepend, không ghi đè)
-#   - Cào chi tiết từng URL mới → data/realtime/data_bonbanh_rt.csv
+#   - Cào chi tiết từng URL mới
 #   - INSERT OR IGNORE vào init_db/data_bonbanh.db và master_data.db
 #
-# Output: web_scraping/data/realtime/data_bonbanh_rt.csv
+# Output: Dữ liệu ghi thẳng vào init_db/data_bonbanh.db và master_data.db.
+#         File CSV trung gian (data_bonbanh_rt.csv) đã bị vô hiệu hóa.
 # ==============================================================================
 
 suppressPackageStartupMessages({
@@ -293,16 +294,18 @@ run_realtime_bonbanh <- function(con_master = NULL) {
     Sys.sleep(runif(1, 0.8, 1.5))
   }
 
-  # ── BƯỚC 4: Ghi ra rt.csv ─────────────────────────────────────────────────────
-  if (length(batch) > 0) {
-    rt_df <- bind_rows(batch)
-    if (!file.exists(RT_OUTPUT)) {
-      readr::write_csv(rt_df, RT_OUTPUT, na = "")
-    } else {
-      readr::write_csv(rt_df, RT_OUTPUT, na = "", append = TRUE, col_names = FALSE)
-    }
-    log_message(SCRIPT_NAME, sprintf("Đã ghi %d dòng vào: %s", nrow(rt_df), RT_OUTPUT))
-  }
+  # ── BƯỚC 4: Ghi ra rt.csv (đã vô hiệu hóa — dữ liệu đã có trong DB) ──────────
+  # Bỏ qua việc ghi file CSV trung gian để tiết kiệm dung lượng lưu trữ.
+  # Dữ liệu đã được INSERT trực tiếp vào init_db và master_data.db ở Bước 3.
+  # if (length(batch) > 0) {
+  #   rt_df <- bind_rows(batch)
+  #   if (!file.exists(RT_OUTPUT)) {
+  #     readr::write_csv(rt_df, RT_OUTPUT, na = "")
+  #   } else {
+  #     readr::write_csv(rt_df, RT_OUTPUT, na = "", append = TRUE, col_names = FALSE)
+  #   }
+  #   log_message(SCRIPT_NAME, sprintf("Đã ghi %d dòng vào: %s", nrow(rt_df), RT_OUTPUT))
+  # }
 
   log_message(SCRIPT_NAME, sprintf(
     "=== Hoàn thành. %d URL mới | %d vào init_db | %d vào master ===",

@@ -79,43 +79,95 @@ for (task in realtime_scripts) {
 
 log_message(SCRIPT_NAME, sprintf("Real-time update cycle completed with %d new rows.", inserted_total))
 
-# Rebuild master_data.csv từ tất cả init_db files (an toàn hơn append từng dòng)
-# Với ~27k dòng thì gộp lại nhanh hơn nhiều so với đọc từ master_data.db khi có lỗi kết nối
-if (inserted_total > 0) {
-  db_files <- list.files(INIT_DB_DIR, pattern = "\\.db$", full.names = TRUE)
+# ==============================================================================
+# Hàm clean_and_rebuild: fix numeric + trim rồi rebuild CSV.
+# Dùng function riêng để on.exit() đóng connection đúng scope,
+# tránh "Invalid or closed connection" từ con của script con bên trên.
+# ==============================================================================
+clean_and_rebuild <- function(db_file, output_csv, script_name) {
 
-  if (length(db_files) == 0) {
-    log_message(SCRIPT_NAME, "Không tìm thấy file .db nào trong init_db/", "WARN")
-  } else {
-    all_data <- lapply(db_files, function(db_path) {
-      tryCatch({
-        con_src <- DBI::dbConnect(RSQLite::SQLite(), db_path)
-        on.exit(DBI::dbDisconnect(con_src), add = TRUE)
-        if (DBI::dbExistsTable(con_src, "car_listings")) {
-          DBI::dbReadTable(con_src, "car_listings")
-        } else {
-          NULL
-        }
-      }, error = function(e) {
-        log_message(SCRIPT_NAME, sprintf("Không đọc được %s: %s", basename(db_path), e$message), "WARN")
-        NULL
-      })
-    })
+  # Mở kết nối mới hoàn toàn độc lập với con bên ngoài
+  cx <- DBI::dbConnect(RSQLite::SQLite(), db_file)
+  on.exit(DBI::dbDisconnect(cx), add = TRUE)
 
-    all_data <- Filter(Negate(is.null), all_data)
-
-    if (length(all_data) > 0) {
-      master_df <- dplyr::bind_rows(all_data) %>%
-        align_schema() %>%
-        dplyr::arrange(source, brand, model, year)
-
-      readr::write_csv(master_df, OUTPUT_CSV, na = "")
-      log_message(SCRIPT_NAME, sprintf("Đã rebuild %s từ %d init_db files (%d dòng).",
-        OUTPUT_CSV, length(db_files), nrow(master_df)))
-    } else {
-      log_message(SCRIPT_NAME, "Không có data nào đọc được từ init_db.", "WARN")
-    }
+  if (!DBI::dbExistsTable(cx, "car_listings")) {
+    log_message(script_name, "Bảng 'car_listings' không tồn tại. Bỏ qua.", "WARN")
+    return(invisible(NULL))
   }
+
+  df <- DBI::dbReadTable(cx, "car_listings")
+  log_message(script_name, sprintf("Clean & rebuild: đọc %d dòng từ master DB.", nrow(df)))
+
+  # ── Bước 1: Fix numeric quality (chạy được trên từng hàng, làm luôn ở đây) ──
+  # engine_size: sửa lỗi parse 0.16→1.6 (cc bị chia 10 thay vì 1000)
+  engine_num <- suppressWarnings(as.numeric(df$engine_size))
+  fix_small  <- !is.na(engine_num) & engine_num > 0 & engine_num < 0.5
+  engine_num[fix_small]                            <- round(engine_num[fix_small] * 10, 2)
+  engine_num[!is.na(engine_num) & engine_num > 8] <- NA_real_
+  df$engine_size <- engine_num
+
+  # seat_count: xoá xe >= 16 chỗ (xe khách)
+  seat_num <- suppressWarnings(as.integer(df$seat_count))
+  n_before <- nrow(df)
+  df       <- df[is.na(seat_num) | seat_num < 16, , drop = FALSE]
+  if (nrow(df) < n_before)
+    log_message(script_name, sprintf("  Xoá %d dòng xe >= 16 chỗ.", n_before - nrow(df)), "WARN")
+
+  # mileage: đặt NA nếu âm hoặc > 500 000 km
+  mileage_num <- suppressWarnings(as.numeric(df$mileage))
+  mileage_num[!is.na(mileage_num) & mileage_num < 0]      <- NA_real_
+  mileage_num[!is.na(mileage_num) & mileage_num > 500000] <- NA_real_
+  df$mileage <- as.integer(mileage_num)
+
+  # origin + is_imported: đồng bộ lại
+  df$origin <- clean_origin(df$origin)
+  if ("is_imported" %in% names(df)) {
+    df$is_imported <- ifelse(is.na(df$origin), NA_integer_,
+                             as.integer(df$origin == "Nhập khẩu"))
+  }
+
+  # brand / model / trim / color
+  df$brand <- clean_brand(df$brand)
+  df$model <- clean_model(df$model)
+  df$trim  <- normalize_na(df$trim)
+  df$color <- normalize_na(df$color)
+
+  log_message(script_name, "  Bước 1 (numeric fix) hoàn thành.")
+
+  # ── Bước 2: Canonicalize trim theo majority-vote (cần toàn bộ dataset) ───────
+  df <- clean_trim_column(df)
+  log_message(script_name, "  Bước 2 (trim canonicalization) hoàn thành.")
+
+  # ── Bước 3: Ghi lại DB ───────────────────────────────────────────────────────
+  DBI::dbWriteTable(cx, "car_listings", df, overwrite = TRUE, row.names = FALSE)
+  log_message(script_name, sprintf("  Đã ghi lại %d dòng vào master DB.", nrow(df)))
+
+  # ── Bước 4: Rebuild CSV ───────────────────────────────────────────────────────
+  master_df <- df %>%
+    align_schema() %>%
+    dplyr::arrange(source, brand, model, year)
+
+  dir.create(dirname(output_csv), recursive = TRUE, showWarnings = FALSE)
+  readr::write_csv(master_df, output_csv, na = "")
+  log_message(script_name, sprintf("  Đã rebuild %s (%d dòng). CSV sẵn sàng cho visual/model.",
+                                    basename(output_csv), nrow(master_df)))
+
+  invisible(nrow(master_df))
+}
+
+# ==============================================================================
+# Chạy clean & rebuild nếu có dữ liệu mới
+# ==============================================================================
+if (inserted_total > 0) {
+  log_message(SCRIPT_NAME, sprintf(
+    "Có %d dòng mới — bắt đầu clean master DB và rebuild CSV...", inserted_total))
+
+  tryCatch(
+    clean_and_rebuild(DB_FILE, OUTPUT_CSV, SCRIPT_NAME),
+    error = function(e) {
+      log_message(SCRIPT_NAME, sprintf("Lỗi clean & rebuild: %s", e$message), "ERROR")
+    }
+  )
 } else {
   log_message(SCRIPT_NAME, sprintf("Không có dòng mới, giữ nguyên %s.", OUTPUT_CSV))
 }

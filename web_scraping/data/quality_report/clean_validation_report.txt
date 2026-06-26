@@ -1,5 +1,5 @@
 CLEAN DATA VALIDATION REPORT
-Generated at: 2026-06-24 00:03:09
+Generated at: 2026-06-26 17:24:03
 Current year rule: <= 2026
 
 # A tibble: 3 × 15
