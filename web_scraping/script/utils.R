@@ -315,40 +315,32 @@ normalize_city_name <- function(x) {
   )
 }
 
-# ── Áp dụng toàn bộ cleaning chung cho dataframe ──────────────────────────────
 standardize_car_data <- function(df) {
   df <- align_schema(df)
 
   df %>%
     mutate(
-      # NA normalisation trước cho tất cả cột ký tự
       across(where(is.character), normalize_na),
 
-      # Numeric columns
-      price       = clean_price(price),
-      mileage     = clean_mileage(mileage),
+      price = clean_price(price),
+      mileage = clean_mileage(mileage),
       engine_size = clean_engine_size(engine_size),
-      year        = clean_year(year),
-      seat_count  = clean_seat_count(seat_count),
+      year = clean_year(year),
+      seat_count = clean_seat_count(seat_count),
 
-      # Date
       posted_date = clean_posted_date(posted_date),
 
-      # Categorical
-      fuel_type    = clean_fuel_type(fuel_type),
+      fuel_type = clean_fuel_type(fuel_type),
       transmission = clean_transmission(transmission),
-      body_type    = clean_body_type(body_type),
-      drivetrain   = clean_drivetrain(drivetrain),
-      origin       = clean_origin(origin),
+      body_type = clean_body_type(body_type),
+      drivetrain = clean_drivetrain(drivetrain),
+      origin = clean_origin(origin),
 
-      # City: lấy tỉnh/thành cuối cùng
       city = normalize_city_name(clean_city(city)),
 
-      # Text casing
       brand = clean_brand(brand),
       model = clean_model(model),
 
-      # trim & color: chỉ squish + normalize NA, không đổi nội dung
       trim  = normalize_na(trim),
       color = normalize_na(color)
     ) %>%

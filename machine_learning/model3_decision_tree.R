@@ -5,6 +5,12 @@ suppressPackageStartupMessages({
   library(scales)
 })
 
+# Thư mục để lưu ảnh output
+output_dir <- "machine_learning/images"
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+}
+
 df_tree <- df[complete.cases(df[, c("price_segment", "car_age", "mileage_k",
                                      "engine_size", "is_auto", "is_imported",
                                      "seat_count")]),
@@ -142,7 +148,7 @@ plot_decision_tree <- function(model = model_tree,
   )
 }
 
-png("output_tree_plot.png", width = 2500, height = 1900, res = 140)
+png(file.path(output_dir, "tree_plot.png"), width = 2500, height = 1900, res = 140)
 plot_decision_tree()
 dev.off()
 
@@ -193,7 +199,7 @@ plot_feature_importance <- function(fi = feat_imp) {
 }
 
 ggsave(
-  "output_feature_importance.png",
+  file.path(output_dir, "feature_importance.png"),
   plot   = plot_feature_importance(),
   width  = 9, height = 5.5, dpi = 150
 )
@@ -276,7 +282,7 @@ plot_confusion_matrix <- function(ct       = conf_table,
 }
 
 ggsave(
-  "output_confusion_matrix.png",
+  file.path(output_dir, "confusion_matrix.png"),
   plot   = plot_confusion_matrix(),
   width  = 8, height = 6.5, dpi = 150
 )
