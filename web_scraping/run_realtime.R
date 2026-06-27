@@ -159,6 +159,15 @@ clean_and_rebuild <- function(db_file, output_csv, script_name) {
   # origin + is_imported: đồng bộ lại
   df$origin <- clean_origin(df$origin)
 
+  # [USER REQUEST] Chuẩn hóa các giá trị origin khác "Trong nước" / "Nhập khẩu"
+  # Bất kỳ giá trị nào không phải là 2 giá trị trên (và không phải NA) sẽ được
+  # coi là "Nhập khẩu" để đồng bộ hóa dữ liệu.
+  df <- df %>%
+    dplyr::mutate(
+      origin = ifelse(!is.na(origin) & origin == "Việt Nam", "Trong nước", origin),
+      origin = ifelse(!is.na(origin) & !origin %in% c("Trong nước", "Nhập khẩu"), "Nhập khẩu", origin)
+    )
+
   # [MỤC 5] Fill origin rule-based cho brand luôn nhập khẩu 100%
   always_imported_brands <- c("BENTLEY", "CADILLAC", "HAVAL", "GEELY", "GAC",
                                "ROLLS-ROYCE", "MASERATI", "LAMBORGHINI", "FERRARI",
