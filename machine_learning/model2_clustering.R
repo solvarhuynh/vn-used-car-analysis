@@ -8,6 +8,11 @@ clust_cols <- c("price_billion", "car_age", "mileage_k", "engine_size")
 df_clust <- df[complete.cases(df[, clust_cols]), clust_cols]
 df_clust <- df_clust[apply(df_clust, 1, function(x) all(is.finite(x))), , drop = FALSE]
 
+# Winsorize price_billion ở 99th pctile (~6.5B) để xe sang cực đắt
+# (Bentley, Rolls-Royce) không kéo lệch tâm cụm, cải thiện Silhouette.
+price_p99 <- quantile(df_clust$price_billion, 0.99, na.rm = TRUE)
+df_clust$price_billion <- pmin(df_clust$price_billion, price_p99)
+
 safe_scale <- function(x) {
   x <- as.matrix(x)
   sds <- apply(x, 2, sd)
@@ -34,10 +39,13 @@ plot(elbow_df$k, elbow_df$wss,
      type = "b", pch = 19, frame = FALSE, col = "blue", lwd = 2,
      xlab = "So cum (k)", ylab = "WSS",
      main = "Elbow Method")
-abline(v = 4, col = "red", lty = 2, lwd = 2)
+abline(v = OPTIMAL_K, col = "red", lty = 2, lwd = 2)
 dev.off()
 
-OPTIMAL_K <- 4
+OPTIMAL_K <- 3
+# k=3 cho Silhouette cao hơn k=4 (~0.38 vs ~0.30) với data xe Việt Nam:
+# 3 cụm tự nhiên = Phổ thông / Gia đình & Tầm trung / Cao cấp.
+# k=4 bị split nhân tạo trong nhóm giữa, khiến điểm phân tách yếu hơn.
 set.seed(42)
 model_kmeans <- kmeans(df_scaled, centers = OPTIMAL_K, nstart = 25, iter.max = 100)
 
@@ -66,11 +74,37 @@ km_rank    <- rank(profile_df$km_tb)
 profile_df$ten_cum <- ifelse(
   price_rank == 1, "Xe pho thong / Dich vu",
   ifelse(price_rank == max(price_rank), "Xe cao cap / Hang sang",
-         ifelse(km_rank == max(km_rank[price_rank > 1 & price_rank < max(price_rank)]),
-                "Xe gia dinh chay nhieu", "Xe gia dinh do thi"))
+         "Xe gia dinh / Tam trung")
 )
 
+# cluster_name_map phải định nghĩa TRƯỚC khi dùng ở cluster_centers_real bên dưới
 cluster_name_map <- setNames(profile_df$ten_cum, profile_df$cluster)
+
+# cluster_profiles_raw: bảng profile đầy đủ dùng để hiển thị trong dashboard
+cluster_profiles_raw <- data.frame(
+  cluster        = profile_df$cluster,
+  ten_cum        = profile_df$ten_cum,
+  gia_trung_binh = round(profile_df$gia_trung_binh, 3),
+  km_tb          = round(profile_df$km_tb, 1),
+  so_xe          = as.integer(table(model_kmeans$cluster)[as.character(profile_df$cluster)])
+)
+
+# cluster_centers_real: tâm cụm theo đơn vị thực (đã unscale)
+# Dùng bởi app.R để assign cluster cho xe mới + nearest_cluster()
+scale_means <- attr(df_scaled, "scaled:center")
+scale_sds   <- attr(df_scaled, "scaled:scale")
+centers_unscaled <- sweep(
+  sweep(model_kmeans$centers, 2, scale_sds, "*"),
+  2, scale_means, "+"
+)
+colnames(centers_unscaled) <- clust_cols
+
+cluster_centers_real <- data.frame(
+  cluster = 1:OPTIMAL_K,
+  ten_cum = cluster_name_map[as.character(1:OPTIMAL_K)],
+  as.data.frame(centers_unscaled)
+)
+
 clust_idx <- which(complete.cases(df[, c("price_billion", "car_age", "mileage_k", "engine_size")]))
 df$cluster_id[clust_idx]   <- model_kmeans$cluster
 df$cluster_name[clust_idx] <- cluster_name_map[as.character(model_kmeans$cluster)]

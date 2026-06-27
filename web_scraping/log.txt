@@ -8644,3 +8644,124 @@
 [2026-06-26 15:44:02] [scrap_chotot.R] - INFO:   Đã rebuild master_data.csv (27530 dòng). CSV sẵn sàng cho visual/model.
 [2026-06-26 17:24:02] [web_scraping/script/validate_clean_data.R] - INFO: === Bắt đầu validation dữ liệu clean ===
 [2026-06-26 17:24:04] [web_scraping/script/validate_clean_data.R] - INFO: === Validation hoàn thành. 27042 dòng clean, report tại web_scraping/data/quality_report ===
+[2026-06-27 18:01:44] [web_scraping/script/validate_clean_data.R] - INFO: === Bắt đầu validation dữ liệu clean ===
+[2026-06-27 18:01:45] [web_scraping/script/validate_clean_data.R] - INFO: === Validation hoàn thành. 27042 dòng clean, report tại web_scraping/data/quality_report ===
+[2026-06-27 18:02:43] [web_scraping/script/validate_clean_data.R] - INFO: === Bắt đầu validation dữ liệu clean ===
+[2026-06-27 18:22:40] [web_scraping/script/validate_clean_data.R] - INFO: === Bắt đầu validation dữ liệu master_data.csv ===
+[2026-06-27 18:22:40] [web_scraping/script/validate_clean_data.R] - INFO: === Validation hoàn thành. 27530 dòng trong master data, report tại web_scraping/data/quality_report ===
+[2026-06-27 18:43:58] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-27 18:43:59] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-27 18:44:06] [realtime_chotot.R] - INFO: Kiểm tra trang 1...
+[2026-06-27 18:44:20] [realtime_chotot.R] - INFO: Trang 1: URL cuối chưa có trong DB → lấy hết 23 URL, sang trang tiếp.
+[2026-06-27 18:44:20] [realtime_chotot.R] - INFO: Kiểm tra trang 2...
+[2026-06-27 18:44:32] [realtime_chotot.R] - INFO: Trang 2: URL cuối đã có trong DB → so ngược từng URL.
+[2026-06-27 18:44:32] [realtime_chotot.R] - INFO: Phát hiện 23 URL mới cần cào.
+[2026-06-27 18:44:32] [realtime_chotot.R] - INFO: Đã ghi 23 URL mới vào cuối file: web_scraping/data/raw/meta/urls_chotot.txt
+[2026-06-27 18:47:41] [realtime_chotot.R] - INFO: === Hoàn thành. 23 URL mới | 23 dòng vào init_db | 23 dòng vào master ===
+[2026-06-27 18:47:41] [realtime_chotot.R] - INFO: Đã đóng session.
+[2026-06-27 18:47:41] [scrap_chotot.R] - INFO: Task disabled: web_scraping/script/realtime/realtime_banxehoicu.R — skipping.
+[2026-06-27 18:47:41] [realtime_bonbanh.R] - INFO: === Bắt đầu realtime BonBanh ===
+[2026-06-27 18:47:41] [realtime_bonbanh.R] - INFO: Kiểm tra trang 1...
+[2026-06-27 18:47:42] [realtime_bonbanh.R] - INFO: Trang 1: URL cuối đã có trong DB → tìm được 13/20 URL mới.
+[2026-06-27 18:47:42] [realtime_bonbanh.R] - INFO: Phát hiện 13 URL mới.
+[2026-06-27 18:47:42] [realtime_bonbanh.R] - INFO: Đã ghi 13 URL mới vào đầu: web_scraping/data/raw/meta/urls_bonbanh.txt
+[2026-06-27 18:48:11] [realtime_bonbanh.R] - INFO: === Hoàn thành. 13 URL mới | 13 vào init_db | 13 vào master ===
+[2026-06-27 18:48:11] [scrap_chotot.R] - INFO: Real-time update cycle completed with 36 new rows.
+[2026-06-27 18:48:11] [scrap_chotot.R] - INFO: Có 36 dòng mới — bắt đầu clean master DB và rebuild CSV...
+[2026-06-27 18:48:12] [scrap_chotot.R] - INFO: Clean & rebuild: đọc 27566 dòng từ master DB.
+[2026-06-27 18:48:12] [scrap_chotot.R] - WARN:   Xoá 1 dòng xe >= 16 chỗ.
+[2026-06-27 18:48:12] [scrap_chotot.R] - WARN:   Xoá 39 dòng trùng URL.
+[2026-06-27 18:48:12] [scrap_chotot.R] - INFO:   Bước 1 (numeric fix) hoàn thành.
+[2026-06-27 18:48:16] [scrap_chotot.R] - INFO:   Bước 2 (trim canonicalization) hoàn thành.
+[2026-06-27 18:48:17] [scrap_chotot.R] - INFO:   Đã ghi lại 27526 dòng vào master DB.
+[2026-06-27 18:48:17] [scrap_chotot.R] - INFO:   Đã rebuild master_data.csv (27526 dòng). CSV sẵn sàng cho visual/model.
+[2026-06-27 18:50:23] [web_scraping/script/validate_clean_data.R] - INFO: === Bắt đầu validation dữ liệu master_data.csv ===
+[2026-06-27 18:50:23] [web_scraping/script/validate_clean_data.R] - INFO: === Validation hoàn thành. 27526 dòng trong master data, report tại web_scraping/data/quality_report ===
+[2026-06-27 21:25:23] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-27 21:25:24] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-27 21:25:31] [realtime_chotot.R] - INFO: Kiểm tra trang 1...
+[2026-06-27 21:25:46] [realtime_chotot.R] - INFO: Trang 1: URL cuối chưa có trong DB → lấy hết 23 URL, sang trang tiếp.
+[2026-06-27 21:25:46] [realtime_chotot.R] - INFO: Kiểm tra trang 2...
+[2026-06-27 21:26:00] [realtime_chotot.R] - INFO: Trang 2: URL cuối đã có trong DB → so ngược từng URL.
+[2026-06-27 21:26:00] [realtime_chotot.R] - INFO: Phát hiện 23 URL mới cần cào.
+[2026-06-27 21:26:00] [realtime_chotot.R] - INFO: Đã ghi 23 URL mới vào cuối file: web_scraping/data/raw/meta/urls_chotot.txt
+[2026-06-27 21:29:00] [realtime_chotot.R] - INFO: === Hoàn thành. 23 URL mới | 22 dòng vào init_db | 22 dòng vào master ===
+[2026-06-27 21:29:00] [realtime_chotot.R] - INFO: Đã đóng session.
+[2026-06-27 21:29:00] [scrap_chotot.R] - INFO: Task disabled: web_scraping/script/realtime/realtime_banxehoicu.R — skipping.
+[2026-06-27 21:29:00] [realtime_bonbanh.R] - INFO: === Bắt đầu realtime BonBanh ===
+[2026-06-27 21:29:00] [realtime_bonbanh.R] - INFO: Kiểm tra trang 1...
+[2026-06-27 21:29:01] [realtime_bonbanh.R] - INFO: Trang 1: URL cuối chưa có trong DB → lấy 12/20 URL mới.
+[2026-06-27 21:29:02] [realtime_bonbanh.R] - INFO: Kiểm tra trang 2...
+[2026-06-27 21:29:03] [realtime_bonbanh.R] - WARN: Không đọc được trang 2: cannot open the connection
+[2026-06-27 21:29:03] [realtime_bonbanh.R] - WARN: Trang 2 không có URL, dừng.
+[2026-06-27 21:29:03] [realtime_bonbanh.R] - INFO: Phát hiện 12 URL mới.
+[2026-06-27 21:29:03] [realtime_bonbanh.R] - INFO: Đã ghi 12 URL mới vào đầu: web_scraping/data/raw/meta/urls_bonbanh.txt
+[2026-06-27 21:29:23] [realtime_bonbanh.R] - INFO: === Hoàn thành. 12 URL mới | 11 vào init_db | 11 vào master ===
+[2026-06-27 21:29:23] [scrap_chotot.R] - INFO: Real-time update cycle completed with 33 new rows.
+[2026-06-27 21:29:23] [scrap_chotot.R] - INFO: Có 33 dòng mới — bắt đầu clean master DB và rebuild CSV...
+[2026-06-27 21:29:23] [scrap_chotot.R] - INFO: Clean & rebuild: đọc 27559 dòng từ master DB.
+[2026-06-27 21:29:24] [scrap_chotot.R] - WARN:   Xoá 23 dòng xe >= 10 chỗ.
+[2026-06-27 21:29:24] [scrap_chotot.R] - WARN:   Đặt NA 355 xe >5 tuổi, km < 100.
+[2026-06-27 21:29:24] [scrap_chotot.R] - WARN:   Đặt NA 31 xe <=3 tuổi, km > 150k.
+[2026-06-27 21:29:24] [scrap_chotot.R] - INFO:   Fill origin 'Nhập khẩu' cho 7 xe (rule-based).
+[2026-06-27 21:29:24] [scrap_chotot.R] - WARN:   Xoá 10 dòng trùng URL.
+[2026-06-27 21:29:24] [scrap_chotot.R] - WARN:   Xoá 2143 dòng trùng brand+model+year+price+mileage (đăng lại).
+[2026-06-27 21:29:24] [scrap_chotot.R] - INFO:   Bước 1 (numeric fix) hoàn thành.
+[2026-06-27 21:29:28] [scrap_chotot.R] - INFO:   Bước 2 (trim canonicalization) hoàn thành.
+[2026-06-27 21:29:28] [scrap_chotot.R] - INFO:   Đã ghi lại 25383 dòng vào master DB.
+[2026-06-27 21:29:29] [scrap_chotot.R] - INFO:   Đã rebuild master_data.csv (25383 dòng). CSV sẵn sàng cho visual/model.
+[2026-06-27 21:31:18] [web_scraping/script/validate_clean_data.R] - INFO: === Bắt đầu validation dữ liệu master_data.csv ===
+[2026-06-27 21:31:18] [web_scraping/script/validate_clean_data.R] - INFO: === Validation hoàn thành. 25383 dòng trong master data, report tại web_scraping/data/quality_report ===
+[2026-06-27 22:01:53] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-27 22:01:54] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-27 22:02:00] [realtime_chotot.R] - INFO: Kiểm tra trang 1...
+[2026-06-27 22:02:14] [realtime_chotot.R] - INFO: Trang 1: URL cuối chưa có trong DB → lấy hết 23 URL, sang trang tiếp.
+[2026-06-27 22:02:14] [realtime_chotot.R] - INFO: Kiểm tra trang 2...
+[2026-06-27 22:02:27] [realtime_chotot.R] - INFO: Trang 2: URL cuối đã có trong DB → so ngược từng URL.
+[2026-06-27 22:02:27] [realtime_chotot.R] - INFO: Phát hiện 23 URL mới cần cào.
+[2026-06-27 22:02:27] [realtime_chotot.R] - INFO: Đã ghi 23 URL mới vào cuối file: web_scraping/data/raw/meta/urls_chotot.txt
+[2026-06-27 22:05:27] [realtime_chotot.R] - INFO: === Hoàn thành. 23 URL mới | 23 dòng vào init_db | 23 dòng vào master ===
+[2026-06-27 22:05:27] [realtime_chotot.R] - INFO: Đã đóng session.
+[2026-06-27 22:05:27] [scrap_chotot.R] - INFO: Task disabled: web_scraping/script/realtime/realtime_banxehoicu.R — skipping.
+[2026-06-27 22:05:27] [realtime_bonbanh.R] - INFO: === Bắt đầu realtime BonBanh ===
+[2026-06-27 22:05:27] [realtime_bonbanh.R] - INFO: Kiểm tra trang 1...
+[2026-06-27 22:05:28] [realtime_bonbanh.R] - INFO: Trang 1: URL cuối đã có trong DB → tìm được 8/20 URL mới.
+[2026-06-27 22:05:28] [realtime_bonbanh.R] - INFO: Phát hiện 8 URL mới.
+[2026-06-27 22:05:28] [realtime_bonbanh.R] - INFO: Đã ghi 8 URL mới vào đầu: web_scraping/data/raw/meta/urls_bonbanh.txt
+[2026-06-27 22:05:42] [realtime_bonbanh.R] - INFO: === Hoàn thành. 8 URL mới | 8 vào init_db | 8 vào master ===
+[2026-06-27 22:05:42] [scrap_chotot.R] - INFO: Real-time update cycle completed with 31 new rows.
+[2026-06-27 22:05:42] [scrap_chotot.R] - INFO: Có 31 dòng mới — bắt đầu clean master DB và rebuild CSV...
+[2026-06-27 22:05:42] [scrap_chotot.R] - INFO: Clean & rebuild: đọc 25414 dòng từ master DB.
+[2026-06-27 22:05:43] [scrap_chotot.R] - WARN:   Đặt NA 51 xe >=5 tuổi, km < 100.
+[2026-06-27 22:05:43] [scrap_chotot.R] - WARN:   Đặt NA 200 xe km < 50 (bất kể tuổi).
+[2026-06-27 22:05:43] [scrap_chotot.R] - WARN:   Xoá 9 dòng trùng URL.
+[2026-06-27 22:05:43] [scrap_chotot.R] - WARN:   Xoá 2 dòng trùng brand+model+year+price+mileage (đăng lại).
+[2026-06-27 22:05:43] [scrap_chotot.R] - INFO:   Bước 1 (numeric fix) hoàn thành.
+[2026-06-27 22:05:46] [scrap_chotot.R] - INFO:   Bước 2 (trim canonicalization) hoàn thành.
+[2026-06-27 22:05:47] [scrap_chotot.R] - INFO:   Đã ghi lại 25403 dòng vào master DB.
+[2026-06-27 22:05:47] [scrap_chotot.R] - INFO:   Đã rebuild master_data.csv (25403 dòng). CSV sẵn sàng cho visual/model.
+[2026-06-27 22:43:56] [web_scraping/run_realtime.R] - INFO: Starting real-time delta fetch cycle.
+[2026-06-27 22:43:56] [realtime_chotot.R] - INFO: === Bắt đầu realtime Chợ Tốt ===
+[2026-06-27 22:44:01] [realtime_chotot.R] - INFO: Kiểm tra trang 1...
+[2026-06-27 22:44:15] [realtime_chotot.R] - INFO: Trang 1: URL cuối đã có trong DB → so ngược từng URL.
+[2026-06-27 22:44:15] [realtime_chotot.R] - INFO: Phát hiện 0 URL mới cần cào.
+[2026-06-27 22:44:15] [realtime_chotot.R] - INFO: Không có URL mới. Kết thúc.
+[2026-06-27 22:44:15] [realtime_chotot.R] - INFO: Đã đóng session.
+[2026-06-27 22:44:15] [scrap_chotot.R] - INFO: Task disabled: web_scraping/script/realtime/realtime_banxehoicu.R — skipping.
+[2026-06-27 22:44:15] [realtime_bonbanh.R] - INFO: === Bắt đầu realtime BonBanh ===
+[2026-06-27 22:44:15] [realtime_bonbanh.R] - INFO: Kiểm tra trang 1...
+[2026-06-27 22:44:15] [realtime_bonbanh.R] - INFO: Trang 1: URL cuối chưa có trong DB → lấy 11/20 URL mới.
+[2026-06-27 22:44:16] [realtime_bonbanh.R] - INFO: Kiểm tra trang 2...
+[2026-06-27 22:44:17] [realtime_bonbanh.R] - INFO: Trang 2: URL cuối đã có trong DB → tìm được 12/20 URL mới.
+[2026-06-27 22:44:17] [realtime_bonbanh.R] - INFO: Phát hiện 23 URL mới.
+[2026-06-27 22:44:17] [realtime_bonbanh.R] - INFO: Đã ghi 23 URL mới vào đầu: web_scraping/data/raw/meta/urls_bonbanh.txt
+[2026-06-27 22:44:55] [realtime_bonbanh.R] - INFO: === Hoàn thành. 23 URL mới | 21 vào init_db | 21 vào master ===
+[2026-06-27 22:44:55] [scrap_chotot.R] - INFO: Real-time update cycle completed with 21 new rows.
+[2026-06-27 22:44:55] [scrap_chotot.R] - INFO: Có 21 dòng mới — bắt đầu clean master DB và rebuild CSV...
+[2026-06-27 22:44:55] [scrap_chotot.R] - INFO: Clean & rebuild: đọc 25424 dòng từ master DB.
+[2026-06-27 22:44:56] [scrap_chotot.R] - INFO:   Bước 1 (numeric fix) hoàn thành.
+[2026-06-27 22:45:00] [scrap_chotot.R] - INFO:   Bước 2 (trim canonicalization) hoàn thành.
+[2026-06-27 22:45:00] [scrap_chotot.R] - INFO:   Đã ghi lại 25424 dòng vào master DB.
+[2026-06-27 22:45:01] [scrap_chotot.R] - INFO:   Đã rebuild master_data.csv (25424 dòng). CSV sẵn sàng cho visual/model.
+[2026-06-27 22:46:10] [web_scraping/script/validate_clean_data.R] - INFO: === Bắt đầu validation dữ liệu master_data.csv ===
+[2026-06-27 22:46:10] [web_scraping/script/validate_clean_data.R] - INFO: === Validation hoàn thành. 25424 dòng trong master data, report tại web_scraping/data/quality_report ===

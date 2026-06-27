@@ -79,7 +79,11 @@ num <- function(x, digits = 0) {
 format_vnd <- function(value) {
   out <- ifelse(
     value >= 1e9,
-    paste0(format(round(value / 1e9, 2), decimal.mark = ".", nsmall = 2, trim = TRUE), " tỷ"),
+    paste0(
+      formatC(round(value / 1e9, 3), format = "f", digits = 3,
+              big.mark = ".", decimal.mark = ","),
+      " tỷ"
+    ),
     ifelse(value >= 1e6, paste0(num(value / 1e6, 0), " tr"), paste0(num(value, 0), " ₫"))
   )
   out[is.na(value) | is.nan(value)] <- "0 ₫"
@@ -188,6 +192,7 @@ prepare_master_data <- function(raw) {
       price_billion = price / 1e9,
       log_price = log(price),
       mileage_k = mileage / 1000,
+      mileage_k = ifelse(!is.na(mileage_k) & mileage_k <= 0, NA_real_, mileage_k),
       transmission = clean_transmission(transmission),
       fuel_type = clean_fuel(fuel_type),
       is_electric = as.integer(fuel_type == "Điện"),
@@ -402,20 +407,50 @@ estimate_price <- function(form) {
       abs(.data$year - form$year) <= 2
     )
   model_regression <- artifact("model_regression")
+
+  # Xác định brand_grp cho model mới (top-20 brand encoding)
+  top_brands_in_model <- tryCatch({
+    lvls <- levels(model_regression$xlevels[["brand_grp"]])
+    if (!is.null(lvls)) lvls else character(0)
+  }, error = function(e) character(0))
+  brand_grp_val <- if (length(top_brands_in_model) > 0) {
+    factor(
+      ifelse(form$brand %in% top_brands_in_model, form$brand, "Other"),
+      levels = top_brands_in_model
+    )
+  } else {
+    NULL
+  }
+
   pred_input <- data.frame(
-    car_age = max(0, CURRENT_YEAR - form$year),
-    mileage_k = max(0, form$km / 1000),
-    engine_size = ifelse(is.na(form$engine_size), median_lookup(form$brand, form$model, "engine_size", 2), form$engine_size),
-    engine_non_ev = ifelse(form$fuel == "Điện", 0, ifelse(is.na(form$engine_size), median_lookup(form$brand, form$model, "engine_size", 2), form$engine_size)),
-    fuel = factor(form$fuel, levels = c("Xăng", "Dầu", "Hybrid", "Điện")),
-    is_auto = as.integer(form$transmission %in% c("Tự động", "CVT")),
-    is_imported = as.integer(form$origin == "Nhập khẩu"),
-    seat_count = form$seat_count
+    car_age      = max(0, CURRENT_YEAR - form$year),
+    mileage_k    = max(0, form$km / 1000),
+    engine_size  = ifelse(is.na(form$engine_size), median_lookup(form$brand, form$model, "engine_size", 2), form$engine_size),
+    engine_non_ev= ifelse(form$fuel == "Điện", 0, ifelse(is.na(form$engine_size), median_lookup(form$brand, form$model, "engine_size", 2), form$engine_size)),
+    fuel         = factor(form$fuel, levels = c("Xăng", "Dầu", "Hybrid", "Điện")),
+    is_auto      = as.integer(form$transmission %in% c("Tự động", "CVT")),
+    is_imported  = as.integer(form$origin == "Nhập khẩu"),
+    seat_count   = form$seat_count
   )
+  if (!is.null(brand_grp_val)) {
+    pred_input$brand_grp <- brand_grp_val
+  }
 
   if (!is.null(model_regression)) {
-    point <- as.numeric(exp(predict(model_regression, newdata = pred_input)))
-    source <- "Linear Regression ML"
+    log_pred <- tryCatch(
+      predict(model_regression, newdata = pred_input),
+      error = function(e) NA_real_
+    )
+    # log_price hợp lệ phải nằm trong log(50tr) ~ log(15 tỷ) = 17.7 ~ 23.4
+    if (is.finite(log_pred) && log_pred >= 17 && log_pred <= 25) {
+      point  <- as.numeric(exp(log_pred))
+      source <- "Linear Regression ML"
+    } else {
+      # Fallback về median theo brand+model nếu predict ra số vô lý
+      point  <- median_safe(similar$price)
+      if (!is.finite(point) || point <= 0) point <- median_safe(data_clean$price)
+      source <- "Median fallback (predict out of range)"
+    }
   } else {
     fallback <- data_clean %>% filter(.data$brand == form$brand)
     base <- if (nrow(similar)) {

@@ -1,0 +1,15 @@
+MASTER DATA VALIDATION REPORT
+Generated at: 2026-06-27 22:46:10
+Current year rule: <= 2026
+
+# A tibble: 1 × 15
+  file         source_name  rows schema_ok missing_cols extra_cols duplicate_url
+  <chr>        <chr>       <int> <lgl>     <chr>        <chr>              <int>
+1 web_scrapin… master_data 25424 TRUE      ""           ""                     0
+# ℹ 8 more variables: missing_brand <int>, missing_model <int>,
+#   missing_url <int>, bad_year <int>, bad_price <int>, bad_mileage <int>,
+#   total_issues <int>, status <chr>
+
+Total rows: 25424
+Schema OK: TRUE
+Status: OK

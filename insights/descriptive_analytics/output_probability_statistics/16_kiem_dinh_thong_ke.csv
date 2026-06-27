@@ -1,4 +1,4 @@
 "kiem_dinh","thong_ke","p_value","ket_luan"
-"T-test: price ~ transmission","t = -74.7115",0,"Co khac biet gia trung binh"
-"Chi-square: transmission vs age_group","X2 = 2892.0121",0,"Co moi lien he thong ke"
-"Pearson correlation: price vs mileage","r = -0.2219",1.16093497379528e-242,"Co tuong quan thong ke"
+"T-test: price ~ transmission","t = -72.2789",0,"Co khac biet gia trung binh"
+"Chi-square: transmission vs age_group","X2 = 2762.0534",0,"Co moi lien he thong ke"
+"Pearson correlation: price vs mileage","r = -0.2289",1.18425596899532e-220,"Co tuong quan thong ke"
