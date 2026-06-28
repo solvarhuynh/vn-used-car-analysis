@@ -69,6 +69,11 @@ DATA_FILE <- first_existing_file(DATA_FILE_CANDIDATES)
 MODEL_FILE <- first_existing_file(MODEL_FILE_CANDIDATES)
 DATA_SOURCE_LABEL <- if (!is.null(DATA_FILE)) DATA_FILE else "chưa tìm thấy CSV"
 MODEL_SOURCE_LABEL <- if (!is.null(MODEL_FILE)) MODEL_FILE else "chưa tìm thấy output_models.RData"
+MODEL_IMAGE_DIR <- file.path("machine_learning", "images")
+if (dir.exists(MODEL_IMAGE_DIR)) {
+  addResourcePath("ml-images", normalizePath(MODEL_IMAGE_DIR, winslash = "/", mustWork = TRUE))
+}
+
 
 num <- function(x, digits = 0) {
   out <- format(round(x, digits), big.mark = ".", decimal.mark = ",", trim = TRUE, nsmall = ifelse(digits > 0, digits, 0), scientific = FALSE)
@@ -887,6 +892,19 @@ ui <- fluidPage(
       .plotly-output > .html-widget-output { width: 100%; min-width: 0; }
       .plotly-output .main-svg,
       .plotly-output .svg-container svg { max-width: none; }
+      .model-gallery { display: grid; gap: 14px; }
+      .model-gallery-frame { position: relative; overflow: hidden; border: 1px solid var(--border); border-radius: 16px; background: linear-gradient(180deg, #fbfdff, #eef6fc); min-height: 460px; }
+      .model-image-slide { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 16px; opacity: 0; transform: translateX(18px); pointer-events: none; transition: opacity .26s ease, transform .26s ease; }
+      .model-image-slide.active { opacity: 1; transform: translateX(0); pointer-events: auto; z-index: 1; }
+      .model-image-wrap { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 380px; flex: 1; }
+      .model-image-wrap img { display: block; max-width: 100%; max-height: 620px; object-fit: contain; border-radius: 10px; background: #fff; box-shadow: 0 8px 24px -18px rgba(23,59,112,.35); }
+      .model-image-caption { margin-top: 12px; color: rgba(32,49,79,.82); font-size: 13px; line-height: 1.45; }
+      .model-gallery-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+      .model-gallery-nav { display: flex; align-items: center; gap: 8px; }
+      .model-gallery-status { color: var(--muted-foreground); font-size: 12px; font-weight: 600; }
+      .model-gallery-dots { display: flex; flex-wrap: wrap; gap: 6px; }
+      .model-gallery-dot { width: 9px; height: 9px; border: 0; border-radius: 999px; background: #c9d8e6; padding: 0; }
+      .model-gallery-dot.active { width: 24px; background: var(--primary); }
       .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 64px 20px; text-align: center; }
       .empty-icon { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 999px; background: var(--secondary); color: var(--muted-foreground); }
       .region-layout { display: grid; gap: 16px; }
@@ -1025,12 +1043,37 @@ ui <- fluidPage(
           if (window.Shiny && Shiny.setInputValue) Shiny.setInputValue('active_tab', tab, {priority: 'event'});
           resizePlots();
         }
+        function showModelSlide(step, absolute) {
+          var gallery = $('.model-gallery');
+          if (!gallery.length) return;
+          var slides = gallery.find('.model-image-slide');
+          if (!slides.length) return;
+          var current = slides.index(slides.filter('.active'));
+          if (current < 0) current = 0;
+          var next = absolute ? Number(step) : current + Number(step);
+          if (!Number.isFinite(next)) next = 0;
+          next = (next + slides.length) % slides.length;
+          if (next === current && slides.filter('.active').length) return;
+          slides.removeClass('active').eq(next).addClass('active');
+          gallery.find('.model-gallery-dot').removeClass('active').eq(next).addClass('active');
+          gallery.find('.model-gallery-status').text((next + 1) + ' / ' + slides.length);
+        }
+        function initModelGallery() {
+          clearInterval(window.__modelGalleryTimer);
+          showModelSlide(0, true);
+        }
         $('.sidebar-item').on('click', function(e) {
           e.preventDefault();
           setTab($(this).data('tab'), $(this).data('title'), $(this).data('subtitle'));
         });
         $(window).on('hashchange', activateFromHash);
         $('.menu-trigger').on('click', function(){ $('body').toggleClass('sidebar-open'); resizePlots(); });
+        $(document).on('click', '.model-gallery-prev', function(e){ e.preventDefault(); showModelSlide(-1, false); });
+        $(document).on('click', '.model-gallery-next', function(e){ e.preventDefault(); showModelSlide(1, false); });
+        $(document).on('click', '.model-gallery-dot', function(e){ e.preventDefault(); showModelSlide($(this).data('idx'), true); });
+        $(document).on('shiny:value', function(e) {
+          if (e.name === 'model_image_gallery') setTimeout(initModelGallery, 80);
+        });
         $('#refresh-demo').on('click', function(){ toast('Dữ liệu Master đã sẵn sàng'); });
         $('#copy-insights').on('click', function(){
           var text = $('#insight-copy-source').text();
@@ -1277,6 +1320,7 @@ ui <- fluidPage(
             section_card("Tầm quan trọng biến", "Theo Decision Tree phân loại phân khúc giá", "sparkles", uiOutput("model_feature_importance")),
             section_card("Cụm K-Means", "Profile các nhóm xe từ output_models.RData", "database", DTOutput("model_cluster_table"))
           ),
+          section_card("Biểu đồ mô hình ML", "Hiển thị lần lượt các ảnh được tạo trong machine_learning/images", "chart", uiOutput("model_image_gallery")),
           section_card("Hệ số Linear Regression", "Mô hình dự đoán log(price)", "trend", DTOutput("model_coef_table")),
           section_card("Ma trận Decision Tree", "Số lần dự đoán đúng/sai theo phân khúc giá", "table", DTOutput("model_conf_table"))
         ),
@@ -2117,6 +2161,52 @@ server <- function(input, output, session) {
   output$model_silhouette <- renderText({
     req(is_tab("models"))
     format_metric(artifact("avg_silhouette", NA), 3)
+  })
+
+  output$model_image_gallery <- renderUI({
+    req(is_tab("models"))
+    if (!dir.exists(MODEL_IMAGE_DIR)) {
+      return(div(class = "empty-state", div(class = "empty-icon", icon_svg("chart")), "Chưa tìm thấy thư mục machine_learning/images."))
+    }
+    files <- list.files(MODEL_IMAGE_DIR, pattern = "\\.(png|jpg|jpeg|webp)$", full.names = TRUE, ignore.case = TRUE)
+    files <- files[file.info(files)[["size"]] > 0]
+    files <- files[!grepl("^_", basename(files))]
+    preferred <- c("regression_heatmap.png", "feature_importance.png", "tree_plot.png", "confusion_matrix.png", "cluster_comparison.png", "elbow_method.png")
+    files <- files[order(match(basename(files), preferred), basename(files), na.last = TRUE)]
+    if (!length(files)) {
+      return(div(class = "empty-state", div(class = "empty-icon", icon_svg("chart")), "Chưa có ảnh biểu đồ hợp lệ để hiển thị."))
+    }
+    captions <- c(
+      regression_heatmap = "Heatmap tương quan các biến trong mô hình Linear Regression.",
+      feature_importance = "Feature importance từ Decision Tree phân loại phân khúc giá.",
+      tree_plot = "Sơ đồ cây quyết định phân loại phân khúc giá xe cũ.",
+      confusion_matrix = "Ma trận nhầm lẫn đánh giá Decision Tree trên tập test.",
+      cluster_comparison = "Biểu đồ so sánh các cụm K-Means theo đặc trưng thị trường.",
+      elbow_method = "Elbow Method hỗ trợ lựa chọn số cụm K-Means."
+    )
+    tagList(
+      div(
+        class = "model-gallery", `data-count` = length(files),
+        div(
+          class = "model-gallery-frame",
+          lapply(seq_along(files), function(i) {
+            key <- tools::file_path_sans_ext(basename(files[i]))
+            caption <- unname(captions[key])
+            if (is.na(caption)) caption <- basename(files[i])
+            div(
+              class = paste("model-image-slide", if (i == 1) "active" else ""),
+              div(class = "model-image-wrap", tags$img(src = paste0("ml-images/", basename(files[i])), alt = caption)),
+              div(class = "model-image-caption", strong(paste0("Hình ", i, ". ")), caption)
+            )
+          })
+        ),
+        div(
+          class = "model-gallery-controls",
+          div(class = "model-gallery-nav", tags$button(type = "button", class = "btn btn-outline model-gallery-prev", span(class = "btn-ico", icon_svg("down")), "Trước"), tags$button(type = "button", class = "btn btn-primary model-gallery-next", "Tiếp", span(class = "btn-ico", icon_svg("up"))), span(class = "model-gallery-status", paste0("1 / ", length(files)))),
+          div(class = "model-gallery-dots", lapply(seq_along(files), function(i) tags$button(type = "button", class = paste("model-gallery-dot", if (i == 1) "active" else ""), `data-idx` = i - 1, `aria-label` = paste("Xem biểu đồ", i))))
+        )
+      )
+    )
   })
 
   output$model_feature_importance <- renderUI({
